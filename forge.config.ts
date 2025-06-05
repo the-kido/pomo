@@ -11,6 +11,9 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
+const ENTRY_POINT_SRC = './src/main/windows';
+const ENTRY_POINT_RENDERER_SRC = './src/renderer/windows';
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
@@ -25,19 +28,19 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: './src/index.html',
-            js: './src/renderer.tsx',
+            html: ENTRY_POINT_SRC + '/main/index.html',
+            js: ENTRY_POINT_RENDERER_SRC + '/mainRenderer.tsx',
             name: 'main_window',
             preload: {
-              js: './src/preload.ts',
+              js: ENTRY_POINT_SRC + '/main/preload.ts',
             },
           },
           {
-            html: './src/main/pomodoro/timer/timer.html',
-            js: './src/main/pomodoro/timer/renderer.tsx',
+            html: ENTRY_POINT_SRC + '/pomodoroTimer/timer.html',
+            js: ENTRY_POINT_RENDERER_SRC + '/pomodoroTimerRenderer.tsx',
             name: 'pomodoro_timer',
             preload: {
-              js: './src/main/pomodoro/timer/preload.ts',
+              js: ENTRY_POINT_SRC + '/pomodoroTimer/preload.ts',
             },
           }
         ],
