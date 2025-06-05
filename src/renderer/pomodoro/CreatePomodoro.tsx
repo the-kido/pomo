@@ -74,9 +74,9 @@ function PomodoroModule() {
 	const [subtasks, setSubtasks] = useState<string[]>(["aas", "bas", "cas", "das"]);
 
 	useEffect(() => {
-		// window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
-		// 	console.log("DATA!", data);
-		// });
+		window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
+			console.log("DATA!", data);
+		});
 	}, [time])
 
 	const isStartButtonDisabled = () => {

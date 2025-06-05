@@ -47,6 +47,7 @@
     "electron-squirrel-startup": "^1.0.1",
     "prod-app-shared": "file:../shared-package",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "zustand": "^5.0.5"
   }
 }

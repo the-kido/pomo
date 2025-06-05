@@ -7,6 +7,7 @@ console.log('preloading in affect')
 contextBridge.exposeInMainWorld('pomodoro', {
    onInit: (callback: (data: PomodoroTimerInfo) => void) =>
       ipcRenderer.on('init-pomodoro', (_event: any, data: any) => callback(data)),
+
    attemptClose: (data: PomodoroTimerInfo) =>
       // "send FROM renderer to main process"
       ipcRenderer.send('closed-pomodoro', data),
