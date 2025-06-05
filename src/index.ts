@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { PomodoroTimerInfo } from './types/Global';
+import { PomodoroTimerInfo } from './types/Pomodoro';
 
 // Automagically made by Forge's Webpack plugin
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -13,8 +13,8 @@ if (require('electron-squirrel-startup')) {
 var mainWindow: BrowserWindow;
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    height: 1080,
+    width: 1920,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },

@@ -1,5 +1,5 @@
 import { createContext, CSSProperties, useContext, useEffect, useRef, useState } from "react";
-import { PomodoroTimerInfo } from "src/types/Global"
+import { PomodoroTimerInfo } from "src/types/Pomodoro"
 // import { GripVertical } from 'lucide-react';
 
 type SubtasksType = {
@@ -109,14 +109,14 @@ function PomodoroModule() {
 			subtasks: subtasks
 		};
 
-		// window.pomodoro.createWindow(info, {width: /*300*/ 800, height: 500})
-		// setPomodoroActive(true);
+		window.pomodoro.createWindow(info, {width: /*300*/ 800, height: 500})
+		setPomodoroActive(true);
 
-		// console.log(window.pomodoro.onClosed);
-		// window.pomodoro.onClosed( () => {
-		// 	console.log("closed!")
-		// 	setPomodoroActive(false);
-		// } )
+		console.log(window.pomodoro.onClosed);
+		window.pomodoro.onClosed( () => {
+			console.log("closed!")
+			setPomodoroActive(false);
+		} )
 	}
 
 	return <>
