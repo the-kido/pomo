@@ -1,5 +1,105 @@
 <style>
   
+/* 
+
+const POMO: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'column',
+  flexWrap: 'wrap',
+  width: '100%'
+}
+
+const MAIN_INFO: CSSProperties = {
+  borderStyle: 'dashed',
+  borderWidth: 'medium',
+  borderColor: 'red',
+  // TODO what does this do?
+  boxSizing: 'border-box',
+  width: '100%',
+  
+  display: 'flex',
+  justifyContent: 'center',
+  alignContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+  flexWrap: 'wrap',
+}
+
+const TIMER: CSSProperties = {
+  display: 'flex', 
+  alignItems: 'center',
+
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  width: '100%',
+  
+}
+
+  const BOX_STYLE: CSSProperties = {
+
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '10px',
+
+    margin: '0px',
+    paddingRight: '10px',
+    paddingLeft: '10px',
+    marginBottom: '10px',
+    
+    borderStyle: 'dashed',
+    borderWidth: 'medium',
+    boxSizing: 'border-box',
+
+    color: `rgb(0, 0, 0, ${percent})`,
+    borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})`,
+  }
+ */
+ .pomo {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+ }
+
+ .main-info {
+  border-style: dashed;
+  border-width: medium;
+  border-color: red;
+  box-sizing: border-box;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+ }
+
+ .timer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+ }
+
+ .subtask-box {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
+  margin: 0px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-bottom: 10px;
+
+  border-style: dashed;
+  border-width: medium;
+  box-sizing: border-box;
+
+ }
+  
   .justification-input
   {
     display: flex;

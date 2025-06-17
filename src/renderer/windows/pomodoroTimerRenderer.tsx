@@ -2,46 +2,13 @@ import { createRoot } from 'react-dom/client';
 
 console.log("hope this works lol!")
 
-import { CSSProperties, JSX, useEffect, useRef, useState } from 'react';
+import { JSX, useEffect, useRef, useState } from 'react';
 import { PomodoroRendererExports, PomodoroTimerInfo } from '../../types/Pomodoro';
 
 declare global {
   interface Window {
     pomodoro: PomodoroRendererExports
   }
-}
-
-const POMO: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  width: '100%'
-}
-
-const MAIN_INFO: CSSProperties = {
-  borderStyle: 'dashed',
-  borderWidth: 'medium',
-  borderColor: 'red',
-  // TODO what does this do?
-  boxSizing: 'border-box',
-  width: '100%',
-  
-  display: 'flex',
-  justifyContent: 'center',
-  alignContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-}
-
-const TIMER: CSSProperties = {
-  display: 'flex', 
-  alignItems: 'center',
-
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  width: '100%',
 }
 
 interface SubtaskProps {
@@ -51,32 +18,8 @@ interface SubtaskProps {
 function Subtask(props: SubtaskProps) {
   const { taskDescription, percent, completed, setTaskComplete } = props;
 
-  const BOX_STYLE: CSSProperties = {
-
-    display: 'flex',
-    flexDirection: 'row',
-    gap: '10px',
-
-    color: `rgb(0, 0, 0, ${percent})`,
-    margin: '0px',
-    paddingRight: '10px',
-    paddingLeft: '10px',
-    marginBottom: '10px',
-
-    borderStyle: 'dashed',
-    borderWidth: 'medium',
-    borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})`,
-    // TODO what does this do?
-    boxSizing: 'border-box',
-    // Border things
-  }
-
-  const TEXT_STYLE: CSSProperties = {
-    margin: '0px'
-  }
-
-  return <div style={BOX_STYLE}>
-    <h3 style={TEXT_STYLE}> {taskDescription} </h3>
+  return <div className='subtask-box' style={{  color: `rgb(0, 0, 0, ${percent})`, borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})`}}>
+    <h3 style={{margin: '0px'}}> {taskDescription} </h3>
     <input type='checkbox' defaultChecked={completed} onClick={setTaskComplete} disabled={completed}></input>
   </div>
 }
@@ -88,14 +31,7 @@ interface TimerState {
   init: (stateComingFrom?: TimerStates) => void,
 }
 
-enum TimerStates {
-  JustOpened,
-  WorkTimer,
-  WorkPaused,
-  WorkFinished,
-  BreakTimer,
-  BreakFinished,
-}
+enum TimerStates { JustOpened, WorkTimer, WorkPaused, WorkFinished, BreakTimer, BreakFinished }
 
 function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: number, onClose : () => void} ) {
 
@@ -276,10 +212,10 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
   var tasks = setupSubtasks();
 
-  return <div style={POMO}>
-    <div style={MAIN_INFO}>
+  return <div className="pomo">
+    <div className="main-info">
       {/* This is the first "square" w/ the main info */}
-        <div style={TIMER}>
+        <div className={"timer"}>
           {/* #TODO What the FRICK is that number and why is it pivotal to getting the effect I want!? */}
           <Timer workTime={info.startTimeSeconds} breakTime={info.breakTimeSeconds} onClose={onClose}/>
         </div>
@@ -305,23 +241,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 }
 
 function App() {
-  const [timerInfo, setTimerInfo] = useState<PomodoroTimerInfo|'Unset'>(
-    /*
-    {
-      received: false,
-      startTimeSeconds: 6,
-      breakTimeSeconds: 1,
-      mainTask: 'Finish Assigment 4 Due In Two Weeks',
-      subtasks: [
-        "Do small thing", 
-        "And other thing",
-        "But this is the last thing!",
-        "NONO BUT THIS THING FOR REAL IM NOT JOKING!!",
-      ]
-    }
-    */
-    'Unset'
-  );
+  const [timerInfo, setTimerInfo] = useState<PomodoroTimerInfo|'Unset'>('Unset');
 
   useEffect(() => {
       window.pomodoro.onInit((receivedData) => {
