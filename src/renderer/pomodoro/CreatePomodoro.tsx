@@ -225,7 +225,6 @@ function PomodoroModule() {
 	
 	console.log("Updated pomo:", test);
 	
-	//
 	const onSetType = (string: "active" | "chill" | "unknown") => {
 		test.type = string
 	}
@@ -245,7 +244,6 @@ function PomodoroModule() {
 	const onRewardChanged = (string: string) => {
 		test.nextReward = string
 	}
-	//
 
 	const renderMainContent = () => {
 		return <Subtasks.Provider value={{subtasks, setSubtasks}}>
@@ -253,9 +251,9 @@ function PomodoroModule() {
 				{/* Left */}
 				<StagesCleared.Provider value={{ stages: stagesCleared, setStages: setStagesCleared }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-							{stagesRequired.includes(Stages.TYPE) && stageAt >=	Stages.TYPE && <TypeStage stageAt={stageAt} onSetGoal={ onSetGoal } onSetType={ onSetType }/>}
-							{stagesRequired.includes(Stages.TASK) && stageAt >= Stages.TASK && < TaskStage stageAt={stageAt} onTaskChanged={ onTaskChanged } onMotivationChanged={ onMotivationChanged } />}
-							{stagesRequired.includes(Stages.FIRST_REWARD) && stageAt >= Stages.FIRST_REWARD && <SelectFirstRewardStage stageAt={stageAt} onRewardChanged={onRewardChanged} />}
+						{stagesRequired.includes(Stages.TYPE) && stageAt >=	Stages.TYPE && <TypeStage stageAt={stageAt} onSetGoal={ onSetGoal } onSetType={ onSetType }/>}
+						{stagesRequired.includes(Stages.TASK) && stageAt >= Stages.TASK && < TaskStage stageAt={stageAt} onTaskChanged={ onTaskChanged } onMotivationChanged={ onMotivationChanged } />}
+						{stagesRequired.includes(Stages.FIRST_REWARD) && stageAt >= Stages.FIRST_REWARD && <SelectFirstRewardStage stageAt={stageAt} onRewardChanged={onRewardChanged} />}
 					</div>
 					{/* Right */}
 					<div>
@@ -269,7 +267,7 @@ function PomodoroModule() {
 	}
 
 	const startPomodoro = () => {
-
+		test.subtasks = subtasks;
 		window.pomodoro.createWindow(test, {width: /*300*/ 1200, height: 500})
 		setPomodoroActive(true);
 

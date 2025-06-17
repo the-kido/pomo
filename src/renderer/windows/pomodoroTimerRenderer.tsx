@@ -18,7 +18,7 @@ interface SubtaskProps {
 function Subtask(props: SubtaskProps) {
   const { taskDescription, percent, completed, setTaskComplete } = props;
 
-  return <div className='subtask-box' style={{  color: `rgb(0, 0, 0, ${percent})`, borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})`}}>
+  return <div className='subtask-box' style={{ color: `rgb(0, 0, 0, ${percent})`, borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})` }}>
     <h3 style={{margin: '0px'}}> {taskDescription} </h3>
     <input type='checkbox' defaultChecked={completed} onClick={setTaskComplete} disabled={completed}></input>
   </div>
@@ -42,7 +42,7 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
     states[goToState].init(stateComingFrom)
   }
   
-  const stringify = (secs: number, mins: number) =>  `${mins}:${secs <= 9 ? "0" : ""}${secs}`;
+  const stringify = (secs: number, mins: number) => `${mins}:${secs <= 9 ? "0" : ""}${secs}`;
   
   const currentTimeAtPause = useRef<number>(0);
   const timeStartedMS = useRef<number>(Date.now());
@@ -180,9 +180,10 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     let out: JSX.Element[] = [];
     
     const makeSubtask = ( subtaskIndex: number, completed: boolean ) => <Subtask 
-      setTaskComplete={() => { completed = true; setCompleteTaskIndicies([...completeTaskIndicies, subtaskIndex]);
-        
-      } } 
+      setTaskComplete={() => { 
+        completed = true; 
+        setCompleteTaskIndicies([...completeTaskIndicies, subtaskIndex]) 
+      }} 
       completed={completed} 
       taskDescription={info.subtasks[subtaskIndex]} 
       percent={SUBTASK_ARRAY_WEIGHTS[out.length]} 
@@ -211,6 +212,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
 
   var tasks = setupSubtasks();
+  var progress = 1.0 * completeTaskIndicies.length / info.subtasks.length;
 
   return <div className="pomo">
     <div className="main-info">
@@ -223,19 +225,15 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
         <h2 style={{textAlign:'center', margin: '10px' }}> {info.task} </h2>
     </div>
 
-    {info.subtasks.length > 0 && <>    
+    {info.subtasks.length > 0 && <>
       {/* For the "progress bar" */}
-      <div style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <h2 style={{position:'absolute', margin: '0px' }} >7/10</h2>
-        <progress style={{ width:'65%', margin: '10px', blockSize: '1.2em' }} id="file" value="32" max="100"> 32% </progress>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <h2 style={{ position: 'absolute', margin: '0px' }} > {completeTaskIndicies.length}/{info.subtasks.length} </h2>
+        <progress style={{ width: '65%', margin: '10px', blockSize: '1.2em' }} id="file" value={progress} max="1"> 32% </progress>
       </div>
       {/* For the list of subtasks */}
-      {
-        tasks.array
-      }
-      {
-        tasks.leftover > 0 && <p> {`. . . (${tasks.leftover} more)`}</p>
-      }   
+      {tasks.array}
+      {tasks.leftover > 0 && <p> {`. . . (${tasks.leftover} more)`}</p>}
     </>}
   </div>
 }
