@@ -9,13 +9,17 @@ export type PomodoroRendererExports = {
 
 export interface PomodoroTimerInfo
 {
-    received: boolean
-    mainTask: string,
+    // Listed in order of what is inputted by the pomodoro creator
+    type: "active" | "chill" | "unknown",
+    goal?: string,
+    task: string,
+    motivation: string,
+    nextReward: string,
+    subtasks: string[]
     startTimeSeconds: number,
     breakTimeSeconds: number,
-    subtasks: string[]
+    received: boolean
 }
-
 
 export interface Window {
     pomodoro: PomodoroRendererExports

@@ -284,7 +284,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
           <Timer workTime={info.startTimeSeconds} breakTime={info.breakTimeSeconds} onClose={onClose}/>
         </div>
 
-        <h2 style={{textAlign:'center', margin: '10px' }}> {info.mainTask} </h2>
+        <h2 style={{textAlign:'center', margin: '10px' }}> {info.task} </h2>
     </div>
 
     {info.subtasks.length > 0 && <>    

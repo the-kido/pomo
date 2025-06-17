@@ -52,6 +52,56 @@ export const useGoalStore = create<Goal>()(
   )
 );
 
+interface Rewards {
+	rewards: string[],
+	setRewards: (newGoals: string[]) => void,
+	addReward: (goal: string) => "Success" | "Duplicate" | "Unknown",
+	removeReward: (goalToRemove: string) => void,
+	clearRewards: () => void,
+}
+
+export const useRewardsStore = create<Rewards>()(
+  devtools(
+    persist(
+      (set, _) => ({
+        rewards: [
+          'Go for a run',
+          'Make a smoothie',
+          'Finish a small Todoist task',
+          'Respond to messages on Discord',
+        ],
+
+        setRewards: (newGoals) => set({ rewards: newGoals }),
+
+        addReward: (reward) => {
+			var response: "Success" | "Duplicate" | "Unknown" = "Unknown";
+
+			set((state) => {
+				// Check for duplicates before adding
+				if (state.rewards.includes(reward)) {
+					response = 'Duplicate'
+					return state; // return state as is
+				}
+				
+				response = 'Success'
+				return { rewards: [...state.rewards, reward] };
+			});
+
+			return response;
+        },
+        removeReward: (goalToRemove) =>
+          set((state) => ({
+            rewards: state.rewards.filter((goal) => goal !== goalToRemove),
+          })),
+
+        clearRewards: () => set({ rewards: [] }),
+      }),
+      {
+        name: 'goals-storage', // Unique name for the local storage item
+      }
+    )
+  )
+);
 
 const SHORT_BREAK_MAYBE_TOO_LONG = 60 * 60;
 const LONG_BREAK_MAYBE_TOO_LONG = 60 * 60;
