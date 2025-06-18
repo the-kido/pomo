@@ -4,6 +4,8 @@ console.log("hope this works lol!")
 
 import { JSX, useEffect, useRef, useState } from 'react';
 import { PomodoroRendererExports, PomodoroTimerInfo } from '../../types/Pomodoro';
+import Popup, { usePopupStore } from '../pomodoro/Popup';
+import { timeToWords } from '/src/main/utils/utils';
 
 declare global {
   interface Window {
@@ -47,8 +49,13 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
   const currentTimeAtPause = useRef<number>(0);
   const timeStartedMS = useRef<number>(Date.now());
   const timePaused = useRef<number>(0);
+  const [timePausedText, setTimePausedText] = useState<string>("");
   const [timeText, setTimeText] = useState<string>(stringify(Math.floor(workTime % 60), Math.floor(workTime / 60)))
   const [percentLeft, setPercentLeft] = useState<number>(1)
+  
+  const openPopup = usePopupStore(state => state.openPopup);
+  const closePopup = usePopupStore(state => state.closePopup);
+  const pauseButtonRef = useRef<HTMLButtonElement>(null);
 
   const states: Record<TimerStates, TimerState> = {
     [TimerStates.JustOpened]: {
@@ -76,13 +83,21 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       },
     },
     [TimerStates.WorkPaused]: {
-      tick: () => null,
+      tick: () => {       
+        var pausedMins = Math.floor(Math.ceil((Date.now() - currentTimeAtPause.current) / 1000) / 60);
+        var pausedSecs = Math.floor((Date.now() - currentTimeAtPause.current) / 1000 - pausedMins * 60);
+        setTimePausedText(timeToWords(pausedMins, pausedSecs));
+      },
       onSwitchPressed: () => null,
       onPausedPressed: () => {
+        closePopup();
         timePaused.current += Date.now() - currentTimeAtPause.current;
         setAndInitState(TimerStates.WorkTimer, TimerStates.WorkPaused)
+        setTimePausedText("0 seconds");
       },
       init: () => {
+        
+        updatePopupPosition();
         currentTimeAtPause.current = Date.now();
       },
     },
@@ -98,7 +113,9 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       tick: () => {
         decreaseTimer(TimerStates.BreakTimer, TimerStates.BreakFinished)
       },
-      onSwitchPressed: () => null,
+      onSwitchPressed: () => {
+
+      },
       onPausedPressed: () => null,
       init: () => {
         timeStartedMS.current = Date.now();
@@ -113,7 +130,22 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       onPausedPressed: () => null,
       init: () => null,
     },
-  } 
+  }
+
+  const updatePopupPosition = () => {
+    const rect = pauseButtonRef.current.getBoundingClientRect();
+      openPopup(rect.right, rect.bottom, rect.width);
+  }
+
+  const open = usePopupStore((store) => store.open);
+
+  useEffect(() => {
+    if (!open) return;
+    window.addEventListener('resize', updatePopupPosition);
+    return () => {
+      window.removeEventListener('resize', updatePopupPosition);
+    };
+  }, [open]);
 
   useEffect(() => {
     setInterval(() => {
@@ -153,12 +185,29 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
   const isPauseButtonEnabled = () => currentState == TimerStates.WorkPaused || currentState == TimerStates.WorkTimer || currentState == TimerStates.JustOpened;
   const isSwitchButtonEnabled = () => currentState == TimerStates.WorkFinished || currentState == TimerStates.BreakFinished || currentState == TimerStates.BreakTimer;
 
+
   return <>
+    <Popup>
+      <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column'  }}>
+        <h2 style={{width:'100%'}}> You've paused the timer for</h2>
+        <h3> {timePausedText}</h3>
+      <textarea id="hint text" placeholder="Optional: why did you pause?" cols={20} rows={5} style={{resize:'none'}}></textarea>
+        {/* <button onClick={onPausePressed}>Unpause</button> */}
+      </div>
+    </Popup>
+    {/* </> } */}
     <div style={{background: `linear-gradient(-90deg,rgb(206, 202, 202) ${percentLeft * 100}%,rgb(243, 73, 73) ${percentLeft * 100}%)`, flex: 1, display: 'flex', justifyContent: 'center'}}>
       <h1 style={{ fontSize: '50px', margin: '0px' }} > {timeText} </h1>
     </div>
     <div style={{display: 'flex', flexDirection: 'column', margin: '10px',  gap: '10px' }} > 
-      <button disabled={!isPauseButtonEnabled()} onClick={() => onPausePressed()} >{currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}</button>
+      <button
+        disabled={!isPauseButtonEnabled()} 
+        onClick={() => onPausePressed()} 
+        style={{width: 70, zIndex: isPaused(currentState) ? 1000 : 'auto'}}
+        ref={pauseButtonRef}
+      >
+        {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
+      </button>
       <button disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch" } </button>
       <button onClick={() => onClose()} >Close</button>
     </div>
@@ -214,7 +263,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   var tasks = setupSubtasks();
   var progress = 1.0 * completeTaskIndicies.length / info.subtasks.length;
 
-  return <div className="pomo">
+return <div className="pomo">
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
         <div className={"timer"}>
@@ -239,7 +288,26 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 }
 
 function App() {
-  const [timerInfo, setTimerInfo] = useState<PomodoroTimerInfo|'Unset'>('Unset');
+  const [timerInfo, setTimerInfo] = useState<PomodoroTimerInfo|'Unset'>(
+    // /*
+    {
+      received: false,
+      startTimeSeconds: 6,
+      breakTimeSeconds: 1,
+      task: 'Finish Assigment 4 Due In Two Weeks',
+      subtasks: [
+        "Do small thing", 
+        "And other thing",
+        "But this is the last thing!",
+        "NONO BUT THIS THING FOR REAL IM NOT JOKING!!",
+      ],
+      type: 'chill',
+      motivation: 'a',
+      nextReward: 'b'
+    }
+    // */
+    // 'Unset'
+  );
 
   useEffect(() => {
       window.pomodoro.onInit((receivedData) => {

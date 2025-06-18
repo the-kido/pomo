@@ -1,111 +1,81 @@
 <style>
-  
-/* 
-
-const POMO: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  width: '100%'
-}
-
-const MAIN_INFO: CSSProperties = {
-  borderStyle: 'dashed',
-  borderWidth: 'medium',
-  borderColor: 'red',
-  // TODO what does this do?
-  boxSizing: 'border-box',
-  width: '100%',
-  
-  display: 'flex',
-  justifyContent: 'center',
-  alignContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-}
-
-const TIMER: CSSProperties = {
-  display: 'flex', 
-  alignItems: 'center',
-
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  width: '100%',
-  
-}
-
-  const BOX_STYLE: CSSProperties = {
-
-    display: 'flex',
-    flexDirection: 'row',
-    gap: '10px',
-
-    margin: '0px',
-    paddingRight: '10px',
-    paddingLeft: '10px',
-    marginBottom: '10px',
-    
-    borderStyle: 'dashed',
-    borderWidth: 'medium',
-    boxSizing: 'border-box',
-
-    color: `rgb(0, 0, 0, ${percent})`,
-    borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})`,
+  .pomo {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
   }
- */
- .pomo {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  flex-wrap: wrap;
-  width: 100%;
- }
 
- .main-info {
-  border-style: dashed;
-  border-width: medium;
-  border-color: red;
-  box-sizing: border-box;
-  width: 100%;
+  .main-info {
+    border-style: dashed;
+    border-width: medium;
+    border-color: red;
+    box-sizing: border-box;
+    width: 100%;
 
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  flex-wrap: wrap;
- }
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 
- .timer {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
- }
+  .timer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
 
- .subtask-box {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
+  .subtask-box {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 
-  margin: 0px;
-  padding-right: 10px;
-  padding-left: 10px;
-  margin-bottom: 10px;
+    margin: 0px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-bottom: 10px;
 
-  border-style: dashed;
-  border-width: medium;
-  box-sizing: border-box;
+    border-style: dashed;
+    border-width: medium;
+    box-sizing: border-box;
+  }
 
- }
-  
   .justification-input
   {
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
+
+  .popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 900;
+  opacity: 1;
+  transition: opacity 0.3s;
+  pointer-events: all;
+}
+.popup-overlay-close {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.popup-overlay-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.popup {
+  position: absolute;
+  border-radius: 8px;
+  padding: 2em;
+  z-index: 1000;
+}
 
 </style>
 
@@ -114,9 +84,10 @@ const TIMER: CSSProperties = {
   <head>
     <meta charset="UTF-8" />
     <title>Hello World!</title>
-
   </head>
+
   <body>
-   <div id="root" ></div>
+    <div id="root"></div>
+    <div id="portal-root"></div>
   </body>
 </html>

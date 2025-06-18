@@ -1,4 +1,4 @@
-import PomodoroModule from "./pomodoro/CreatePomodoro";
+import PomodoroModule from "./main/CreatePomodoro";
 
 export default function App()
 {
