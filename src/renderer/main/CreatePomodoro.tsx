@@ -245,27 +245,6 @@ function PomodoroModule() {
 		test.nextReward = string
 	}
 
-	const renderMainContent = () => {
-		return <Subtasks.Provider value={{subtasks, setSubtasks}}>
-			<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-				{/* Left */}
-				<StagesCleared.Provider value={{ stages: stagesCleared, setStages: setStagesCleared }}>
-					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-						{stagesRequired.includes(Stages.TYPE) && stageAt >=	Stages.TYPE && <TypeStage stageAt={stageAt} onSetGoal={ onSetGoal } onSetType={ onSetType }/>}
-						{stagesRequired.includes(Stages.TASK) && stageAt >= Stages.TASK && < TaskStage stageAt={stageAt} onTaskChanged={ onTaskChanged } onMotivationChanged={ onMotivationChanged } />}
-						{stagesRequired.includes(Stages.FIRST_REWARD) && stageAt >= Stages.FIRST_REWARD && <SelectFirstRewardStage stageAt={stageAt} onRewardChanged={onRewardChanged} />}
-					</div>
-					{/* Right */}
-					<div>
-						{stagesRequired.includes(Stages.SUBTASKS) && stageAt >= Stages.SUBTASKS && <SubtaskList stageAt={stageAt} />}
-					</div>
-				</StagesCleared.Provider>
-			</div>
-			<button disabled={ isStartButtonDisabled() } onClick={() => startPomodoro()} >Start Pomodoro </button>
-			
-		</Subtasks.Provider>
-	}
-
 	const startPomodoro = () => {
 		test.subtasks = subtasks;
 		window.pomodoro.createWindow(test, {width: /*300*/ 1200, height: 500})
@@ -278,10 +257,28 @@ function PomodoroModule() {
 		} )
 	}
 
-	return <>
-        <h1> whaa</h1>
-        {renderMainContent()}
-	</>
+
+	return <Subtasks.Provider value={{subtasks, setSubtasks}}> <div className="creator"> 
+			<div className="creator-content">
+		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+				
+			{/* Left */}
+			<StagesCleared.Provider value={{ stages: stagesCleared, setStages: setStagesCleared }}>
+				<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+					{stagesRequired.includes(Stages.TYPE) && stageAt >=	Stages.TYPE && <TypeStage stageAt={stageAt} onSetGoal={ onSetGoal } onSetType={ onSetType }/>}
+					{stagesRequired.includes(Stages.TASK) && stageAt >= Stages.TASK && < TaskStage stageAt={stageAt} onTaskChanged={ onTaskChanged } onMotivationChanged={ onMotivationChanged } />}
+					{stagesRequired.includes(Stages.FIRST_REWARD) && stageAt >= Stages.FIRST_REWARD && <SelectFirstRewardStage stageAt={stageAt} onRewardChanged={onRewardChanged} />}
+				</div>
+				{/* Right */}
+				<div>
+					{stagesRequired.includes(Stages.SUBTASKS) && stageAt >= Stages.SUBTASKS && <SubtaskList stageAt={stageAt} />}
+				</div>
+			</StagesCleared.Provider>
+			</div>
+		
+		</div>
+		<button disabled={ isStartButtonDisabled() } onClick={() => startPomodoro()} >Start Pomodoro </button>
+	</div> </Subtasks.Provider> 
 }
 
 export default PomodoroModule;
