@@ -202,7 +202,7 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       </div>
     </Popup>
     <Popup usePopupStore={useCheckInPopupStore}>
-      <textarea id="hint text" placeholder="Optional: why did you pause?" cols={20} rows={5} style={{resize:'none'}}></textarea>
+      <textarea id="hint text" placeholder="How did that session go?" cols={20} rows={5} style={{resize:'none'}}></textarea>
         <button onClick={hideCheckIn}>Dismiss</button>
     </Popup>
     {/* </> } */}
