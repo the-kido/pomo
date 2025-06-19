@@ -1,9 +1,10 @@
 import { createRoot } from 'react-dom/client';
 
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useRef, useState } from 'react';
 import { PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro';
 import Subtask from './pomodoro/Subtask';
 import Timer from './pomodoro/Timer';
+import { create, useStore } from 'zustand';
 
 declare global {
   interface Window {
@@ -13,11 +14,25 @@ declare global {
 
 const SUBTASK_ARRAY_WEIGHTS = [1, 0.5, 0.325];
 
+
+interface UpdateDescription {
+  updating: boolean,
+  setDescription: () => void,
+  finishSettingDescription: () => void,
+}
+
+const useUpdatingState = create<UpdateDescription>(set => ({
+  updating: false,
+  setDescription: () => set({ updating: true }),
+  finishSettingDescription: () => set({ updating: false})
+}))
+
 function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
   const [completeTaskIndicies, setCompleteTaskIndicies] = useState<Array<number>>([]);
+  const descriptionTextField = useRef<HTMLTextAreaElement>(null);
 
-  useEffect( () => {
+  useEffect(() => {
     window.pomodoro.sendUpdate(info);
   }, [completeTaskIndicies])
 
@@ -49,26 +64,45 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
       const a = completeTaskIndicies[i];
       out.push(makeSubtask(a, true));
     }
-
+    
     return {array: out, leftover: info.subtasks.length - out.length };
   }
   
-  function onClose() {
+  function onPomodoroClose() {
     window.pomodoro.attemptClose(info); 
   }
-
+  
+  function onDescriptionChangeCancel() {
+    finishSettingDescription();
+  }
+  
+  function onDescriptionChangeSaved() {
+    info.task = descriptionTextField.current.value;    
+    finishSettingDescription();
+  }
+  
   var tasks = setupSubtasks();
   var progress = 1.0 * completeTaskIndicies.length / info.subtasks.length;
-
-return <div className="pomo">
+  
+  const updating = useUpdatingState(state => state.updating);
+  const setDescription = useUpdatingState(state => state.setDescription);
+  const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
+  
+  return <div className="pomo">
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
-        <div className={"timer"}>
-          {/* #TODO What the FRICK is that number and why is it pivotal to getting the effect I want!? */}
-          <Timer workTime={info.startTimeSeconds} breakTime={info.breakTimeSeconds} onClose={onClose}/>
+      <div className={"timer"}>
+        {/* #TODO What the FRICK is that number and why is it pivotal to getting the effect I want!? */}
+        <Timer workTime={info.startTimeSeconds} breakTime={info.breakTimeSeconds} onClose={onPomodoroClose}/>
+      </div>
+      { updating ? <textarea ref={descriptionTextField} defaultValue={info.task}></textarea> : <h2 style={{textAlign:'center', margin: '10px', cursor: 'text' }} onClick={setDescription} > {info.task} </h2> }
+      { updating ? <div style={{display: 'flex'}}>
+          <input type='button' defaultValue={"Cancel"} onClick={onDescriptionChangeCancel}></input>
+          <input type='button' defaultValue={"Finish"} onClick={onDescriptionChangeSaved}></input>
+        </div> : <div> 
+          here will be extra info 
         </div>
-
-        <h2 style={{textAlign:'center', margin: '10px' }}> {info.task} </h2>
+      }
     </div>
       {info.subtasks.length > 0 && <>
       {/* For the "progress bar" */}
