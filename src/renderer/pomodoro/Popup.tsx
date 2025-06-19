@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { CSSProperties, ReactNode } from "react";
-import { create } from "zustand";
+import { create, StoreApi, UseBoundStore } from "zustand";
 
 interface OpenPopup {
   open: boolean,
@@ -11,13 +11,34 @@ interface OpenPopup {
   closePopup: () => void
 }
 
-export const usePopupStore = create<OpenPopup>(set => ({
+export const usePausePopupStore = create<OpenPopup>(set => ({
   open: false,
   x: 0,
   y: 0,
   width: 0,
   openPopup: (x: number, y: number, width: number) => set({ x: x, y: y, width: width, open: true }),
   closePopup: () => set({ open: false }),
+}));
+
+export const useCheckInPopupStore = create<OpenPopup>(set => ({
+  open: false,
+  x: 0,
+  y: 0,
+  width: 0,
+  openPopup: (x: number, y: number, width: number) => set({ x: x, y: y, width: width, open: true }),
+  closePopup: () => set({ open: false }),
+}));
+
+interface ShowCheckIn {
+  showingCheckIn: boolean,
+  showCheckIn: () => void,
+  hideCheckIn: () => void
+}
+
+export const useCheckInStore = create<ShowCheckIn>(set => ({
+  showingCheckIn: false,
+  showCheckIn: () => set({ showingCheckIn: true}),
+  hideCheckIn: () => set({ showingCheckIn: false}),
 }));
 
 const STYLE: CSSProperties = {
@@ -45,13 +66,13 @@ const STYLE: CSSProperties = {
     width: '0px',
 }
 
-function Popup({ children /*, onClose */}: {  children: ReactNode /*, onClose: () => void */ }) {
+function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore:  UseBoundStore<StoreApi<OpenPopup>>}) {
   const portalRoot = document.getElementById('portal-root');
 
   const open = usePopupStore(state => state.open);
-  const x = usePopupStore(state => state.x);
-  const y = usePopupStore(state => state.y);
-  const width = usePopupStore(state => state.width);
+  // const x = usePausePopupStore(state => state.x);
+  // const y = usePausePopupStore(state => state.y);
+  // const width = usePausePopupStore(state => state.width);
 
 
   console.log(portalRoot);
@@ -61,8 +82,8 @@ function Popup({ children /*, onClose */}: {  children: ReactNode /*, onClose: (
     <div className={`popup-overlay ${open ? 'popup-overlay-open' : 'popup-overlay-close'}`} />
     {createPortal(
       <> 
-        <div style={{...TRIANGLE, left: x - 16 - width / 2, top: y + 16}}></div>
-        <div className="popup" style={{ ...STYLE, top: y + 16, left: x, position: 'absolute' }}>
+        {/* <div style={{...TRIANGLE, left: x - 16 - width / 2, top: y + 16}}></div> */}
+        <div className="popup" style={{ ...STYLE, top: 100, left: 300, position: 'absolute' }}>
           {children}
         </div>
       </>,
