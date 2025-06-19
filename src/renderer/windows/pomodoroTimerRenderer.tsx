@@ -4,7 +4,7 @@ console.log("hope this works lol!")
 
 import { JSX, useEffect, useRef, useState } from 'react';
 import { PomodoroRendererExports, PomodoroTimerInfo } from '../../types/Pomodoro';
-import Popup, { useCheckInPopupStore, useCheckInStore, usePausePopupStore } from '../pomodoro/Popup';
+import Popup, { useCheckInPopupStore, usePausePopupStore } from '../pomodoro/Popup';
 import { timeToWords } from '/src/main/utils/utils';
 
 declare global {
@@ -55,7 +55,6 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
   
   const openPausePopup = usePausePopupStore(state => state.openPopup);
   const closePausePopup = usePausePopupStore(state => state.closePopup);
-  const pauseButtonRef = useRef<HTMLButtonElement>(null);
   
   const showCheckIn = useCheckInPopupStore(state => state.openPopup);
   const hideCheckIn = useCheckInPopupStore(state => state.closePopup);
@@ -99,7 +98,7 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
         setTimePausedText("0 seconds");
       },
       init: () => {
-        updatePopupPosition();
+        openPausePopup();
         currentTimeAtPause.current = Date.now();
       },
     },
@@ -123,7 +122,7 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       },
       onPausedPressed: () => null,
       init: () => {
-        showCheckIn(65,65,65);
+        showCheckIn();
         timeStartedMS.current = Date.now();
         timePaused.current = 0;
       },
@@ -137,22 +136,6 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       init: () => null,
     },
   }
-
-
-  const updatePopupPosition = () => {
-    const rect = pauseButtonRef.current.getBoundingClientRect();
-      openPausePopup(rect.right, rect.bottom, rect.width);
-  }
-
-  const open = usePausePopupStore((store) => store.open);
-
-  useEffect(() => {
-    if (!open) return;
-    window.addEventListener('resize', updatePopupPosition);
-    return () => {
-      window.removeEventListener('resize', updatePopupPosition);
-    };
-  }, [open]);
 
   useEffect(() => {
     setInterval(() => {
@@ -192,7 +175,6 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
   const isPauseButtonEnabled = () => currentState == TimerStates.WorkPaused || currentState == TimerStates.WorkTimer || currentState == TimerStates.JustOpened;
   const isSwitchButtonEnabled = () => currentState == TimerStates.WorkFinished || currentState == TimerStates.BreakFinished || currentState == TimerStates.BreakTimer;
 
-
   return <>
     <Popup usePopupStore={usePausePopupStore}>
       <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column'  }}>
@@ -205,7 +187,6 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
       <textarea id="hint text" placeholder="How did that session go?" cols={20} rows={5} style={{resize:'none'}}></textarea>
         <button onClick={hideCheckIn}>Dismiss</button>
     </Popup>
-    {/* </> } */}
     <div style={{background: `linear-gradient(-90deg,rgb(206, 202, 202) ${percentLeft * 100}%,rgb(243, 73, 73) ${percentLeft * 100}%)`, flex: 1, display: 'flex', justifyContent: 'center'}}>
       <h1 style={{ fontSize: '50px', margin: '0px' }} > {timeText} </h1>
     </div>
@@ -214,7 +195,6 @@ function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: nu
         disabled={!isPauseButtonEnabled()} 
         onClick={() => onPausePressed()} 
         style={{width: 70, zIndex: isPaused(currentState) ? 1000 : 'auto'}}
-        ref={pauseButtonRef}
       >
         {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
       </button>
@@ -272,8 +252,6 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
   var tasks = setupSubtasks();
   var progress = 1.0 * completeTaskIndicies.length / info.subtasks.length;
-
-  const open = useCheckInStore(store => store.showingCheckIn);
 
 return <div className="pomo">
   {
