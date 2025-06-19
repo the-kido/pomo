@@ -3,14 +3,6 @@ import { useGoalStore, usePomodoroTimerStore, useRewardsStore } from "/src/main/
 import { PomodoroTimerInfo } from "/src/types/Pomodoro"
 // import { GripVertical } from 'lucide-react';
 
-type SubtasksType = {
-  subtasks: string[];
-  setSubtasks: React.Dispatch<React.SetStateAction<string[]>>;
-};
-
-const Subtasks = createContext<SubtasksType | undefined>(undefined);
-
-
 type StagesCompletedType = {
 	stages: Stages[], 
 	setStages: React.Dispatch<React.SetStateAction<Stages[]>>,
@@ -18,52 +10,47 @@ type StagesCompletedType = {
 
 const StagesCleared = createContext<StagesCompletedType | undefined>(undefined);
 
-function Subtask({subtask, index} : {subtask: string, index: number}) {
-	const subtaskContext = useContext(Subtasks);
+function Subtask({subtask, index, onRemove} : {subtask: string, index: number, onRemove: () => void}) {
 
-	return <h3 style={{userSelect: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-			{ `${index}. ${subtask}` }
-			<div>
-				<button onClick={() => subtaskContext.setSubtasks(  subtaskContext.subtasks.filter( (_, i) => i != index  ) ) } >X</button>
-				{/* <GripVertical /> */}
-			</div>
-	</h3>
+	return <p className="subtask">
+		{ `${index}. ${subtask}` }
+			<button className="delete-button" onClick={onRemove} >✖</button>
+			{/* <GripVertical /> */}
+	</p>
 }
 
-function SubtaskList({stageAt} : {stageAt: Stages} ) {
+function SubtaskList({info, stageAt} : {info? : PomodoroTimerInfo, stageAt: Stages, onSubtasksChanged: (subtasks: string[]) => void} ) {
 	const listRef = useRef<HTMLUListElement>(null);
-	const subtaskContext = useContext(Subtasks);
+	const [subtasks, setSubtasks] = useState<string[]>(info ? info.subtasks : []);
 	
 	useEffect(() => {
 		if (listRef.current) {
 				listRef.current.scrollTop = listRef.current.scrollHeight;
 		}
-	}, [subtaskContext.subtasks]);
+	}, [subtasks]);
 
 	const stagesCompletedContext = useContext(StagesCleared);
 	updateStageCleared(true, Stages.SUBTASKS, stagesCompletedContext, stageAt);
 
 	return <>
-		<ul ref={listRef} style={{padding: '0px', overflowY: 'scroll', height: '200'}}>
-				{subtaskContext.subtasks.map((task, index) => (
-					<Subtask key={index} subtask={task} index={index}/>
+		<ul ref={listRef} className="subtasks">
+				{subtasks.map((task, index) => (
+					<Subtask key={index} subtask={task} index={index} onRemove={() => setSubtasks(  subtasks.filter( (_, i) => i != index  ) ) }/>
 				))}
-			<AddComponent />
+			<AddSubtask subtasks={subtasks} setSubtasks={(newSubtasks) => setSubtasks(newSubtasks)} />
 		</ul>
 	</>
 }
 
-function AddComponent() {
+function AddSubtask({ subtasks, setSubtasks}: {subtasks: string[], setSubtasks: (subtasks: string[]) => void}) {
 	const [newTask, setNewTask] = useState<string>('')
-	const subtaskContext = useContext(Subtasks);
 	
-
 	const onAddSubtaskPressed = () => {
-		subtaskContext.setSubtasks([...subtaskContext.subtasks, newTask])
+		setSubtasks([...subtasks, newTask])
 		setNewTask('')
 	}
 	
-	return 	<div>
+	return <div key={-1}>
 			Add: 
 			<input
 				value={newTask}
@@ -84,7 +71,6 @@ enum Stages {
 }
 
 function updateStageCleared(isCompleted: boolean, stage: Stages, stagesClearedContext: StagesCompletedType, stageAt: Stages) {
-	console.log(isCompleted, stage, stagesClearedContext.stages);
 	if (stage <= stageAt && isCompleted && !stagesClearedContext.stages.includes(stage)) { 
 		stagesClearedContext.setStages([...stagesClearedContext.stages, stage]) 
 	} else if (!isCompleted && stagesClearedContext.stages.includes(stage)) {
@@ -92,9 +78,9 @@ function updateStageCleared(isCompleted: boolean, stage: Stages, stagesClearedCo
 	}
 }
 
-function TypeStage(props: {stageAt: Stages, onSetType: (type: "active" | "chill" | "unknown") => void, onSetGoal: (goal: string) => void }) {
-	const [type, setType] = useState<"active" | "chill" | "unknown">("unknown");
-	const [goal, setGoal] = useState<string>("");
+function TypeStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onSetType: (type: "active" | "chill" | "unknown") => void, onSetGoal: (goal: string) => void }) {
+	const [type, setType] = useState<"active" | "chill" | "unknown">(props.info ? props.info.type : "unknown");
+	const [goal, setGoal] = useState<string>(props.info ? props.info.goal : '');
 	const goals = useGoalStore((state) => state.goals);
 
 	const stagesClearedContext = useContext(StagesCleared);
@@ -119,27 +105,26 @@ function TypeStage(props: {stageAt: Stages, onSetType: (type: "active" | "chill"
 	</>
 }
 
-function TaskStage(props: {stageAt: Stages, onTaskChanged: (str: string) => void, onMotivationChanged: (str: string) => void })
-{
-	const [task, setTask] = useState<string>('');
-	const [motivation, setMotivation] = useState<string>('');
+function TaskStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onTaskChanged: (str: string) => void, onMotivationChanged: (str: string) => void }) {
+	const [task, setTask] = useState<string>(props.info ? props.info.task : '');
+	const [motivation, setMotivation] = useState<string>(props.info ? props.info.motivation : '');
 
 	const stagesCompletedContext = useContext(StagesCleared)
 
-	useEffect( () => {
+	useEffect(() => {
 		const isCompleted = task != '' && motivation != '';
 		updateStageCleared(isCompleted, Stages.TASK, stagesCompletedContext, props.stageAt);
 	}, [task, motivation])
 
 	return <div style={border}>
-		<p style={{margin: '0px'}} > I will <input type="text" onChange={(e) => { setTask(e.target.value); props.onTaskChanged(e.target.value) }} ></input> <br></br>
-		in order to <input type="text" onChange={(e) => { setMotivation(e.target.value); props.onMotivationChanged(e.target.value) }}></input>
+		<p style={{margin: '0px'}} > I will <input type="text" defaultValue={task} onChange={(e) => { setTask(e.target.value); props.onTaskChanged(e.target.value) }} ></input> <br></br>
+		in order to <input type="text" defaultValue={motivation} onChange={(e) => { setMotivation(e.target.value); props.onMotivationChanged(e.target.value) }}></input>
 		 </p>
 	</div>
 }
 
-function SelectFirstRewardStage({ stageAt, onRewardChanged }: {stageAt: Stages, onRewardChanged: (str: string) => void }) {
-	const [reward, setReward] = useState<string>("");
+function SelectFirstRewardStage({info, stageAt, onRewardChanged }: {info? : PomodoroTimerInfo, stageAt: Stages, onRewardChanged: (str: string) => void }) {
+	const [reward, setReward] = useState<string>(info ? info.nextReward : '');
 	const rewards = useRewardsStore((state) => state.rewards);
 
 	const stagesCompletedContext = useContext(StagesCleared)
@@ -149,14 +134,14 @@ function SelectFirstRewardStage({ stageAt, onRewardChanged }: {stageAt: Stages, 
 	const longBreakTime = usePomodoroTimerStore((store) => store.longBreakTime);
 
 	useEffect( () => {
-		const isCompleted = reward != "";
+		const isCompleted = reward != '';
 		updateStageCleared(isCompleted, Stages.FIRST_REWARD, stagesCompletedContext, stageAt);
 	}, [reward])
 
 	return <div style={border}>
 		<h3> Initial things: </h3>
 		<p> Reward:  
-		<select onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
+		<select defaultValue={info ? reward : rewards[0]} onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
 			{rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option>   ) }
 		</select>
 		</p>
@@ -171,16 +156,15 @@ const border: CSSProperties = {
 	width: '300px'
 }
 
-function PomodoroModule() {
+function CreatePomodoro({info} : {info? : PomodoroTimerInfo}) {
 	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS];
 	
 	const [isPomodoroActive, setPomodoroActive ] = useState<boolean>(false);
 	const [time, setTime] = useState<number>(0); 
-	const [reason, setReason] = useState<string>("");
 	const [subtasks, setSubtasks] = useState<string[]>(["aas", "bas", "cas", "das"]);
-	const [stagesCleared, setStagesCleared] = useState<Stages[]>([]);
-	const [stageAt, setStageAt] = useState<Stages>(stagesRequired[0]);
-	const [test, setTest] = useState<PomodoroTimerInfo>({
+	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
+	const [stageAt, setStageAt] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
+	const [test, setTest] = useState<PomodoroTimerInfo>(info ? info : {
 		type: 'unknown',
 		task: '',
 		motivation: '',
@@ -188,7 +172,8 @@ function PomodoroModule() {
 		subtasks: [],
 		startTimeSeconds: 25 * 60,
 		breakTimeSeconds: 300,
-		received: false
+		received: false,
+		completed: 0,
 	});
 
 	// Temporary; should be replaced by a store
@@ -202,7 +187,6 @@ function PomodoroModule() {
 	useEffect(() => {
 		// If no stages are complete, then the stage at is just the first required stage.
 		// If 1 or more stages is complete, then the stage at is the stage *after* the completed stage.
-		
 
 		if (stagesCleared.length == 0) setStageAt(stagesRequired[0]);
 		else {
@@ -217,32 +201,31 @@ function PomodoroModule() {
 	}, [stagesCleared, stageAt])
 
 	const isStartButtonDisabled = () => {
-		console.log(stagesCleared);
-		console.log(stagesRequired);
 		return !stagesRequired.every(required => stagesCleared.includes(required));
 	}
-
-	
-	console.log("Updated pomo:", test);
 	
 	const onSetType = (string: "active" | "chill" | "unknown") => {
-		test.type = string
+		test.type = string;
 	}
 	
 	const onSetGoal = (string: string) => {
-		test.goal = string
+		test.goal = string;
 	}
 	
 	const onTaskChanged = (string: string) => {
-		test.task = string
+		test.task = string;
 	}
 	
 	const onMotivationChanged = (string: string) => {
-		test.motivation = string
+		test.motivation = string;
 	}
 	
 	const onRewardChanged = (string: string) => {
-		test.nextReward = string
+		test.nextReward = string;
+	}
+	
+	const onSubtasksChanged = (subtasks: string[]) => {
+		test.subtasks = subtasks;
 	}
 
 	const startPomodoro = () => {
@@ -250,35 +233,36 @@ function PomodoroModule() {
 		window.pomodoro.createWindow(test, {width: /*300*/ 1200, height: 500})
 		setPomodoroActive(true);
 
-		console.log(window.pomodoro.onClosed);
 		window.pomodoro.onClosed( () => {
 			console.log("closed!")
 			setPomodoroActive(false);
 		} )
 	}
 
+	const canEnterStage = (stage: Stages) => stagesRequired.includes(stage) && stageAt >= stage;
 
-	return <Subtasks.Provider value={{subtasks, setSubtasks}}> <div className="creator"> 
-			<div className="creator-content">
+	return <> <div className="creator"> 
+		<div className="creator-content">
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 				
 			{/* Left */}
 			<StagesCleared.Provider value={{ stages: stagesCleared, setStages: setStagesCleared }}>
 				<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-					{stagesRequired.includes(Stages.TYPE) && stageAt >=	Stages.TYPE && <TypeStage stageAt={stageAt} onSetGoal={ onSetGoal } onSetType={ onSetType }/>}
-					{stagesRequired.includes(Stages.TASK) && stageAt >= Stages.TASK && < TaskStage stageAt={stageAt} onTaskChanged={ onTaskChanged } onMotivationChanged={ onMotivationChanged } />}
-					{stagesRequired.includes(Stages.FIRST_REWARD) && stageAt >= Stages.FIRST_REWARD && <SelectFirstRewardStage stageAt={stageAt} onRewardChanged={onRewardChanged} />}
+					{canEnterStage(Stages.TYPE) && <TypeStage info={info} stageAt={stageAt} onSetGoal={ onSetGoal } onSetType={ onSetType }/>}
+					{canEnterStage(Stages.TASK) && <TaskStage info={info} stageAt={stageAt} onTaskChanged={ onTaskChanged } onMotivationChanged={ onMotivationChanged }/>}
+					{canEnterStage(Stages.FIRST_REWARD) && <SelectFirstRewardStage info={info} stageAt={stageAt} onRewardChanged={onRewardChanged}/>}
 				</div>
 				{/* Right */}
 				<div>
-					{stagesRequired.includes(Stages.SUBTASKS) && stageAt >= Stages.SUBTASKS && <SubtaskList stageAt={stageAt} />}
+					{canEnterStage(Stages.SUBTASKS) && <SubtaskList info={info} stageAt={stageAt} onSubtasksChanged={ onSubtasksChanged } />}
 				</div>
 			</StagesCleared.Provider>
 			</div>
 		
 		</div>
-		<button disabled={ isStartButtonDisabled() } onClick={() => startPomodoro()} >Start Pomodoro </button>
-	</div> </Subtasks.Provider> 
+		<button disabled={ isStartButtonDisabled() } onClick={() => startPomodoro()} >{info ? "Save" : "Create"} </button>
+		{/* TODO: <button disabled={test.type == 'unknown'}> Cancel </button> */}
+	</div> </> 
 }
 
-export default PomodoroModule;
+export default CreatePomodoro;

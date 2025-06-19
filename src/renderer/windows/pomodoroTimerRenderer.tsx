@@ -134,7 +134,8 @@ function App() {
       ],
       type: 'chill',
       motivation: 'a',
-      nextReward: 'b'
+      nextReward: 'b',
+      completed: 0
     }
     // */
     // 'Unset'

@@ -1,4 +1,5 @@
-import PomodoroModule from "./main/CreatePomodoro";
+import CreatePomodoro from "./main/CreatePomodoro";
+import PomodoroList from "./main/PomodoroList";
 
 export default function App()
 {
@@ -6,6 +7,10 @@ export default function App()
         <h1>
             Create a Pomodoro
         </h1>
-        <PomodoroModule />
+        <CreatePomodoro/>
+        <h1>
+            Previous
+        </h1>
+        <PomodoroList/>
     </> 
 }

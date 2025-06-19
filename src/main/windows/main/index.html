@@ -11,6 +11,74 @@
   .creator-content {
     padding: 10px;
   }
+
+  .task {
+    position: absolute;
+    top: -1rem;
+    left: 1rem;
+    background-color: #ffffff;
+    padding: 3px;
+  }
+
+  .listed-pomodoro {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    position: relative; 
+    border: 1px solid gray;
+    border-radius: 12px;
+    padding: 10px;
+    padding-top: 20px;
+  }
+
+  .listed-pomodoro-content {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between;
+    align-items: flex-start
+  }
+
+  h4 {
+    margin-top: 0px;
+    padding-left: 4px;
+    margin-right: 8px;
+    padding-right: 4px;
+    border: 1px solid gray;
+    border-radius: 4px;
+  }
+
+  span {
+    font-weight: 600;
+  }
+
+  button {
+    height: 25px;
+    filter: grayscale(100%);
+  }
+
+  button:hover {
+      filter: grayscale(0%);
+  }
+  
+  .subtasks {
+    padding: 10px;
+    overflow-y: scroll;
+    height: 200px;
+  }
+
+  .subtask {
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .delete-button {
+    padding: 0px;
+    height: 24px;
+    width: 24px;
+  }
 </style>
 
 <!DOCTYPE html>
@@ -18,7 +86,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hello World!</title>
-
   </head>
   <div id="root" ></div>
 </html>

@@ -19,6 +19,7 @@ export interface PomodoroTimerInfo
     startTimeSeconds: number,
     breakTimeSeconds: number,
     received: boolean
+    completed: number
 }
 
 export interface Window {
