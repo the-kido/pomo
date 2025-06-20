@@ -8,16 +8,26 @@ declare global {
     }
 }
 
+var prevListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
+
 contextBridge.exposeInMainWorld('pomodoro', {
     createWindow: (fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
         ipcRenderer.invoke('createWindow', fileToLoad, options)
     },
-    
     onUpdate: (callback: (data: PomodoroTimerInfo) => void) => {
         console.log("i should be getting something!")
-        ipcRenderer.on('update-pomodoro', (_event, data) => callback(data))
+        prevListener = (_event, data) => callback(data)
+        ipcRenderer.on('update-pomodoro', prevListener)
     },
     
-    onClosed: (callback: () => void) => 
-        ipcRenderer.on('pomodoro-window-closed', () => callback()),
+    onUnsubUpdate: () => {
+        console.log("i should be REMOVING something!")
+        console.log(ipcRenderer.listenerCount('update-pomodoro') )
+        ipcRenderer.removeListener('update-pomodoro', prevListener)
+    },
+    
+    onClosed: (callback: () => void) => {
+        ipcRenderer.removeAllListeners('pomodoro-window-closed');
+        ipcRenderer.on('pomodoro-window-closed', () => callback());
+    }
 });

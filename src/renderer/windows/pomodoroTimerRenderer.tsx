@@ -30,11 +30,12 @@ const useUpdatingState = create<UpdateDescription>(set => ({
 function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
   const [completeTaskIndicies, setCompleteTaskIndicies] = useState<Array<number>>([]);
+  const [pomosCompleted, setPomosCompleted] = useState<number>(info.completed);
   const descriptionTextField = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     window.pomodoro.sendUpdate(info);
-  }, [completeTaskIndicies])
+  }, [pomosCompleted])
 
   const setupSubtasks = (): {array: JSX.Element[], leftover: number} => {
     
@@ -68,6 +69,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     return {array: out, leftover: info.subtasks.length - out.length };
   }
   
+ 
   function onPomodoroClose() {
     window.pomodoro.attemptClose(info); 
   }
@@ -77,8 +79,9 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
   
   function onDescriptionChangeSaved() {
-    info.task = descriptionTextField.current.value;    
+    info.task = descriptionTextField.current.value;
     finishSettingDescription();
+    window.pomodoro.sendUpdate(info);
   }
   
   var tasks = setupSubtasks();
@@ -93,14 +96,22 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
       {/* This is the first "square" w/ the main info */}
       <div className={"timer"}>
         {/* #TODO What the FRICK is that number and why is it pivotal to getting the effect I want!? */}
-        <Timer workTime={info.startTimeSeconds} breakTime={info.breakTimeSeconds} onClose={onPomodoroClose}/>
+        <Timer 
+          workTime={info.startTimeSeconds} 
+          breakTime={info.breakTimeSeconds} 
+          onClose={onPomodoroClose}
+          pomosFinished={info.completed}
+          onPomoFinished={() =>{ console.log("okay...  "); setPomosCompleted(prev => prev + 1);}} 
+        />
       </div>
       { updating ? <textarea ref={descriptionTextField} defaultValue={info.task}></textarea> : <h2 style={{textAlign:'center', margin: '10px', cursor: 'text' }} onClick={setDescription} > {info.task} </h2> }
       { updating ? <div style={{display: 'flex'}}>
           <input type='button' defaultValue={"Cancel"} onClick={onDescriptionChangeCancel}></input>
           <input type='button' defaultValue={"Finish"} onClick={onDescriptionChangeSaved}></input>
         </div> : <div> 
-          here will be extra info 
+          <h4>{info.type}</h4> 
+          <h4>{info.goal}</h4> 
+          <h4>🍅 x{pomosCompleted}</h4> 
         </div>
       }
     </div>
@@ -147,7 +158,7 @@ function App() {
           // okay wait no, i just need to ensure the pomodoro sends valid info
           setTimerInfo(receivedData);
       });
-  });
+  }, []);
   return timerInfo == 'Unset' ? <div> Loading... </div> : <Pomodoro info={timerInfo}/>
 }
 

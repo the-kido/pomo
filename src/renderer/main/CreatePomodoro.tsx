@@ -184,13 +184,6 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 		addPomodoro(test);
 		reset();
 	}
-
-	// Temporary; should be replaced by a store
-	useEffect(() => {
-		window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
-			console.log("DATA!", data);
-		});
-	}, [time])
 	
 	// Update stageAt whenever stagesCleared is updated
 	useEffect(() => {

@@ -1,8 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { PomodoroTimerInfo } from '../../../types/Pomodoro';
 
-console.log('preloading in affect')
-
 // Exposes functions that the *renderers* can call.
 contextBridge.exposeInMainWorld('pomodoro', {
    onInit: (callback: (data: PomodoroTimerInfo) => void) =>
@@ -12,7 +10,8 @@ contextBridge.exposeInMainWorld('pomodoro', {
       // "send FROM renderer to main process"
       ipcRenderer.send('closed-pomodoro', data),
 
-   sendUpdate: (data: PomodoroTimerInfo) =>{
-      ipcRenderer.send('updated-pomodoro', data)
+   sendUpdate: (data: PomodoroTimerInfo) => {
+      console.log("sending!!")
+      ipcRenderer.send('sending-pomo-update', data)
    }
 });

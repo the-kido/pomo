@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./CreatePomodoro";
 
@@ -15,16 +15,34 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch}: Liste
         onUpdate(newPomo);
         setEditing(false);
     }
-
+    
+    // Temporary; should be replaced by a store
+    const test = (data: PomodoroTimerInfo) => {
+        if (status == 'launched') {
+            onUpdate(data);
+        }
+    }
+    
+    useEffect(() => {
+        window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
+            if (status == 'launched') {
+                test(data)
+            }
+        });
+        return () => {
+            console.log("!!")
+            window.pomodoro.onUnsubUpdate();
+        }
+    }, []);
+    
     if (editing) {
         return <CreatePomodoro onSaved={onSaved} info={info} />
     }
-
+    
     return <div className="listed-pomodoro">
         <div className="task">{info.task}</div>
 
         <div className="listed-pomodoro-content">
-
             {/* Left */}
             <div>
                 {/* Type Stage */}
@@ -54,7 +72,7 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch}: Liste
                 <button disabled={status == 'launched'} onClick={() => setEditing(true)} > Edit </button>
                 <button disabled={status != 'launchable'} onClick={() => onLaunch()} > { status != 'launched' ? 'Launch 🚀' : 'Launched' } </button>
             </div>
-            {/* <p className="pomo-count">🍅 x{info.completed}</p> */}
+            <p className="pomo-count">🍅 x{info.completed}</p>
         </div>
     </div>
 }

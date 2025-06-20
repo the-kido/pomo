@@ -86,7 +86,11 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
     pomodoro.close()
   });
 
-  ipcMain.on('updated-pomodoro', (_, data: PomodoroTimerInfo) => {
+
+  ipcMain.removeAllListeners('sending-pomo-update');
+  
+  ipcMain.on('sending-pomo-update', (_, data: PomodoroTimerInfo) => {
+    console.log("recieing!")
     mainWindow.webContents.send('update-pomodoro', data);
   });
   

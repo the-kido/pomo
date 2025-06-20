@@ -11,7 +11,7 @@ interface TimerState {
 
 enum TimerStates { JustOpened, WorkTimer, WorkPaused, WorkFinished, BreakTimer, BreakFinished }
 
-export default function Timer({workTime, breakTime, onClose} : {workTime: number, breakTime: number, onClose : () => void} ) {
+export default function Timer({workTime, breakTime, onClose, onPomoFinished} : {workTime: number, breakTime: number, onClose : () => void, pomosFinished: number, onPomoFinished: () => void} ) {
 
   const [currentState, setCurrentState] = useState<TimerStates>(TimerStates.JustOpened);
 
@@ -81,10 +81,11 @@ export default function Timer({workTime, breakTime, onClose} : {workTime: number
     [TimerStates.WorkFinished]: {
       tick: () => null,
       onSwitchPressed: () => {
+        onPomoFinished();
         setAndInitState(TimerStates.BreakTimer)
       },
       onPausedPressed: () => null,
-      init: () => null,
+      init: () => {},
     },
     [TimerStates.BreakTimer]: {
       tick: () => {
@@ -127,7 +128,7 @@ export default function Timer({workTime, breakTime, onClose} : {workTime: number
 
     const finalTimeMS = currentState == TimerStates.BreakTimer ? getFinalBreakTime() : getFinalWorkTime()
     if (finalTimeMS <= 0) {
-      setCurrentState(switchTo);
+      setAndInitState(switchTo);
       setPercentLeft(0)          
       setTimeText('0:00');
       return

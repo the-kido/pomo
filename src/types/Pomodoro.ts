@@ -3,6 +3,7 @@ export type PomodoroRendererExports = {
     onInit: (callback: (data: PomodoroTimerInfo) => void) => void;
     sendUpdate: (data: PomodoroTimerInfo) => void;
     onUpdate: (callback: (data: PomodoroTimerInfo) => void) => void;
+    onUnsubUpdate: () => void;
     attemptClose: (data: PomodoroTimerInfo) => void;
     onClosed: (callback: () => void) => void;
 };

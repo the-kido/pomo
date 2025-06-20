@@ -33,7 +33,7 @@ export const usePomodorosStore = create<Pomodoros>(set => ({
         received: false,
         startTimeSeconds: 2,
         breakTimeSeconds: 4,
-        task: 'Finish Assigment 4 Due In Two Weeks',
+        task: 'Slack Off',
         subtasks: [
             "Do small thing", 
             "And other thing",
@@ -73,10 +73,7 @@ export default function PomodoroList() {
             info={pomoInfo} 
             key={idx} 
             onUpdate={(newPomo) => updatePomodoro(idx, newPomo)}
-            status={
-                launchedPomo == null ? 'launchable' : (launchedPomo == idx ? 'launched' : 'cant launch')
-                // launchedPomo == idx ? 'launched' : launchedPomo == null ? 'launchable' : 'cant launch' 
-            }
+            status={launchedPomo == null ? 'launchable' : (launchedPomo == idx ? 'launched' : 'cant launch')}
             onLaunch={() => launch(idx)}
         />)}
     </>
