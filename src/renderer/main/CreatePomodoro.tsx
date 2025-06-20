@@ -1,6 +1,7 @@
 import { createContext, CSSProperties, useContext, useEffect, useRef, useState } from "react";
 import { useGoalStore, usePomodoroTimerStore, useRewardsStore } from "/src/main/states/states"
 import { PomodoroTimerInfo } from "/src/types/Pomodoro"
+import { usePomodorosStore } from "./PomodoroList";
 // import { GripVertical } from 'lucide-react';
 
 type StagesCompletedType = {
@@ -19,7 +20,7 @@ function Subtask({subtask, index, onRemove} : {subtask: string, index: number, o
 	</p>
 }
 
-function SubtaskList({info, stageAt} : {info? : PomodoroTimerInfo, stageAt: Stages, onSubtasksChanged: (subtasks: string[]) => void} ) {
+function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimerInfo, stageAt: Stages, onSubtasksChanged: (subtasks: string[]) => void} ) {
 	const listRef = useRef<HTMLUListElement>(null);
 	const [subtasks, setSubtasks] = useState<string[]>(info ? info.subtasks : []);
 	
@@ -35,9 +36,12 @@ function SubtaskList({info, stageAt} : {info? : PomodoroTimerInfo, stageAt: Stag
 	return <>
 		<ul ref={listRef} className="subtasks">
 				{subtasks.map((task, index) => (
-					<Subtask key={index} subtask={task} index={index} onRemove={() => setSubtasks(  subtasks.filter( (_, i) => i != index  ) ) }/>
+					<Subtask key={index} subtask={task} index={index} onRemove={() => { 
+						var newSubtasks = subtasks.filter((_, i) => i != index);
+						setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) 
+					}}/>
 				))}
-			<AddSubtask subtasks={subtasks} setSubtasks={(newSubtasks) => setSubtasks(newSubtasks)} />
+			<AddSubtask subtasks={subtasks} setSubtasks={(newSubtasks) => { setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) }} />
 		</ul>
 	</>
 }
@@ -60,7 +64,7 @@ function AddSubtask({ subtasks, setSubtasks}: {subtasks: string[], setSubtasks: 
 			<button 
 				disabled={newTask == ''}
 				onClick={onAddSubtaskPressed} 
-				>
+			>
 				Add
 			</button>
 		</div>
@@ -156,7 +160,7 @@ const border: CSSProperties = {
 	width: '300px'
 }
 
-function CreatePomodoro({info} : {info? : PomodoroTimerInfo}) {
+function CreatePomodoro({info, onCreated: onSaved} : {info? : PomodoroTimerInfo, onCreated?: (newPomo: PomodoroTimerInfo) => void}) {
 	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS];
 	
 	const [isPomodoroActive, setPomodoroActive ] = useState<boolean>(false);
@@ -164,7 +168,7 @@ function CreatePomodoro({info} : {info? : PomodoroTimerInfo}) {
 	const [subtasks, setSubtasks] = useState<string[]>(["aas", "bas", "cas", "das"]);
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [stageAt, setStageAt] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
-	const [test, setTest] = useState<PomodoroTimerInfo>(info ? info : {
+	const [test, setTest] = useState<PomodoroTimerInfo>(info ? {...info} : {
 		type: 'unknown',
 		task: '',
 		motivation: '',
@@ -228,7 +232,7 @@ function CreatePomodoro({info} : {info? : PomodoroTimerInfo}) {
 		test.subtasks = subtasks;
 	}
 
-	const startPomodoro = () => {
+	const createPomodoro = () => {
 		test.subtasks = subtasks;
 		window.pomodoro.createWindow(test, {width: /*300*/ 1200, height: 500})
 		setPomodoroActive(true);
@@ -237,6 +241,11 @@ function CreatePomodoro({info} : {info? : PomodoroTimerInfo}) {
 			console.log("closed!")
 			setPomodoroActive(false);
 		} )
+	}
+
+
+	const savePomodoro = () => {
+		onSaved(test);
 	}
 
 	const canEnterStage = (stage: Stages) => stagesRequired.includes(stage) && stageAt >= stage;
@@ -260,7 +269,7 @@ function CreatePomodoro({info} : {info? : PomodoroTimerInfo}) {
 			</div>
 		
 		</div>
-		<button disabled={ isStartButtonDisabled() } onClick={() => startPomodoro()} >{info ? "Save" : "Create"} </button>
+		<button disabled={ isStartButtonDisabled() } onClick={() => info ? savePomodoro() : createPomodoro()} >{info ? "Save" : "Create"} </button>
 		{/* TODO: <button disabled={test.type == 'unknown'}> Cancel </button> */}
 	</div> </> 
 }

@@ -5,11 +5,11 @@ import ListedPomodoro from "./ListedPomodoro";
 interface Pomodoros {
     list: PomodoroTimerInfo[],
     addPomodoro: (toAdd: PomodoroTimerInfo) => void,
-    updatePomodoro: (previous: PomodoroTimerInfo, toReplace: PomodoroTimerInfo) => void,
+    updatePomodoro: (idx: number, toReplace: PomodoroTimerInfo) => void,
     removePomodoro: (toRemove: PomodoroTimerInfo) => void,
 }
 
-const usePomodorosStore = create<Pomodoros>(set => ({
+export const usePomodorosStore = create<Pomodoros>(set => ({
     list: [{
         received: false,
         startTimeSeconds: 2,
@@ -46,15 +46,23 @@ const usePomodorosStore = create<Pomodoros>(set => ({
     }],
     // temp
     addPomodoro: (toAdd) => set({list: [toAdd]}),
-    updatePomodoro: (previous, toReplace) => null,
+    updatePomodoro: (idxToReplace, toReplace) => {
+        console.log("hello", idxToReplace, toReplace)
+        set(state => { 
+            state.list[idxToReplace] = {...toReplace};
+            
+            return { list: state.list.map((previous, idx) => ( idx == idxToReplace ? toReplace : previous ))}
+        });
+    },
     removePomodoro: (toRemove) => null
 }));
 
 
 export default function PomodoroList() {
     const pomodoros = usePomodorosStore(state => state.list);
+    const updatePomodoro = usePomodorosStore(state => state.updatePomodoro);
 
     return <>
-        {pomodoros.map((element, idx) => <ListedPomodoro info={element} key={idx}/> )}
+        {pomodoros.map((element, idx) => <ListedPomodoro info={element} key={idx} onUpdate={(newPomo) => updatePomodoro(idx, newPomo) }/> )}
     </>
 }
