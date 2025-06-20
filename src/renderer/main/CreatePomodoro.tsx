@@ -24,14 +24,13 @@ function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimer
 	const listRef = useRef<HTMLUListElement>(null);
 	const [subtasks, setSubtasks] = useState<string[]>(info ? info.subtasks : []);
 	
+	const stagesCompletedContext = useContext(StagesCleared);
 	useEffect(() => {
 		if (listRef.current) {
-				listRef.current.scrollTop = listRef.current.scrollHeight;
+			listRef.current.scrollTop = listRef.current.scrollHeight;
 		}
+		updateStageCleared(true, Stages.SUBTASKS, stagesCompletedContext, stageAt);
 	}, [subtasks]);
-
-	const stagesCompletedContext = useContext(StagesCleared);
-	updateStageCleared(true, Stages.SUBTASKS, stagesCompletedContext, stageAt);
 
 	return <>
 		<ul ref={listRef} className="subtasks">
@@ -160,10 +159,9 @@ const border: CSSProperties = {
 	width: '300px'
 }
 
-function CreatePomodoro({info, onCreated: onSaved} : {info? : PomodoroTimerInfo, onCreated?: (newPomo: PomodoroTimerInfo) => void}) {
-	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS];
+function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onSaved?: (newPomo: PomodoroTimerInfo) => void, reset?: () => void}) {
+	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS ];
 	
-	const [isPomodoroActive, setPomodoroActive ] = useState<boolean>(false);
 	const [time, setTime] = useState<number>(0); 
 	const [subtasks, setSubtasks] = useState<string[]>(["aas", "bas", "cas", "das"]);
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
@@ -179,6 +177,13 @@ function CreatePomodoro({info, onCreated: onSaved} : {info? : PomodoroTimerInfo,
 		received: false,
 		completed: 0,
 	});
+
+	const addPomodoro = usePomodorosStore(store => store.addPomodoro)
+	
+	const createPomodoro = () => {
+		addPomodoro(test);
+		reset();
+	}
 
 	// Temporary; should be replaced by a store
 	useEffect(() => {
@@ -232,17 +237,7 @@ function CreatePomodoro({info, onCreated: onSaved} : {info? : PomodoroTimerInfo,
 		test.subtasks = subtasks;
 	}
 
-	const createPomodoro = () => {
-		test.subtasks = subtasks;
-		window.pomodoro.createWindow(test, {width: /*300*/ 1200, height: 500})
-		setPomodoroActive(true);
-
-		window.pomodoro.onClosed( () => {
-			console.log("closed!")
-			setPomodoroActive(false);
-		} )
-	}
-
+	
 
 	const savePomodoro = () => {
 		onSaved(test);
@@ -263,7 +258,7 @@ function CreatePomodoro({info, onCreated: onSaved} : {info? : PomodoroTimerInfo,
 				</div>
 				{/* Right */}
 				<div>
-					{canEnterStage(Stages.SUBTASKS) && <SubtaskList info={info} stageAt={stageAt} onSubtasksChanged={ onSubtasksChanged } />}
+					{canEnterStage(Stages.SUBTASKS) && <SubtaskList info={info} stageAt={stageAt} onSubtasksChanged={ (change) => onSubtasksChanged(change) } />}
 				</div>
 			</StagesCleared.Provider>
 			</div>

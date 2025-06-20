@@ -10,6 +10,7 @@ interface Pomodoros {
 }
 
 export const usePomodorosStore = create<Pomodoros>(set => ({
+    // Temporary items for quick testing!
     list: [{
         received: false,
         startTimeSeconds: 2,
@@ -44,16 +45,8 @@ export const usePomodorosStore = create<Pomodoros>(set => ({
         nextReward: 'b',
         completed: 0,
     }],
-    // temp
-    addPomodoro: (toAdd) => set({list: [toAdd]}),
-    updatePomodoro: (idxToReplace, toReplace) => {
-        console.log("hello", idxToReplace, toReplace)
-        set(state => { 
-            state.list[idxToReplace] = {...toReplace};
-            
-            return { list: state.list.map((previous, idx) => ( idx == idxToReplace ? toReplace : previous ))}
-        });
-    },
+    addPomodoro: (toAdd) => set(state => ({list: [...state.list, toAdd]})),
+    updatePomodoro: (idxToReplace, toReplace) => set(state => ({list: state.list.map((previous, idx) => (idx == idxToReplace ? toReplace : previous))})),
     removePomodoro: (toRemove) => null
 }));
 
