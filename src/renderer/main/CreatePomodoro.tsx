@@ -163,7 +163,7 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS ];
 	
 	const [time, setTime] = useState<number>(0); 
-	const [subtasks, setSubtasks] = useState<string[]>(["aas", "bas", "cas", "das"]);
+	const [changeMade, setChangeMade] = useState<boolean>(false);
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [stageAt, setStageAt] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
 	const [test, setTest] = useState<PomodoroTimerInfo>(info ? {...info} : {
@@ -237,10 +237,12 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 		test.subtasks = subtasks;
 	}
 
-	
-
 	const savePomodoro = () => {
 		onSaved(test);
+	}
+	
+	const cancelUpdate = () => {
+		onSaved(info);
 	}
 
 	const canEnterStage = (stage: Stages) => stagesRequired.includes(stage) && stageAt >= stage;
@@ -262,10 +264,11 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 				</div>
 			</StagesCleared.Provider>
 			</div>
-		
 		</div>
-		<button disabled={ isStartButtonDisabled() } onClick={() => info ? savePomodoro() : createPomodoro()} >{info ? "Save" : "Create"} </button>
-		{/* TODO: <button disabled={test.type == 'unknown'}> Cancel </button> */}
+		<div style={{ display: 'flex', padding: '10px', gap: '8px'}} >
+			<button disabled={ isStartButtonDisabled() } onClick={() => info ? savePomodoro() : createPomodoro()} >{info ? "Save" : "Create"} </button>
+			<button className="reset-button" onClick={() => info ? cancelUpdate()  : reset()} > {info ? "Cancel" : "Reset" } </button>
+		</div>
 	</div> </> 
 }
 

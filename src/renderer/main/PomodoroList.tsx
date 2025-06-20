@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
 import ListedPomodoro from "./ListedPomodoro";
+import { useState } from "react";
 
 interface Pomodoros {
     list: PomodoroTimerInfo[],
@@ -50,12 +51,33 @@ export const usePomodorosStore = create<Pomodoros>(set => ({
     removePomodoro: (toRemove) => null
 }));
 
-
 export default function PomodoroList() {
+	const [launchedPomo, setLaunchedPomo ] = useState<number>(null);
     const pomodoros = usePomodorosStore(state => state.list);
+    
+    const pomoList = usePomodorosStore(state => state.list);
     const updatePomodoro = usePomodorosStore(state => state.updatePomodoro);
 
+    const launch = (idx: number) => {
+		window.pomodoro.createWindow(pomoList[idx], {width: /*300*/ 1200, height: 500})
+		setLaunchedPomo(idx);
+
+		window.pomodoro.onClosed( () => {
+			console.log("closed!")
+			setLaunchedPomo(null);
+		} )
+	}
+
     return <>
-        {pomodoros.map((element, idx) => <ListedPomodoro info={element} key={idx} onUpdate={(newPomo) => updatePomodoro(idx, newPomo) }/> )}
+        {pomodoros.map((pomoInfo, idx) => <ListedPomodoro 
+            info={pomoInfo} 
+            key={idx} 
+            onUpdate={(newPomo) => updatePomodoro(idx, newPomo)}
+            status={
+                launchedPomo == null ? 'launchable' : (launchedPomo == idx ? 'launched' : 'cant launch')
+                // launchedPomo == idx ? 'launched' : launchedPomo == null ? 'launchable' : 'cant launch' 
+            }
+            onLaunch={() => launch(idx)}
+        />)}
     </>
 }

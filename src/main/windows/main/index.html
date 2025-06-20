@@ -1,11 +1,15 @@
 <style>
-
   .creator {
     border: 2px solid #888;
     border-radius: 12px;
-    width: 100%;           /* 90% of viewport width */
+    width: 100%;
     min-height: 300px;
     box-sizing: border-box;
+    
+    /* Stuff to separation the cancel / reset buttons from the main content */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .creator-content {
@@ -59,10 +63,27 @@
       filter: grayscale(0%);
   }
   
+  button:disabled:hover {
+    cursor: not-allowed;
+  }
+  
+  .reset-button {
+    border-radius: 4px;
+    border: none;
+    transition: scale 0.05s ease-out;
+  }
+  
+  .reset-button:hover {
+    background-color: #f68686;
+  }
+  
+  .reset-button:active {
+    scale: 0.9;
+  }
+
   .subtasks {
     padding: 10px;
     overflow-y: scroll;
-    height: 200px;
   }
 
   .subtask {
@@ -78,6 +99,10 @@
     padding: 0px;
     height: 24px;
     width: 24px;
+  }
+
+  .pomo-count {
+    margin: 0px;
   }
 </style>
 

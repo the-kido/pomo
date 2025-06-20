@@ -1,24 +1,15 @@
 import { useState } from "react";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./CreatePomodoro";
+
+interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void }
+
 /*
 Represents an entry of a created pomodoro timer within the
 pomodoro list present on the main screen.
 */
-
-export default function ListedPomodoro({info, onUpdate} : {info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void}) {
+export default function ListedPomodoro({info, onUpdate, status, onLaunch}: ListedPomodoroProps) {
     const [editing, setEditing] = useState<boolean>(false);
-	const [isPomodoroActive, setPomodoroActive ] = useState<boolean>(false);
-
-	const launch = () => {
-		window.pomodoro.createWindow(info, {width: /*300*/ 1200, height: 500})
-		setPomodoroActive(true);
-
-		window.pomodoro.onClosed( () => {
-			console.log("closed!")
-			setPomodoroActive(false);
-		} )
-	}
 
     const onSaved = (newPomo: PomodoroTimerInfo ) => {
         onUpdate(newPomo);
@@ -58,9 +49,12 @@ export default function ListedPomodoro({info, onUpdate} : {info: PomodoroTimerIn
                 )}
             </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '10px' }} >
-            <button onClick={() => setEditing(true)} > Edit </button>
-            <button> Launch 🚀 </button>
+        <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+                <button disabled={status == 'launched'} onClick={() => setEditing(true)} > Edit </button>
+                <button disabled={status != 'launchable'} onClick={() => onLaunch()} > { status != 'launched' ? 'Launch 🚀' : 'Launched' } </button>
+            </div>
+            {/* <p className="pomo-count">🍅 x{info.completed}</p> */}
         </div>
     </div>
 }
