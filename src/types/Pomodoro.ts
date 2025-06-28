@@ -8,8 +8,7 @@ export type PomodoroRendererExports = {
     onClosed: (callback: () => void) => void;
 };
 
-export interface PomodoroTimerInfo
-{
+export interface PomodoroTimerInfo {
     // Listed in order of what is inputted by the pomodoro creator
     type: "active" | "chill" | "unknown",
     goal?: string,
@@ -19,8 +18,9 @@ export interface PomodoroTimerInfo
     subtasks: string[]
     startTimeSeconds: number,
     breakTimeSeconds: number,
-    received: boolean
-    completed: number
+    received: boolean,
+    completed: number,
+    timeCreated: number,
 }
 
 export interface Window {

@@ -14,7 +14,7 @@ export default function App()
         </h1>
         <CreatePomodoro key={key} reset={() => setKey(key => key + 1)}/>
         <h1>
-            Previous
+            Saved Pomodoros
         </h1>
         <PomodoroList/>
     </> 

@@ -13,40 +13,7 @@ interface Pomodoros {
 
 export const usePomodorosStore = create<Pomodoros>(set => ({
     // Temporary items for quick testing!
-    list: [{
-        received: false,
-        startTimeSeconds: 2,
-        breakTimeSeconds: 4,
-        task: 'Finish Assigment 4 Due In Two Weeks',
-        subtasks: [
-            "Do small thing", 
-            "And other thing",
-            "But this is the last thing!",
-            "NONO BUT THIS THING FOR REAL IM NOT JOKING!!",
-        ],
-        type: 'active',
-        goal: 'fafw',
-        motivation: 'a',
-        nextReward: 'Make a smoothie',
-        completed: 0,
-    },
-    {
-        received: false,
-        startTimeSeconds: 2,
-        breakTimeSeconds: 4,
-        task: 'Slack Off',
-        subtasks: [
-            "Do small thing", 
-            "And other thing",
-            "But this is the last thing!",
-            "NONO BUT THIS THING FOR REAL IM NOT JOKING!!",
-        ],
-        type: 'active',
-        goal: 'fafw',
-        motivation: 'a',
-        nextReward: 'b',
-        completed: 0,
-    }],
+    list: [],
     addPomodoro: (toAdd) => set(state => ({list: [...state.list, toAdd]})),
     updatePomodoro: (idxToReplace, toReplace) => set(state => ({list: state.list.map((previous, idx) => (idx == idxToReplace ? toReplace : previous))})),
     removePomodoro: (idxToRemove) => {set(state => ({ list: state.list.filter((_, itemIdx) => itemIdx !== idxToRemove )  }))}
@@ -81,6 +48,7 @@ export default function PomodoroList() {
         }
     }, [launchedPomo]);
     
+    if (pomoList.length == 0) return <p>You have no saved pomodoros! 🍃</p>
 
     return <>
         {promptToDelete.state && <Warn 

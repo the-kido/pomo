@@ -162,11 +162,9 @@ const border: CSSProperties = {
 function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onSaved?: (newPomo: PomodoroTimerInfo) => void, reset?: () => void}) {
 	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS ];
 	
-	const [time, setTime] = useState<number>(0); 
-	const [changeMade, setChangeMade] = useState<boolean>(false);
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [stageAt, setStageAt] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
-	const [test, setTest] = useState<PomodoroTimerInfo>(info ? {...info} : {
+	const [newPomo, _] = useState<PomodoroTimerInfo>(info ? {...info} : {
 		type: 'unknown',
 		task: '',
 		motivation: '',
@@ -176,12 +174,13 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 		breakTimeSeconds: 300,
 		received: false,
 		completed: 0,
+		timeCreated: Date.now(),
 	});
 
 	const addPomodoro = usePomodorosStore(store => store.addPomodoro)
 	
 	const createPomodoro = () => {
-		addPomodoro(test);
+		addPomodoro(newPomo);
 		reset();
 	}
 	
@@ -189,7 +188,6 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 	useEffect(() => {
 		// If no stages are complete, then the stage at is just the first required stage.
 		// If 1 or more stages is complete, then the stage at is the stage *after* the completed stage.
-
 		if (stagesCleared.length == 0) setStageAt(stagesRequired[0]);
 		else {
 			let largest = stagesCleared[0];
@@ -202,43 +200,19 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 
 	}, [stagesCleared, stageAt])
 
-	const isStartButtonDisabled = () => {
-		return !stagesRequired.every(required => stagesCleared.includes(required));
-	}
+	const isStartButtonDisabled = () => !stagesRequired.every(required => stagesCleared.includes(required));
 	
-	const onSetType = (string: "active" | "chill" | "unknown") => {
-		test.type = string;
-	}
-	
-	const onSetGoal = (string: string) => {
-		test.goal = string;
-	}
-	
-	const onTaskChanged = (string: string) => {
-		test.task = string;
-	}
-	
-	const onMotivationChanged = (string: string) => {
-		test.motivation = string;
-	}
-	
-	const onRewardChanged = (string: string) => {
-		test.nextReward = string;
-	}
-	
-	const onSubtasksChanged = (subtasks: string[]) => {
-		test.subtasks = subtasks;
-	}
-
-	const savePomodoro = () => {
-		onSaved(test);
-	}
-	
-	const cancelUpdate = () => {
-		onSaved(info);
-	}
-
 	const canEnterStage = (stage: Stages) => stagesRequired.includes(stage) && stageAt >= stage;
+	
+	const savePomodoro = () => onSaved(newPomo);
+	const cancelUpdate = () => onSaved(info);
+	
+	const onSetType = (string: "active" | "chill" | "unknown") => newPomo.type = string;
+	const onSetGoal = (string: string) => newPomo.goal = string;
+	const onTaskChanged = (string: string) => newPomo.task = string;
+	const onMotivationChanged = (string: string) => newPomo.motivation = string;
+	const onRewardChanged = (string: string) => newPomo.nextReward = string;
+	const onSubtasksChanged = (subtasks: string[]) => newPomo.subtasks = subtasks;
 
 	return <> <div className="creator"> 
 		<div className="creator-content">
