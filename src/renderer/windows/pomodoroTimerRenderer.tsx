@@ -34,7 +34,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   const descriptionTextField = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    window.pomodoro.sendUpdate(info);
+    window.pomodoro.sendUpdate({...info, completed: pomosCompleted});
   }, [pomosCompleted])
 
   const setupSubtasks = (): {array: JSX.Element[], leftover: number} => {

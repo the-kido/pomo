@@ -169,9 +169,3 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>()(
 		)
 	)
 )
-
-// const goals = useGoalStore((state) => state.goals);
-// const addGoal = useGoalStore((state) => state.addGoal);
-// const removeGoal = useGoalStore((state) => state.removeGoal);
-// const setGoals = useGoalStore((state) => state.setGoals);
-// const clearGoals = useGoalStore((state) => state.clearGoals);

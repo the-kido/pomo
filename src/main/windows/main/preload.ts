@@ -1,5 +1,5 @@
-import {} from 'prod-app-shared'
-import { PomodoroRendererExports, PomodoroTimerInfo } from '../../../types/Pomodoro'
+// import {} from 'prod-app-shared'
+import { PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro'
 import { contextBridge, ipcRenderer } from 'electron'
 
 declare global {
