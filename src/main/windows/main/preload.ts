@@ -8,26 +8,28 @@ declare global {
     }
 }
 
-var prevListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
+var prevOnUpdateListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
+var prevOnClosedListener: (event: Electron.IpcRendererEvent) => void;
 
 contextBridge.exposeInMainWorld('pomodoro', {
     createWindow: (fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
         ipcRenderer.invoke('createWindow', fileToLoad, options)
     },
     onUpdate: (callback: (data: PomodoroTimerInfo) => void) => {
-        console.log("i should be getting something!")
-        prevListener = (_event, data) => callback(data)
-        ipcRenderer.on('update-pomodoro', prevListener)
+        prevOnUpdateListener = (_event, data) => callback(data)
+        ipcRenderer.on('update-pomodoro', prevOnUpdateListener)
     },
     
     onUnsubUpdate: () => {
-        console.log("i should be REMOVING something!")
-        console.log(ipcRenderer.listenerCount('update-pomodoro') )
-        ipcRenderer.removeListener('update-pomodoro', prevListener)
+        ipcRenderer.removeListener('update-pomodoro', prevOnUpdateListener)
     },
     
     onClosed: (callback: () => void) => {
-        ipcRenderer.removeAllListeners('pomodoro-window-closed');
-        ipcRenderer.on('pomodoro-window-closed', () => callback());
+        
+        if (prevOnClosedListener) {
+            ipcRenderer.removeListener('pomodoro-window-closed', prevOnClosedListener)
+        }
+        prevOnClosedListener = () => callback()
+        ipcRenderer.on('pomodoro-window-closed', prevOnClosedListener);
     }
 });

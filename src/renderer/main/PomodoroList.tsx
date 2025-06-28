@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
 import ListedPomodoro from "./ListedPomodoro";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Warn from "../misc/Warn";
 
 interface Pomodoros {
@@ -64,12 +64,23 @@ export default function PomodoroList() {
     const launchPomo = (idx: number) => {
 		window.pomodoro.createWindow(pomoList[idx], {width: /*300*/ 1200, height: 500})
 		setLaunchedPomo(idx);
-
-		window.pomodoro.onClosed( () => {
-			console.log("closed!")
-			setLaunchedPomo(null);
-		} )
 	}
+
+    useEffect(() => {
+        window.pomodoro.onClosed( () => {
+			setLaunchedPomo(null);
+		})
+    }, [])
+
+    useEffect(() => {
+        window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
+            if (launchedPomo != null) updatePomodoro(launchedPomo, data);
+        });
+        return () => {
+            window.pomodoro.onUnsubUpdate();
+        }
+    }, [launchedPomo]);
+    
 
     return <>
         {promptToDelete.state && <Warn 

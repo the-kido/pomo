@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./CreatePomodoro";
 
@@ -16,24 +16,7 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
         setEditing(false);
     }
     
-    // Temporary; should be replaced by a store
-    const test = (data: PomodoroTimerInfo) => {
-        console.log("UPDATING!", data)
-        onUpdate(data);
-    }
-    
-    useEffect(() => {
-        window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
-            if (status == 'launched') test(data)            
-        });
-        return () => {
-            window.pomodoro.onUnsubUpdate();
-        }
-    }, [status]);
-    
-    if (editing) {
-        return <CreatePomodoro onSaved={onSaved} info={info} />
-    }
+    if (editing) return <CreatePomodoro onSaved={onSaved} info={info} />
     
     return <div className="listed-pomodoro">
         <div style={{display: 'flex', justifyContent: 'space-between' }} >

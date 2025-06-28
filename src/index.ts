@@ -81,20 +81,12 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
     pomodoro.hide();
     mainWindow.webContents.send('pomodoro-window-closed');
   });
-
-  ipcMain.on('closed-pomodoro', (_, data: PomodoroTimerInfo) => {
-    pomodoro.close()
-  });
-
-
-  ipcMain.removeAllListeners('sending-pomo-update');
-  
-  ipcMain.on('sending-pomo-update', (_, data: PomodoroTimerInfo) => {
-    console.log("recieing!")
-    mainWindow.webContents.send('update-pomodoro', data);
-  });
-  
-  return;
 })
+  
+ipcMain.on('closed-pomodoro', (_, data: PomodoroTimerInfo) => {
+  pomodoro.close()
+});
 
-
+ipcMain.on('sending-pomo-update', (_, data: PomodoroTimerInfo) => {
+  mainWindow.webContents.send('update-pomodoro', data);
+});

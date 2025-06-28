@@ -6,12 +6,12 @@ contextBridge.exposeInMainWorld('pomodoro', {
    onInit: (callback: (data: PomodoroTimerInfo) => void) =>
       ipcRenderer.on('init-pomodoro', (_event: any, data: any) => callback(data)),
 
-   attemptClose: (data: PomodoroTimerInfo) =>
+   attemptClose: (data: PomodoroTimerInfo) =>{
       // "send FROM renderer to main process"
-      ipcRenderer.send('closed-pomodoro', data),
+      ipcRenderer.send('closed-pomodoro', data)
+   },
 
    sendUpdate: (data: PomodoroTimerInfo) => {
-      console.log("sending!!")
       ipcRenderer.send('sending-pomo-update', data)
    }
 });

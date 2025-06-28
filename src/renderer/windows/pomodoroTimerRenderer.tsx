@@ -81,7 +81,8 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   function onDescriptionChangeSaved() {
     info.task = descriptionTextField.current.value;
     finishSettingDescription();
-    window.pomodoro.sendUpdate(info);
+
+    window.pomodoro.sendUpdate({...info, task: descriptionTextField.current.value});
   }
   
   var tasks = setupSubtasks();
@@ -95,17 +96,16 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
       <div className={"timer"}>
-        {/* #TODO What the FRICK is that number and why is it pivotal to getting the effect I want!? */}
         <Timer 
           workTime={info.startTimeSeconds} 
           breakTime={info.breakTimeSeconds} 
           onClose={onPomodoroClose}
           pomosFinished={info.completed}
-          onPomoFinished={() =>{ console.log("okay...  "); setPomosCompleted(prev => prev + 1);}} 
+          onPomoFinished={() => setPomosCompleted(prev => prev + 1)} 
         />
       </div>
-      { updating ? <textarea ref={descriptionTextField} defaultValue={info.task}></textarea> : <h2 style={{textAlign:'center', margin: '10px', cursor: 'text' }} onClick={setDescription} > {info.task} </h2> }
-      { updating ? <div style={{display: 'flex'}}>
+      {updating ? <textarea ref={descriptionTextField} defaultValue={info.task}></textarea> : <h2 style={{textAlign:'center', margin: '10px', cursor: 'text' }} onClick={setDescription} > {info.task} </h2>}
+      {updating ? <div style={{display: 'flex'}}>
           <input type='button' defaultValue={"Cancel"} onClick={onDescriptionChangeCancel}></input>
           <input type='button' defaultValue={"Finish"} onClick={onDescriptionChangeSaved}></input>
         </div> : <div> 
@@ -118,44 +118,21 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
       {info.subtasks.length > 0 && <>
       {/* For the "progress bar" */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <h2 style={{ position: 'absolute', margin: '0px' }} > {completeTaskIndicies.length}/{info.subtasks.length} </h2>
+        <h2 style={{ position: 'absolute', margin: '0px' }}> {completeTaskIndicies.length}/{info.subtasks.length} </h2>
         <progress style={{ width: '65%', margin: '10px', blockSize: '1.2em' }} id="file" value={progress} max="1"> 32% </progress>
       </div>
       {/* For the list of subtasks */}
       {tasks.array}
       {tasks.leftover > 0 && <p> {`. . . (${tasks.leftover} more)`}</p>}
-      
     </>}
   </div>
 }
 
 function App() {
-  const [timerInfo, setTimerInfo] = useState<PomodoroTimerInfo|'Unset'>(
-    // /*
-    {
-      received: false,
-      startTimeSeconds: 2,
-      breakTimeSeconds: 4,
-      task: 'Finish Assigment 4 Due In Two Weeks',
-      subtasks: [
-        "Do small thing", 
-        "And other thing",
-        "But this is the last thing!",
-        "NONO BUT THIS THING FOR REAL IM NOT JOKING!!",
-      ],
-      type: 'chill',
-      motivation: 'a',
-      nextReward: 'b',
-      completed: 0
-    }
-    // */
-    // 'Unset'
-  );
+  const [timerInfo, setTimerInfo] = useState<PomodoroTimerInfo | 'Unset'>('Unset');
 
   useEffect(() => {
       window.pomodoro.onInit((receivedData) => {
-          // TODO: Send response to pomodoro to ensure info send is valid ?
-          // okay wait no, i just need to ensure the pomodoro sends valid info
           setTimerInfo(receivedData);
       });
   }, []);
@@ -166,5 +143,5 @@ const container = document.getElementById("root");
 
 if (container) {
   const root = createRoot(container);
-  root.render(<App/>);
+  root.render(<App />);
 }
