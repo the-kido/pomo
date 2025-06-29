@@ -94,7 +94,6 @@ export default function Timer({workTime, breakTime, onClose, onPomoFinished} : {
       onSwitchPressed: () => {
         // A very hacky solution. May change if required in the future.
         timeStartedMS.current = Date.now() - workTime * 1000;
-        console.log(getFinalBreakTime());
         decreaseTimer(TimerStates.BreakTimer, TimerStates.BreakFinished);
       },
       onPausedPressed: () => null,

@@ -3,26 +3,24 @@ import { create } from 'zustand';
 import { UserData, UserDataStore } from '/src/types/UserData';
 import { usePomodorosStore } from '/src/renderer/main/PomodoroList';
 
-export const NO_SELECTION: string = "None"
-
 export const DEFAULT_USERDATA: UserData = {
-    user: {
-        goals: ["📈 Improve GPA"],
-        rewards: ["🚶 Go for a walk"],
-        breakTime: 5 * 60,
-        longBreakTime: 25 * 60,
-        workTime: 25 * 60,
-    },
-    window: {
-        width: 0,
-        height: 0
-    },
-    storedPomos: []
+	user: {
+		goals: ["📈 Improve GPA"],
+		rewards: ["🚶 Go for a walk"],
+		breakTime: 5 * 60,
+		longBreakTime: 25 * 60,
+		workTime: 25 * 60,
+	},
+	window: {
+		width: 0,
+		height: 0
+	},
+	storedPomos: []
 }
 
+// Fetches and loads user data; individual data is stored in separate, self-contained stores 
 export const useUserDataStore = create<UserDataStore>((_, __) => ({
 	getUserData: () => {
-		// Return the current user data from the store, or a default if not set
 		var goals = useGoalStore.getState().goals;
 		var rewards = useRewardsStore.getState().rewards;
 		var breaktime = usePomodoroTimerStore.getState().breakTime;
@@ -46,8 +44,8 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 			storedPomos: usePomodorosStore.getState().list,
 		};
 	}, loadUserData: (data) => {
-		useGoalStore.getState().setGoals(["None", ...data.user.goals]);
-		useRewardsStore.getState().setRewards(["None", ...data.user.rewards]);
+		useGoalStore.getState().setGoals([...data.user.goals]);
+		useRewardsStore.getState().setRewards([...data.user.rewards]);
 		usePomodoroTimerStore.getState().setBreakTime(data.user.breakTime);
 		usePomodoroTimerStore.getState().setLongBreakTime(data.user.longBreakTime);
 		usePomodoroTimerStore.getState().setWorkTime(data.user.workTime);

@@ -6,6 +6,7 @@ import { AppContext } from "../App";
 // import { GripVertical } from 'lucide-react';
 
 
+const NONE: string = "None"
 const PLEASE_SELECT: string = "Please Select"
 
 type StagesCompletedType = {
@@ -88,6 +89,7 @@ function TypeStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onSetType
 	const goals = useGoalStore((state) => state.goals);
 
 	const stagesClearedContext = useContext(StagesCleared);
+	
 	useEffect(() => {
 		const isCompleted = type == PomoActivityType.CHILL || type == PomoActivityType.ACTIVE && goal != PLEASE_SELECT;
 		updateStageCleared(isCompleted, Stages.TYPE, stagesClearedContext, props.stageAt);
@@ -101,14 +103,12 @@ function TypeStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onSetType
 			<option value={PomoActivityType.ACTIVE}>{PomoActivityTypeDisplay[PomoActivityType.ACTIVE]}</option>
 			<option value={PomoActivityType.CHILL}>{PomoActivityTypeDisplay[PomoActivityType.CHILL]}</option>
 		</select>
-		{
-			// Temporary: Select between all the missions that we've created
-			type == PomoActivityType.ACTIVE && <select value={goal} onChange={e => { setGoal(e.target.value); props.onSetGoal(e.target.value) }}>
-				<option value={PLEASE_SELECT} key={-1} >{PLEASE_SELECT}</option>
-				<option className="divider-option" disabled>──────────</option>
-				{goals.map((goal, i) => <option value={goal} key={i}> {goal} </option>)}
-			</select>
-		}
+		{ type == PomoActivityType.ACTIVE && <select value={goal} onChange={e => { setGoal(e.target.value); props.onSetGoal(e.target.value) }}>
+			<option value={PLEASE_SELECT}>{PLEASE_SELECT}</option>
+			<option className="divider-option" disabled>──────────</option>
+			<option value={NONE} key={-1}>{NONE}</option>
+			{goals.map((goal, i) => <option value={goal} key={i}> {goal} </option>)}
+		</select> }
 	</>
 }
 
@@ -150,9 +150,10 @@ function SelectFirstRewardStage({info, stageAt, onRewardChanged }: {info? : Pomo
 		<h3> Initial things: </h3>
 		<p> Reward:  
 		<select defaultValue={info ? reward : PLEASE_SELECT} onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
-			<option value={PLEASE_SELECT} key={-1}>{PLEASE_SELECT}</option>
-				<option className="divider-option" disabled>──────────</option>
-				{rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option>   ) }
+			<option value={PLEASE_SELECT}>{PLEASE_SELECT}</option>
+			<option className="divider-option" disabled>──────────</option>
+			<option value={NONE} key={-1}>{NONE}</option>
+			{rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option>   ) }
 		</select>
 		</p>
 	</div>
