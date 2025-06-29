@@ -1,8 +1,11 @@
 import { createContext, CSSProperties, useContext, useEffect, useRef, useState } from "react";
-import { useGoalStore, usePomodoroTimerStore, useRewardsStore } from "/src/main/states/states"
-import { PomodoroTimerInfo } from "/src/types/Pomodoro"
+import { useGoalStore, useRewardsStore } from "/src/main/states/states"
+import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "./PomodoroList";
 // import { GripVertical } from 'lucide-react';
+
+
+const PLEASE_SELECT: string = "Please Select"
 
 type StagesCompletedType = {
 	stages: Stages[], 
@@ -54,19 +57,16 @@ function AddSubtask({ subtasks, setSubtasks}: {subtasks: string[], setSubtasks: 
 	}
 	
 	return <div key={-1}>
-			Add: 
-			<input
-				value={newTask}
-				onChange={(newTask) => {setNewTask(newTask.target.value)}} 
-				type='text'
-				/>
-			<button 
-				disabled={newTask == ''}
-				onClick={onAddSubtaskPressed} 
-			>
-				Add
-			</button>
-		</div>
+		Add: 
+		<input
+			value={newTask}
+			onChange={(newTask) => {setNewTask(newTask.target.value)}} 
+			type='text'
+		/>
+		<button disabled={newTask == ''} onClick={onAddSubtaskPressed}>
+			Add
+		</button>
+	</div>
 }
 
 enum Stages {
@@ -81,27 +81,30 @@ function updateStageCleared(isCompleted: boolean, stage: Stages, stagesClearedCo
 	}
 }
 
-function TypeStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onSetType: (type: "active" | "chill" | "unknown") => void, onSetGoal: (goal: string) => void }) {
-	const [type, setType] = useState<"active" | "chill" | "unknown">(props.info ? props.info.type : "unknown");
-	const [goal, setGoal] = useState<string>(props.info ? props.info.goal : '');
+function TypeStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onSetType: (type: PomoActivityType) => void, onSetGoal: (goal: string) => void }) {
+	const [type, setType] = useState<PomoActivityType>(props.info ? props.info.type : PomoActivityType.UNKNOWN);
+	const [goal, setGoal] = useState<string>(props.info ? props.info.goal : PLEASE_SELECT);
 	const goals = useGoalStore((state) => state.goals);
 
 	const stagesClearedContext = useContext(StagesCleared);
 	useEffect(() => {
-		const isCompleted = type == 'chill' || type == 'active' && goal != '';
+		const isCompleted = type == PomoActivityType.CHILL || type == PomoActivityType.ACTIVE && goal != PLEASE_SELECT;
 		updateStageCleared(isCompleted, Stages.TYPE, stagesClearedContext, props.stageAt);
 	}, [type, goal])
 
 	return <>
 		{/* Temporary; use "slider" selection instead */}
-		<select value={type} onChange={e => { setType(e.target.value as "active" | "chill"); props.onSetType(e.target.value as "active" | "chill") }}>
+		<select value={type} onChange={e => { setType(e.target.value as unknown as PomoActivityType); props.onSetType(e.target.value as unknown as PomoActivityType) }}>
 			<option value="unknown">Select</option>
-			<option value="chill">Chill</option>
-			<option value="active">Active</option>
+			<option className="divider-option" disabled>──────────</option>
+			<option value={PomoActivityType.ACTIVE}>{PomoActivityTypeDisplay[PomoActivityType.ACTIVE]}</option>
+			<option value={PomoActivityType.CHILL}>{PomoActivityTypeDisplay[PomoActivityType.CHILL]}</option>
 		</select>
 		{
 			// Temporary: Select between all the missions that we've created
-			type == "active" && <select value={goal} onChange={e => { setGoal(e.target.value); props.onSetGoal(e.target.value) }}>
+			type == PomoActivityType.ACTIVE && <select value={goal} onChange={e => { setGoal(e.target.value); props.onSetGoal(e.target.value) }}>
+				<option value={PLEASE_SELECT} key={-1} >{PLEASE_SELECT}</option>
+				<option className="divider-option" disabled>──────────</option>
 				{goals.map((goal, i) => <option value={goal} key={i}> {goal} </option>)}
 			</select>
 		}
@@ -127,25 +130,28 @@ function TaskStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onTaskCha
 }
 
 function SelectFirstRewardStage({info, stageAt, onRewardChanged }: {info? : PomodoroTimerInfo, stageAt: Stages, onRewardChanged: (str: string) => void }) {
-	const [reward, setReward] = useState<string>(info ? info.nextReward : '');
+	const [reward, setReward] = useState<string>(info ? info.nextReward : PLEASE_SELECT);
 	const rewards = useRewardsStore((state) => state.rewards);
 
 	const stagesCompletedContext = useContext(StagesCleared)
 	
-	// TODO: Change time if wanted.
+	/* TODO: Change time if wanted.
 	const breakTime = usePomodoroTimerStore((store) => store.breakTime);
 	const longBreakTime = usePomodoroTimerStore((store) => store.longBreakTime);
+	*/
 
 	useEffect( () => {
-		const isCompleted = reward != '';
+		const isCompleted = reward != PLEASE_SELECT;
 		updateStageCleared(isCompleted, Stages.FIRST_REWARD, stagesCompletedContext, stageAt);
 	}, [reward])
 
 	return <div style={border}>
 		<h3> Initial things: </h3>
 		<p> Reward:  
-		<select defaultValue={info ? reward : rewards[0]} onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
-			{rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option>   ) }
+		<select defaultValue={info ? reward : PLEASE_SELECT} onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
+			<option value={PLEASE_SELECT} key={-1}>{PLEASE_SELECT}</option>
+				<option className="divider-option" disabled>──────────</option>
+				{rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option>   ) }
 		</select>
 		</p>
 	</div>
@@ -165,7 +171,7 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [stageAt, setStageAt] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
 	const [newPomo, _] = useState<PomodoroTimerInfo>(info ? {...info} : {
-		type: 'unknown',
+		type: PomoActivityType.UNKNOWN,
 		task: '',
 		motivation: '',
 		nextReward: '',
@@ -207,7 +213,7 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 	const savePomodoro = () => onSaved(newPomo);
 	const cancelUpdate = () => onSaved(info);
 	
-	const onSetType = (string: "active" | "chill" | "unknown") => newPomo.type = string;
+	const onSetType = (string: PomoActivityType) => newPomo.type = string;
 	const onSetGoal = (string: string) => newPomo.goal = string;
 	const onTaskChanged = (string: string) => newPomo.task = string;
 	const onMotivationChanged = (string: string) => newPomo.motivation = string;

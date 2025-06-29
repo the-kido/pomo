@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PomodoroTimerInfo } from "/src/types/Pomodoro";
+import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./CreatePomodoro";
 
 interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void }
@@ -32,8 +32,8 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
                 {/* Type Stage */}
                 <div style={{display: 'flex'}}> 
                     {/* ⚠️ TEMP */}
-                    <h4>{info.type}</h4>
-                    { info.type == 'active' && <h4>{info.goal}</h4> }
+                    <h4>{PomoActivityTypeDisplay[info.type]}</h4>
+                    { info.type == PomoActivityType.ACTIVE && <h4>{info.goal}</h4> }
                 </div>
                 {/* Task Stage*/}
                 <div> 

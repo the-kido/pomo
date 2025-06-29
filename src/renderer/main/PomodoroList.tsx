@@ -6,6 +6,7 @@ import Warn from "../misc/Warn";
 
 interface Pomodoros {
     list: PomodoroTimerInfo[],
+    setPomodoros: (list: PomodoroTimerInfo[]) => void,
     addPomodoro: (toAdd: PomodoroTimerInfo) => void,
     updatePomodoro: (idx: number, toReplace: PomodoroTimerInfo) => void,
     removePomodoro: (idx: number) => void,
@@ -14,6 +15,7 @@ interface Pomodoros {
 export const usePomodorosStore = create<Pomodoros>(set => ({
     // Temporary items for quick testing!
     list: [],
+    setPomodoros: (list: PomodoroTimerInfo[]) => set({list: list}),
     addPomodoro: (toAdd) => set(state => ({list: [...state.list, toAdd]})),
     updatePomodoro: (idxToReplace, toReplace) => set(state => ({list: state.list.map((previous, idx) => (idx == idxToReplace ? toReplace : previous))})),
     removePomodoro: (idxToRemove) => {set(state => ({ list: state.list.filter((_, itemIdx) => itemIdx !== idxToRemove )  }))}

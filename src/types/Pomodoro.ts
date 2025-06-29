@@ -8,9 +8,17 @@ export type PomodoroRendererExports = {
     onClosed: (callback: () => void) => void;
 };
 
+export enum PomoActivityType { ACTIVE, CHILL, UNKNOWN }
+
+export const PomoActivityTypeDisplay: Record<PomoActivityType, string> = {
+  [PomoActivityType.ACTIVE]: "🔥 Active",
+  [PomoActivityType.CHILL]: "☕ Chill",
+  [PomoActivityType.UNKNOWN]: "❓ Unknown"
+};
+
 export interface PomodoroTimerInfo {
     // Listed in order of what is inputted by the pomodoro creator
-    type: "active" | "chill" | "unknown",
+    type: PomoActivityType,
     goal?: string,
     task: string,
     motivation: string,

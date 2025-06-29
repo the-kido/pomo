@@ -1,10 +1,12 @@
 // import {} from 'prod-app-shared'
 import { PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro'
 import { contextBridge, ipcRenderer } from 'electron'
+import { UserData } from '/src/types/UserData';
 
 declare global {
     interface Window {
-        pomodoro: PomodoroRendererExports
+        pomodoro: PomodoroRendererExports,
+        app: { onDidFinishLoad: (callback: (data: UserData) => void) => void }
     }
 }
 
@@ -25,11 +27,15 @@ contextBridge.exposeInMainWorld('pomodoro', {
     },
     
     onClosed: (callback: () => void) => {
-        
         if (prevOnClosedListener) {
             ipcRenderer.removeListener('pomodoro-window-closed', prevOnClosedListener)
         }
         prevOnClosedListener = () => callback()
         ipcRenderer.on('pomodoro-window-closed', prevOnClosedListener);
     }
+});
+
+contextBridge.exposeInMainWorld('app', {
+    onDidFinishLoad: (callback: (data: UserData) => void) => 
+        ipcRenderer.addListener('hydrate-user-data', (_, data: UserData) => callback(data)),
 });

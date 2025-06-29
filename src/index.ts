@@ -1,19 +1,20 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { PomodoroTimerInfo } from './types/Pomodoro';
+import { PomodoroTimerInfo } from '/src/types/Pomodoro';
+import '/src/main/data/load'
+
+//#region Main Window
 
 // Automagically made by Forge's Webpack plugin
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-import './main/states/states'
+import { readData } from '/src/main/data/load';
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
+if (require('electron-squirrel-startup')) app.quit();
 
 var mainWindow: BrowserWindow;
-const createWindow = (): void => {
+
+const createWindow = async (): Promise<void> => {
   mainWindow = new BrowserWindow({
     height: 1080,
     width: 1920,
@@ -25,6 +26,17 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   mainWindow.webContents.openDevTools();
+ 
+  // "hydrating" user data
+  const data = await readData();
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('hydrate-user-data', data);
+  });
+
+  mainWindow.webContents.on('did-frame-finish-load', () => {
+    mainWindow.webContents.send('hydrate-user-data', data);
+  });
 };
 
 app.on('ready', createWindow);
@@ -43,10 +55,9 @@ app.on('activate', () => {
   }
 });
 
+//#endregion Main Window
 
-/*
-MOVE ELSE WHERE
-*/
+//#region Pomodoro Window
 
 declare const POMODORO_TIMER_WEBPACK_ENTRY: string;
 declare const POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY: string;
@@ -54,19 +65,14 @@ declare const POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY: string;
 let pomodoro: BrowserWindow | null = null;
 
 ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electron.BaseWindowConstructorOptions) => {
-  // Create the browser window.
-
-   pomodoro = new BrowserWindow({
+  
+  pomodoro = new BrowserWindow({
     height: options.height,
     width: options.width,
-    
-    webPreferences: {
-      preload: POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY, // Your preload.ts
-    },
+    webPreferences: {preload: POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY}
   });
 
-  pomodoro.setMinimumSize( 300, 500) 
-  // and load the index.html of the app.
+  pomodoro.setMinimumSize(300, 500);
   pomodoro.loadURL(POMODORO_TIMER_WEBPACK_ENTRY);
 
   // Open the DevTools.
@@ -77,16 +83,18 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
   });
 
   pomodoro.on('close', (event) => {
-    event.preventDefault()
+    event.preventDefault();
     pomodoro.hide();
     mainWindow.webContents.send('pomodoro-window-closed');
   });
 })
   
 ipcMain.on('closed-pomodoro', (_, data: PomodoroTimerInfo) => {
-  pomodoro.close()
+  pomodoro.close();
 });
 
 ipcMain.on('sending-pomo-update', (_, data: PomodoroTimerInfo) => {
   mainWindow.webContents.send('update-pomodoro', data);
 });
+
+//#endregion Pomodoro Window

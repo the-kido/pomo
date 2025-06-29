@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 
 import { JSX, useEffect, useRef, useState } from 'react';
-import { PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro';
+import { PomoActivityTypeDisplay, PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro';
 import Subtask from './pomodoro/Subtask';
 import Timer from './pomodoro/Timer';
 import { create, useStore } from 'zustand';
@@ -109,7 +109,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
           <input type='button' defaultValue={"Cancel"} onClick={onDescriptionChangeCancel}></input>
           <input type='button' defaultValue={"Finish"} onClick={onDescriptionChangeSaved}></input>
         </div> : <div> 
-          <h4>{info.type}</h4> 
+          <h4>{PomoActivityTypeDisplay[info.type]}</h4> 
           <h4>{info.goal}</h4> 
           <h4>🍅 x{pomosCompleted}</h4> 
         </div>
