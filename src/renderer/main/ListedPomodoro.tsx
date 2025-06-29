@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./CreatePomodoro";
+import { AppContext } from "../App";
 
 interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void }
 
@@ -9,11 +10,15 @@ Represents an entry of a created pomodoro timer within the
 pomodoro list present on the main screen.
 */
 export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDelete  }: ListedPomodoroProps) {
+    
     const [editing, setEditing] = useState<boolean>(false);
-
+    
+    const appContext = useContext<AppContext>(AppContext);
+    
     const onSaved = (newPomo: PomodoroTimerInfo ) => {
         onUpdate(newPomo);
         setEditing(false);
+        appContext.saveData()
     }
     
     if (editing) return <CreatePomodoro onSaved={onSaved} info={info} />

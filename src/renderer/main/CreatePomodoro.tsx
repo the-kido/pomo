@@ -2,6 +2,7 @@ import { createContext, CSSProperties, useContext, useEffect, useRef, useState }
 import { useGoalStore, useRewardsStore } from "/src/main/states/states"
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "./PomodoroList";
+import { AppContext } from "../App";
 // import { GripVertical } from 'lucide-react';
 
 
@@ -185,9 +186,12 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 
 	const addPomodoro = usePomodorosStore(store => store.addPomodoro)
 	
+	const appContext = useContext<AppContext>(AppContext);
+
 	const createPomodoro = () => {
 		addPomodoro(newPomo);
 		reset();
+		appContext.saveData();
 	}
 	
 	// Update stageAt whenever stagesCleared is updated
@@ -240,7 +244,7 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 		</div>
 		<div style={{ display: 'flex', padding: '10px', gap: '8px'}} >
 			<button disabled={ isStartButtonDisabled() } onClick={() => info ? savePomodoro() : createPomodoro()} >{info ? "Save" : "Create"} </button>
-			<button className="reset-button" onClick={() => info ? cancelUpdate()  : reset()} > {info ? "Cancel" : "Reset" } </button>
+			<button className="reset-button" onClick={() => info ? cancelUpdate() : reset()} > {info ? "Cancel" : "Reset" } </button>
 		</div>
 	</div> </> 
 }

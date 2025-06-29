@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
 import ListedPomodoro from "./ListedPomodoro";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Warn from "../misc/Warn";
+import { AppContext } from "../App";
 
 interface Pomodoros {
     list: PomodoroTimerInfo[],
@@ -41,9 +42,14 @@ export default function PomodoroList() {
 		})
     }, [])
 
+    const appContext = useContext<AppContext>(AppContext);
+    
     useEffect(() => {
         window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
-            if (launchedPomo != null) updatePomodoro(launchedPomo, data);
+            if (launchedPomo != null) {
+                updatePomodoro(launchedPomo, data);
+                appContext.saveData();
+            }
         });
         return () => {
             window.pomodoro.onUnsubUpdate();
@@ -55,7 +61,11 @@ export default function PomodoroList() {
     return <>
         {promptToDelete.state && <Warn 
             confirmText="Are you sure you want to delete this pomodoro?"
-            onYes={() => {removePomodoro(promptToDelete.idx); setPromptToDelete({state: false})}}
+            onYes={() => {
+                removePomodoro(promptToDelete.idx); 
+                setPromptToDelete({state: false});
+                appContext.saveData();
+            }}
             onNo={() => setPromptToDelete({state: false})}
         />}
         {pomodoros.map((pomoInfo, idx) => <ListedPomodoro 

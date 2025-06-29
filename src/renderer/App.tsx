@@ -25,10 +25,6 @@ export default function App() {
         window.app.onDidFinishLoad((data: UserData) => {
             useUserDataStore.getState().loadUserData(data);
         });
-        // Update persistent data on pomodoro change
-        window.pomodoro.onUpdate((_) => {
-            saveData()
-        })
     }, []);
 
     // Band-aid solution to "entirely" reset CreatePomodoro
