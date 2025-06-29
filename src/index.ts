@@ -8,7 +8,8 @@ import '/src/main/data/load'
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-import { readData } from '/src/main/data/load';
+import { readData, writeData } from '/src/main/data/load';
+import { UserData } from './types/UserData';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -89,8 +90,12 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
   });
 })
   
-ipcMain.on('closed-pomodoro', (_, data: PomodoroTimerInfo) => {
+ipcMain.on('closed-pomodoro', () => {
   pomodoro.close();
+});
+
+ipcMain.on('save-data', (_, data: UserData) => {
+  writeData(data);
 });
 
 ipcMain.on('sending-pomo-update', (_, data: PomodoroTimerInfo) => {

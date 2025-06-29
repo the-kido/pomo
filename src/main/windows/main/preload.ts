@@ -6,7 +6,10 @@ import { UserData } from '/src/types/UserData';
 declare global {
     interface Window {
         pomodoro: PomodoroRendererExports,
-        app: { onDidFinishLoad: (callback: (data: UserData) => void) => void }
+        app: { 
+            onDidFinishLoad: (callback: (data: UserData) => void) => void,
+            saveData: (data: UserData) => void,
+        }
     }
 }
 
@@ -38,4 +41,7 @@ contextBridge.exposeInMainWorld('pomodoro', {
 contextBridge.exposeInMainWorld('app', {
     onDidFinishLoad: (callback: (data: UserData) => void) => 
         ipcRenderer.addListener('hydrate-user-data', (_, data: UserData) => callback(data)),
+    saveData: (data: UserData) => {
+        ipcRenderer.send('save-data', data);
+    }
 });
