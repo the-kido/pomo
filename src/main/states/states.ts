@@ -1,4 +1,3 @@
-      
 import { create } from 'zustand';
 import { UserData, UserDataStore } from '/src/types/UserData';
 import { usePomodorosStore } from '/src/renderer/main/PomodoroList';
@@ -17,6 +16,10 @@ export const DEFAULT_USERDATA: UserData = {
 	},
 	storedPomos: []
 }
+
+const SHORT_BREAK_MAYBE_TOO_LONG = 15 * 60;
+const LONG_BREAK_MAYBE_TOO_LONG = 30 * 60;
+const WORK_MAYBE_TOO_LONG = 35 * 60;
 
 // Fetches and loads user data; individual data is stored in separate, self-contained stores 
 export const useUserDataStore = create<UserDataStore>((_, __) => ({
@@ -117,7 +120,7 @@ export const useRewardsStore = create<Rewards>((set, _) => ({
 				response = 'Duplicate'
 				return state; // return state as is
 			}
-			
+
 			response = 'Success'
 			return { rewards: [...state.rewards, reward] };
 		});
@@ -126,16 +129,11 @@ export const useRewardsStore = create<Rewards>((set, _) => ({
 	},
 	removeReward: (goalToRemove) =>
 		set((state) => ({
-		rewards: state.rewards.filter((goal) => goal !== goalToRemove),
+			rewards: state.rewards.filter((goal) => goal !== goalToRemove),
 		})),
 
 	clearRewards: () => set({ rewards: [] }),
-	})
-);
-
-const SHORT_BREAK_MAYBE_TOO_LONG = 15 * 60;
-const LONG_BREAK_MAYBE_TOO_LONG = 30 * 60;
-const WORK_MAYBE_TOO_LONG = 35 * 60;
+}));
 
 type SetBreakTimeResults = 'Success' | 'Too Short' | 'Longer Than Long Break' | 'Suggest Too Long';
 type SetLongBreakTimeResults = 'Success' | 'Shorter Than Break' | 'Maybe Too Long';
@@ -149,15 +147,14 @@ interface PomodoroTimerTimes {
 	setLongBreakTime: (to: number) => SetLongBreakTimeResults,
 	setWorkTime: (to: number) => SetWorkTimeResults,
 }
+
 export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 	breakTime: 5 * 60,
 	longBreakTime: 25 * 60,
 	workTime: 25 * 60,
 	setBreakTime: (to: number) => {
 		var result: SetBreakTimeResults;
-		
 		set((state) => {
-			
 			if (to <= 0) {
 				result = 'Too Short';
 				return state;
@@ -178,8 +175,7 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 	},
 	setLongBreakTime(to: number) {
 		var result: SetLongBreakTimeResults;
-		
-			set((state) => {
+		set((state) => {
 			if (to <= state.breakTime ) {
 				result = 'Shorter Than Break';
 				return state;
@@ -196,7 +192,7 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 	},
 	setWorkTime(to: number) {
 		var result: SetWorkTimeResults;
-			set((state) => {
+		set((state) => {
 			if (to <= 3) {
 				result = 'Too Short';
 				return state;
@@ -207,20 +203,19 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 			}
 			return { ...state, longBreakTime: to }
 		})
+
 		return result;
 	},
-}))
+}));
 
 interface WindowSize {
 	width: number,
 	height: number,
 	setSize: (width: number, height: number) => void,
 }
+
 export const useWindowSizeStore = create<WindowSize>((set) => ({
 	width: 300,
 	height: 500,
-	setSize: (width, height) => set({width: width, height: height}),
-}))
-
-
-
+	setSize: (width, height) => set({ width: width, height: height }),
+}));
