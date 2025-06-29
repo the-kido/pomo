@@ -23,13 +23,13 @@ export const DEFAULT_USERDATA: UserData = {
 export const useUserDataStore = create<UserDataStore>((_, __) => ({
 	getUserData: () => {
 		// Return the current user data from the store, or a default if not set
-		var goals = useGoalStore(a => a.goals);
-		var rewards = useRewardsStore(a => a.rewards);
-		var breaktime = usePomodoroTimerStore(a => a.breakTime);
-		var longBreakTime = usePomodoroTimerStore(a => a.longBreakTime);
-		var workTime = usePomodoroTimerStore(a => a.workTime);
-		var length = useWindowSizeStore(a => a.height);
-		var width = useWindowSizeStore(a => a.width);
+		var goals = useGoalStore.getState().goals;
+		var rewards = useRewardsStore.getState().rewards;
+		var breaktime = usePomodoroTimerStore.getState().breakTime;
+		var longBreakTime = usePomodoroTimerStore.getState().longBreakTime;
+		var workTime = usePomodoroTimerStore.getState().workTime;
+		var length = useWindowSizeStore.getState().height;
+		var width = useWindowSizeStore.getState().width;
 
 		return {
 			user: {
@@ -43,7 +43,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				width: width,
 				height: length,
 			},
-			storedPomos: usePomodorosStore(a => a.list),
+			storedPomos: usePomodorosStore.getState().list,
 		};
 	}, loadUserData: (data) => {
 		useGoalStore.getState().setGoals(["None", ...data.user.goals]);
