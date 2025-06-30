@@ -4,6 +4,7 @@ import ListedPomodoro from "./ListedPomodoro";
 import { useContext, useEffect, useState } from "react";
 import Warn from "../misc/Warn";
 import { AppContext } from "../App";
+import { useWindowSizeStore } from "/src/main/states/states";
 
 interface Pomodoros {
     list: PomodoroTimerInfo[],
@@ -30,9 +31,11 @@ export default function PomodoroList() {
     const pomoList = usePomodorosStore(state => state.list);
     const updatePomodoro = usePomodorosStore(state => state.updatePomodoro);
     const removePomodoro = usePomodorosStore(state => state.removePomodoro);
+    const windowWidth = useWindowSizeStore(state => state.width);
+    const windowHeight = useWindowSizeStore(state => state.height);
 
     const launchPomo = (idx: number) => {
-		window.pomodoro.createWindow(pomoList[idx], {width: /*300*/ 1200, height: 500})
+		window.pomodoro.createWindow(pomoList[idx], {width: windowWidth, height: windowHeight})
 		setLaunchedPomo(idx);
 	}
 

@@ -1,5 +1,7 @@
 <style>
   .pomo {
+    /* Padding required to avoid colliding content with the header! */
+    padding-top: 1.5rem;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -8,16 +10,22 @@
   }
 
   .main-info {
-    border-style: dashed;
-    border-width: medium;
-    border-color: red;
+    border-radius: 10px;
     box-sizing: border-box;
     width: 100%;
+
+    background-color: white;
 
     display: flex;
     justify-content: center;
     flex-direction: column;
     flex-wrap: wrap;
+  }
+
+  .misc-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
   }
 
   .timer {
@@ -33,6 +41,9 @@
     flex-direction: row;
     gap: 10px;
 
+    background-color: white;
+    color: rgb(0, 0, 0, var(--percent));
+
     margin: 0px;
     padding-right: 10px;
     padding-left: 10px;
@@ -42,6 +53,14 @@
     border-width: medium;
     box-sizing: border-box;
   }
+  
+  .subtask-box-incomplete {
+    border-color: rgb(255, 0, 0, var(--percent))
+  }
+  
+  .subtask-box-completed {
+    border-color: rgb(0, 255, 255, var(--percent))
+  }
 
   .justification-input
   {
@@ -50,8 +69,21 @@
     justify-content: center;
   }
 
+  .description {
+    text-align: center;
+    cursor: text; 
+  }
 
-  .popup-overlay {
+  h2 {
+    margin: 0px;
+  }
+
+  h4 {
+    margin: 0px;
+  }
+
+
+.popup-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.7);
@@ -75,6 +107,22 @@
   border-radius: 8px;
   padding: 2em;
   z-index: 1000;
+}
+
+
+/* Things to do with the custom title bar */
+.title-bar {
+  position: fixed;
+  padding: 5px;
+  height: 1.5rem;
+  background-color: aliceblue;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.window-dragger {
+  -webkit-app-region: drag;
 }
 
 </style>

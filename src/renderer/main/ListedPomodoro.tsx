@@ -41,8 +41,8 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
                     { info.type == PomoActivityType.ACTIVE && <h4>{info.goal}</h4> }
                 </div>
                 {/* Task Stage*/}
-                <div> 
-                    Created in order to <span>{info.motivation}</span> 
+                <div>
+                    Created in order to <span>{info.motivation}</span>
                 </div>
                 {/* Select First Reward Stage*/}
                 <div> 
@@ -51,15 +51,16 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
             </div>
             
             {/* Right */}
-            <div>
+            <div className="listed-pomodoro-content-">
                 {info.subtasks.length != 0 && <h3>Subtasks</h3>}
                 <div>
-                    {info.subtasks.map((subtask, index) => <div>
+                    {info.subtasks.map((subtask, index) => <div key={index}>
                         <span style={{fontWeight: '400', marginRight: '10px'}}>{`${index + 1}.`}</span>{subtask} 
                     </div>)}
                 </div>
             </div>
         </div>
+
         <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                 <div style={{ display: 'flex', gap: '8px'}}>

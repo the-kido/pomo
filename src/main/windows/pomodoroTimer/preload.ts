@@ -1,5 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { PomodoroTimerInfo } from '../../../types/Pomodoro';
+import { PomodoroRendererExports, PomodoroTimerInfo } from '../../../types/Pomodoro';
+
+declare global {
+  interface Window {
+    pomodoro: PomodoroRendererExports
+  }
+}
 
 // Exposes functions that the *renderers* can call.
 contextBridge.exposeInMainWorld('pomodoro', {

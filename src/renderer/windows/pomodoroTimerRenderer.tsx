@@ -1,19 +1,14 @@
-import { createRoot } from 'react-dom/client';
+import '../../index.css';
 
+import { createRoot } from 'react-dom/client';
 import { JSX, useEffect, useRef, useState } from 'react';
-import { PomoActivityTypeDisplay, PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro';
+import { PomoActivityTypeDisplay, PomodoroTimerInfo } from '/src/types/Pomodoro';
 import Subtask from './pomodoro/Subtask';
 import Timer from './pomodoro/Timer';
-import { create, useStore } from 'zustand';
-
-declare global {
-  interface Window {
-    pomodoro: PomodoroRendererExports
-  }
-}
+import { create } from 'zustand';
+import Header from './pomodoro/Header';
 
 const SUBTASK_ARRAY_WEIGHTS = [1, 0.5, 0.325];
-
 
 interface UpdateDescription {
   updating: boolean,
@@ -31,7 +26,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
   const [completeTaskIndicies, setCompleteTaskIndicies] = useState<Array<number>>([]);
   const [pomosCompleted, setPomosCompleted] = useState<number>(info.completed);
-  const descriptionTextField = useRef<HTMLTextAreaElement>(null);
+  const discTextField = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     window.pomodoro.sendUpdate({...info, completed: pomosCompleted});
@@ -79,10 +74,10 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
   
   function onDescriptionChangeSaved() {
-    info.task = descriptionTextField.current.value;
+    info.task = discTextField.current.value;
     finishSettingDescription();
 
-    window.pomodoro.sendUpdate({...info, task: descriptionTextField.current.value});
+    window.pomodoro.sendUpdate({...info, task: discTextField.current.value});
   }
   
   var tasks = setupSubtasks();
@@ -91,8 +86,9 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   const updating = useUpdatingState(state => state.updating);
   const setDescription = useUpdatingState(state => state.setDescription);
   const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
-  
+
   return <div className="pomo">
+    <Header />
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
       <div className={"timer"}>
@@ -104,13 +100,15 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
           onPomoFinished={() => setPomosCompleted(prev => prev + 1)} 
         />
       </div>
-      {updating ? <textarea ref={descriptionTextField} defaultValue={info.task}></textarea> : <h2 style={{textAlign:'center', margin: '10px', cursor: 'text' }} onClick={setDescription} > {info.task} </h2>}
+      {updating ? <textarea ref={discTextField} defaultValue={info.task}></textarea> : <h2 className='description' onClick={setDescription} > {info.task} </h2>}
       {updating ? <div style={{display: 'flex'}}>
           <input type='button' defaultValue={"Cancel"} onClick={onDescriptionChangeCancel}></input>
           <input type='button' defaultValue={"Finish"} onClick={onDescriptionChangeSaved}></input>
-        </div> : <div> 
-          <h4>{PomoActivityTypeDisplay[info.type]}</h4> 
-          <h4>{info.goal}</h4> 
+        </div> : <div className='misc-info'> 
+          <div style={{display: 'flex'}}>
+            <h4>{PomoActivityTypeDisplay[info.type]}</h4> 
+            <h4>{info.goal}</h4> 
+          </div>
           <h4>🍅 x{pomosCompleted}</h4> 
         </div>
       }

@@ -1,10 +1,8 @@
-import { createContext, CSSProperties, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useGoalStore, useRewardsStore } from "/src/main/states/states"
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "./PomodoroList";
 import { AppContext } from "../App";
-// import { GripVertical } from 'lucide-react';
-
 
 const NONE: string = "None"
 const PLEASE_SELECT: string = "Please Select"
@@ -17,15 +15,14 @@ type StagesCompletedType = {
 const StagesCleared = createContext<StagesCompletedType | undefined>(undefined);
 
 function Subtask({subtask, index, onRemove} : {subtask: string, index: number, onRemove: () => void}) {
-	return <p className="subtask">
+	return <div className="subtask">
 		<div>
 			<span style={{fontWeight: '400', marginRight: '10px'}}>{`${index + 1}.`}</span>{subtask}
 		</div> 
 		<button className="delete-button" onClick={onRemove} >
 			<span className="delete-button-x">✖</span>
 		</button>
-		{/* <GripVertical /> */}
-	</p>
+	</div>
 }
 
 function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimerInfo, stageAt: Stages, onSubtasksChanged: (subtasks: string[]) => void} ) {

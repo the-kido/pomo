@@ -70,11 +70,19 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
   pomodoro = new BrowserWindow({
     height: options.height,
     width: options.width,
-    webPreferences: {preload: POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY}
+    webPreferences: {preload: POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY},
+    frame: false,
+    // expose window controls in Windows/Linux
+    ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {})
   });
 
   pomodoro.setMinimumSize(300, 500);
   pomodoro.loadURL(POMODORO_TIMER_WEBPACK_ENTRY);
+
+  // This looks so goofy  
+  pomodoro.on('maximize', () => {
+    pomodoro.unmaximize();
+  });
 
   // Open the DevTools.
   pomodoro.webContents.openDevTools();

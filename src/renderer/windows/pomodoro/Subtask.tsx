@@ -5,7 +5,7 @@ interface SubtaskProps {
 export default function Subtask(props: SubtaskProps) {
   const { taskDescription, percent, completed, setTaskComplete } = props;
 
-  return <div className='subtask-box' style={{ color: `rgb(0, 0, 0, ${percent})`, borderColor: !completed ? `rgb(255, 0, 0, ${percent})` : `rgb(0, 255, 255, ${percent})` }}>
+  return <div className={`subtask-box ${completed ? 'subtask-box-completed' : 'subtask-box-incomplete'}`} style={{'--percent': percent} as React.CSSProperties}>
     <h3 style={{margin: '0px'}}> {taskDescription} </h3>
     <input type='checkbox' defaultChecked={completed} onClick={setTaskComplete} disabled={completed}></input>
   </div>
