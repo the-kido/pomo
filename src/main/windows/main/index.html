@@ -1,6 +1,19 @@
 <style>
+
+  :root {
+    --input-border-radius: 5px;
+    --select-background: #f0f8ff;
+    --select-accent: #0078d4;
+  }
+
+  .main {
+    margin: auto;
+    max-width: 38rem;
+    padding: 2rem;
+  }
+
   .creator {
-    border: 2px solid #888;
+    border: 1px solid #888;
     border-radius: 12px;
     width: 100%;
     min-height: 300px;
@@ -37,8 +50,12 @@
   .listed-pomodoro-content {
     display: flex;
     flex-direction: row; 
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start
+  }
+  
+  .listed-pomodoro-content-left {
+    min-width: 14rem;  
   }
 
   h4 {
@@ -47,7 +64,8 @@
     margin-right: 8px;
     padding-right: 4px;
     border: 1px solid gray;
-    border-radius: 4px;
+    border-radius: var(--input-border-radius);
+    
   }
 
   span {
@@ -68,8 +86,8 @@
   }
   
   .reset-button {
-    border-radius: 4px;
-    border: none;
+    border-radius: var(--input-border-radius);
+    border-color: #ffffff00;
     transition: scale 0.05s ease-out;
   }
   
@@ -83,6 +101,7 @@
 
   .subtasks {
     padding: 10px;
+    padding-right: 0px;
     overflow-y: scroll;
   }
 
@@ -95,10 +114,24 @@
     margin-bottom: 10px;
   }
 
+  select {
+    margin-bottom: 5px;
+  }
+
   .delete-button {
-    padding: 0px;
-    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+  }
+  .delete-button:hover {
+    color: #f68686;
   }
 
   .pomo-count {
@@ -127,10 +160,59 @@
     z-index: 1000;
     width: 20rem;
   }
+
   .divider-option {
     padding: 2px 8px;
     font-size: 0.85rem;
     line-height: 1.2;
+  }
+
+  select, button {
+    font-family: inherit;
+    border-radius: var(--input-border-radius);
+    border-width: 1px;
+  }
+
+  input[type="text"] {
+    border-bottom: 1px solid black;
+    width: 9rem;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-bottom: 1px solid var(--select-accent);
+    background-color: var(--select-background);
+  }
+
+  select, button {
+    line-height: 1.5rem;
+    font-size:medium;
+  }
+
+  .inline-input {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  h3 {
+    margin: 0px;
+  }
+  
+  /* For bordered areas */
+  .section {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 4px;
+    margin-top: 10px;
+    width: 250px;
+  }
+
+  input {
+    font-weight: 400;
+    font-size: medium;
   }
 </style>
 

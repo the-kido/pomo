@@ -33,7 +33,7 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
 
         <div className="listed-pomodoro-content">
             {/* Left */}
-            <div>
+            <div className="listed-pomodoro-content-left">
                 {/* Type Stage */}
                 <div style={{display: 'flex'}}> 
                     {/* ⚠️ TEMP */}
@@ -52,8 +52,12 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
             
             {/* Right */}
             <div>
-                {info.subtasks.map( (subtask, id) => <li key={id}> {subtask} </li>
-                )}
+                {info.subtasks.length != 0 && <h3>Subtasks</h3>}
+                <div>
+                    {info.subtasks.map((subtask, index) => <div>
+                        <span style={{fontWeight: '400', marginRight: '10px'}}>{`${index + 1}.`}</span>{subtask} 
+                    </div>)}
+                </div>
             </div>
         </div>
         <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>

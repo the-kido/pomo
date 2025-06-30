@@ -17,11 +17,14 @@ type StagesCompletedType = {
 const StagesCleared = createContext<StagesCompletedType | undefined>(undefined);
 
 function Subtask({subtask, index, onRemove} : {subtask: string, index: number, onRemove: () => void}) {
-
 	return <p className="subtask">
-		{ `${index}. ${subtask}` }
-			<button className="delete-button" onClick={onRemove} >✖</button>
-			{/* <GripVertical /> */}
+		<div>
+			<span style={{fontWeight: '400', marginRight: '10px'}}>{`${index + 1}.`}</span>{subtask}
+		</div> 
+		<button className="delete-button" onClick={onRemove} >
+			<span className="delete-button-x">✖</span>
+		</button>
+		{/* <GripVertical /> */}
 	</p>
 }
 
@@ -52,23 +55,27 @@ function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimer
 
 function AddSubtask({ subtasks, setSubtasks}: {subtasks: string[], setSubtasks: (subtasks: string[]) => void}) {
 	const [newTask, setNewTask] = useState<string>('')
-	
+	const input = useRef<HTMLInputElement>(null);
+
 	const onAddSubtaskPressed = () => {
 		setSubtasks([...subtasks, newTask])
 		setNewTask('')
+		input.current.value = ''
 	}
 	
-	return <div key={-1}>
-		Add: 
+	return <p className="subtask">
+		{ `${subtasks.length + 1}.` } 
 		<input
-			value={newTask}
-			onChange={(newTask) => {setNewTask(newTask.target.value)}} 
-			type='text'
+			ref={input}
+			type="text" 
+			className="inline-input" 
+			onChange={(newTask) => {setNewTask(newTask.target.value)}}
+			placeholder="Add a subtask"
 		/>
 		<button disabled={newTask == ''} onClick={onAddSubtaskPressed}>
 			Add
 		</button>
-	</div>
+	</p>
 }
 
 enum Stages {
@@ -123,9 +130,9 @@ function TaskStage(props: {info? : PomodoroTimerInfo, stageAt: Stages, onTaskCha
 		updateStageCleared(isCompleted, Stages.TASK, stagesCompletedContext, props.stageAt);
 	}, [task, motivation])
 
-	return <div style={border}>
-		<p style={{margin: '0px'}} > I will <input type="text" defaultValue={task} onChange={(e) => { setTask(e.target.value); props.onTaskChanged(e.target.value) }} ></input> <br></br>
-		in order to <input type="text" defaultValue={motivation} onChange={(e) => { setMotivation(e.target.value); props.onMotivationChanged(e.target.value) }}></input>
+	return <div className="section">
+		<p style={{margin: '0px'}} > I will <input type="text" className="inline-input" defaultValue={task} onChange={(e) => { setTask(e.target.value); props.onTaskChanged(e.target.value) }} ></input> <br></br>
+		in order to <input type="text" className="inline-input" defaultValue={motivation} onChange={(e) => { setMotivation(e.target.value); props.onMotivationChanged(e.target.value) }}></input>
 		 </p>
 	</div>
 }
@@ -146,10 +153,10 @@ function SelectFirstRewardStage({info, stageAt, onRewardChanged }: {info? : Pomo
 		updateStageCleared(isCompleted, Stages.FIRST_REWARD, stagesCompletedContext, stageAt);
 	}, [reward])
 
-	return <div style={border}>
+	return <div className="section">
 		<h3> Initial things: </h3>
 		<p> Reward:  
-		<select defaultValue={info ? reward : PLEASE_SELECT} onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
+		<select className="inline-input" defaultValue={info ? reward : PLEASE_SELECT} onChange={(e) => { setReward(e.target.value); onRewardChanged(e.target.value) }}> 
 			<option value={PLEASE_SELECT}>{PLEASE_SELECT}</option>
 			<option className="divider-option" disabled>──────────</option>
 			<option value={NONE} key={-1}>{NONE}</option>
@@ -157,14 +164,6 @@ function SelectFirstRewardStage({info, stageAt, onRewardChanged }: {info? : Pomo
 		</select>
 		</p>
 	</div>
-}
-
-const border: CSSProperties = {
-	border: "2px solid #ccc",
-	borderRadius: "8px",
-	padding: "4px",
-	marginTop: '10px',
-	width: '300px'
 }
 
 function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onSaved?: (newPomo: PomodoroTimerInfo) => void, reset?: () => void}) {

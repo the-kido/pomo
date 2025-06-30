@@ -13,27 +13,28 @@ export interface AppContext {
 
 export const AppContext = createContext<AppContext>(undefined)
 
-
 export default function App() {
 
-    const saveData = () => {
-        window.app.saveData(useUserDataStore.getState().getUserData());
-    };
+	const saveData = () => {
+		window.app.saveData(useUserDataStore.getState().getUserData());
+	};
 
-    useEffect(() => {
-        // Deal with recieving the initial loaded data from the main process
-        window.app.onDidFinishLoad((data: UserData) => {
-            useUserDataStore.getState().loadUserData(data);
-        });
-    }, []);
+	useEffect(() => {
+		// Deal with recieving the initial loaded data from the main process
+		window.app.onDidFinishLoad((data: UserData) => {
+			useUserDataStore.getState().loadUserData(data);
+		});
+	}, []);
 
-    // Band-aid solution to "entirely" reset CreatePomodoro
-    const [key, setKey] = useState<number>(0);
+	// Band-aid solution to "entirely" reset CreatePomodoro
+	const [key, setKey] = useState<number>(0);
 
-    return <AppContext.Provider value={{saveData: saveData}} >
-        <h1> Create a Pomodoro </h1>
-        <CreatePomodoro key={key} reset={() => setKey(key => key + 1)} />
-        <h1> Saved Pomodoros </h1>
-        <PomodoroList />
-    </AppContext.Provider>
+	return <AppContext.Provider value={{saveData: saveData}} >
+		<div className="main">
+			<h1> Create a Pomodoro </h1>
+			<CreatePomodoro key={key} reset={() => setKey(key => key + 1)} />
+			<h1> Saved Pomodoros </h1>
+			<PomodoroList />
+		</div>
+	</AppContext.Provider>
 }

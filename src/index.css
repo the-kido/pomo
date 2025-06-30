@@ -1,7 +1,17 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+@font-face {
+  font-family: 'Zain';
+  src: url('../assets/Zain-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, input {
+  font-family: 'Zain', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+}
+
+
+h4 {
+  line-height: 1.5; /* or px value like 24px */
+  font-weight: 300;
 }
