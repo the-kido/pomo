@@ -74,6 +74,7 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
     frame: false,
     // expose window controls in Windows/Linux
     ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {})
+    , alwaysOnTop: true
   });
 
   pomodoro.setMinimumSize(300, 500);

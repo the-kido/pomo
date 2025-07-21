@@ -88,14 +88,13 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
 
   return <div className="pomo">
-    <Header />
+    <Header onClose={onPomodoroClose}/>
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
       <div className={"timer"}>
         <Timer 
           workTime={info.startTimeSeconds} 
           breakTime={info.breakTimeSeconds} 
-          onClose={onPomodoroClose}
           pomosFinished={info.completed}
           onPomoFinished={() => setPomosCompleted(prev => prev + 1)} 
         />
@@ -106,8 +105,8 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
           <input type='button' defaultValue={"Finish"} onClick={onDescriptionChangeSaved}></input>
         </div> : <div className='misc-info'> 
           <div style={{display: 'flex'}}>
-            <h4>{PomoActivityTypeDisplay[info.type]}</h4> 
-            <h4>{info.goal}</h4> 
+            <h4 className='chip'>{PomoActivityTypeDisplay[info.type]}</h4> 
+            <h4 className='chip'>{info.goal}</h4> 
           </div>
           <h4>🍅 x{pomosCompleted}</h4> 
         </div>

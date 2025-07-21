@@ -1,4 +1,11 @@
 <style>
+  
+  :root {
+    --input-border-radius: 5px;
+    --select-background: #f0f8ff;
+    --select-accent: #0078d4;
+  }
+
   .pomo {
     /* Padding required to avoid colliding content with the header! */
     padding-top: 1.5rem;
@@ -113,17 +120,22 @@
 /* Things to do with the custom title bar */
 .title-bar {
   position: fixed;
-  padding: 5px;
+  margin: 5px;
   height: 1.5rem;
   background-color: aliceblue;
   top: 0;
   left: 0;
-  width: 100%;
+  width: calc(100% - 10px);
+
+  display: flex;
+  justify-content: space-between;
 }
 
 .window-dragger {
   -webkit-app-region: drag;
 }
+
+
 
 </style>
 

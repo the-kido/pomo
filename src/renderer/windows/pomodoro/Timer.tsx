@@ -11,7 +11,7 @@ interface TimerState {
 
 enum TimerStates { JustOpened, WorkTimer, WorkPaused, WorkFinished, BreakTimer, BreakFinished }
 
-export default function Timer({workTime, breakTime, onClose, onPomoFinished} : {workTime: number, breakTime: number, onClose : () => void, pomosFinished: number, onPomoFinished: () => void} ) {
+export default function Timer({workTime, breakTime, onPomoFinished} : {workTime: number, breakTime: number, pomosFinished: number, onPomoFinished: () => void} ) {
 
   const [currentState, setCurrentState] = useState<TimerStates>(TimerStates.JustOpened);
 
@@ -153,7 +153,7 @@ export default function Timer({workTime, breakTime, onClose, onPomoFinished} : {
 
   return <>
     <Popup usePopupStore={usePausePopupStore}>
-      <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column'  }}>
+      <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         <h2 style={{width:'100%'}}> You've paused the timer for</h2>
         <h3> {timePausedText}</h3>
       <textarea id="hint text" placeholder="Optional: why did you pause?" cols={20} rows={5} style={{resize:'none'}}></textarea>
@@ -175,7 +175,6 @@ export default function Timer({workTime, breakTime, onClose, onPomoFinished} : {
         {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
       </button>
       <button disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch" } </button>
-      <button onClick={() => onClose()} >Close</button>
     </div>
   </>
 }
