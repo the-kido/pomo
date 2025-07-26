@@ -16,8 +16,9 @@ contextBridge.exposeInMainWorld('pomodoro', {
       // "send FROM renderer to main process"
       ipcRenderer.send('closed-pomodoro', data)
    },
-
    sendUpdate: (data: PomodoroTimerInfo) => {
       ipcRenderer.send('sending-pomo-update', data)
-   }
+   },
+   changeSize : (x: number, y: number) => 
+      ipcRenderer.send('change-window-size', x, y)
 });

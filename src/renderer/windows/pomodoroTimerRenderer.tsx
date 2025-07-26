@@ -28,6 +28,10 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   const [pomosCompleted, setPomosCompleted] = useState<number>(info.completed);
   const discTextField = useRef<HTMLTextAreaElement>(null);
 
+  // Required for if we're using the shrunk or not shrunk version of the UI
+  const [isShrunk, setIsShrunk] = useState<boolean>(false);
+  const pomoWindow = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     window.pomodoro.sendUpdate({...info, completed: pomosCompleted});
   }, [pomosCompleted])
@@ -36,7 +40,8 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     
     let out: JSX.Element[] = [];
     
-    const makeSubtask = ( subtaskIndex: number, completed: boolean ) => <Subtask 
+    const makeSubtask = ( subtaskIndex: number, completed: boolean ) => 
+    <Subtask 
       setTaskComplete={() => { 
         completed = true; 
         setCompleteTaskIndicies([...completeTaskIndicies, subtaskIndex]) 
@@ -69,6 +74,16 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     window.pomodoro.attemptClose(info); 
   }
   
+  function onToggleSize(newSize: boolean) {
+    setIsShrunk(newSize);
+  }
+
+  useEffect(() => {
+    // This runs after isShrunk changes and the DOM/layout is updated
+    window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight);
+    // You can also measure the DOM here if needed
+  }, [isShrunk]);
+
   function onDescriptionChangeCancel() {
     finishSettingDescription();
   }
@@ -87,8 +102,11 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   const setDescription = useUpdatingState(state => state.setDescription);
   const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
 
-  return <div className="pomo">
-    <Header onClose={onPomodoroClose}/>
+
+  const subtaskProgressBarColor = `linear-gradient(-90deg,rgba(255, 255, 255, 0) ${(1 - progress) * 100}%,rgba(100, 176, 85, 1) ${(1- progress) * 100}%)`
+
+  return <div ref={pomoWindow} className="pomo">
+    <Header onClose={onPomodoroClose} isShrunk={isShrunk} toggleSize={onToggleSize} />
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
       <div className={"timer"}>
@@ -112,16 +130,21 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
         </div>
       }
     </div>
-      {info.subtasks.length > 0 && <>
+      { info.subtasks.length > 0 && <>
       {/* For the "progress bar" */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <h2 style={{ position: 'absolute', margin: '0px' }}> {completeTaskIndicies.length}/{info.subtasks.length} </h2>
-        <progress style={{ width: '65%', margin: '10px', blockSize: '1.2em' }} id="file" value={progress} max="1"> 32% </progress>
+        <h2 className='progress-bar-text'> 
+           {`${completeTaskIndicies.length}/${info.subtasks.length}`}
+        </h2>
+        <div className='subtask-progress-bar' style={{background: subtaskProgressBarColor, height: '10px'}} ></div>
       </div>
       {/* For the list of subtasks */}
-      {tasks.array}
-      {tasks.leftover > 0 && <p> {`. . . (${tasks.leftover} more)`}</p>}
-    </>}
+      {!isShrunk && <> 
+        {tasks.array} 
+        {tasks.leftover > 0 && <p> {`. . . (${tasks.leftover} more)`}</p>}
+      </> 
+      }
+    </> }
   </div>
 }
 

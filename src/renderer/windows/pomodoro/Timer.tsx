@@ -151,30 +151,34 @@ export default function Timer({workTime, breakTime, onPomoFinished} : {workTime:
   const isPauseButtonEnabled = () => currentState == TimerStates.WorkPaused || currentState == TimerStates.WorkTimer || currentState == TimerStates.JustOpened;
   const isSwitchButtonEnabled = () => currentState == TimerStates.WorkFinished || currentState == TimerStates.BreakFinished || currentState == TimerStates.BreakTimer;
 
+  const progressBarColor = `linear-gradient(-90deg,rgb(206, 202, 202) ${percentLeft * 100}%,rgb(243, 73, 73) ${percentLeft * 100}%)`
   return <>
+    {/* Pop-up related stuff */}
     <Popup usePopupStore={usePausePopupStore}>
-      <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        <h2 style={{width:'100%'}}> You've paused the timer for</h2>
+      <div style={{ textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+        <h2 style={{ width: '100%' }}> You've paused the timer for</h2>
         <h3> {timePausedText}</h3>
-      <textarea id="hint text" placeholder="Optional: why did you pause?" cols={20} rows={5} style={{resize:'none'}}></textarea>
+        <textarea id="hint text" placeholder="Optional: why did you pause?" cols={20} rows={5} style={{ resize: 'none' }}></textarea>
       </div>
     </Popup>
     <Popup usePopupStore={useCheckInPopupStore}>
-      <textarea id="hint text" placeholder="How did that session go?" cols={20} rows={5} style={{resize:'none'}}></textarea>
-        <button onClick={hideCheckIn}>Dismiss</button>
+      <textarea id="hint text" placeholder="How did that session go?" cols={20} rows={5} style={{ resize: 'none' }}></textarea>
+      <button onClick={hideCheckIn}>Dismiss</button>
     </Popup>
-    <div style={{background: `linear-gradient(-90deg,rgb(206, 202, 202) ${percentLeft * 100}%,rgb(243, 73, 73) ${percentLeft * 100}%)`, flex: 1, display: 'flex', justifyContent: 'center'}}>
-      <h1 style={{ fontSize: '50px', margin: '0px' }} > {timeText} </h1>
-    </div>
-    <div style={{display: 'flex', flexDirection: 'column', margin: '10px',  gap: '10px' }} > 
-      <button
-        disabled={!isPauseButtonEnabled()} 
-        onClick={() => onPausePressed()} 
-        style={{width: 70, zIndex: isPaused(currentState) ? 1000 : 'auto'}}
-      >
-        {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
-      </button>
-      <button disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch" } </button>
+    {/* The actual content of the timer */}
+    <div className="progress-bar" style={{ background: progressBarColor, flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <h1 className="timer-text"> {timeText} </h1>
+      <div style={{ display: 'flex', flexDirection: 'column', margin: '10px', gap: '10px' }}>
+        <button
+          disabled={!isPauseButtonEnabled()}
+          onClick={() => onPausePressed()}
+          className="test"
+          style={{ width: 70, zIndex: isPaused(currentState) ? 1000 : 'auto' }}
+        >
+          {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
+        </button>
+        <button disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch"} </button>
+      </div>
     </div>
   </>
 }

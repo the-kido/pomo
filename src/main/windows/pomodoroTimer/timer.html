@@ -6,9 +6,13 @@
     --select-accent: #0078d4;
   }
 
+  body {
+    margin: 0px;
+  }
+
   .pomo {
     /* Padding required to avoid colliding content with the header! */
-    padding-top: 1.5rem;
+    padding-top: 34px;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -56,17 +60,19 @@
     padding-left: 10px;
     margin-bottom: 10px;
 
-    border-style: dashed;
-    border-width: medium;
+    border-radius: var(--input-border-radius);
+    border-style: solid;
+    border-width: 2px;
     box-sizing: border-box;
   }
   
   .subtask-box-incomplete {
-    border-color: rgb(255, 0, 0, var(--percent))
+    border-color: rgb(255, 0, 0, var(--percent));
   }
   
   .subtask-box-completed {
-    border-color: rgb(0, 255, 255, var(--percent))
+    border: none;
+    background-color: #eaeaea;
   }
 
   .justification-input
@@ -79,6 +85,13 @@
   .description {
     text-align: center;
     cursor: text; 
+  }
+
+
+  h1 {
+    line-height: normal;
+    display: flex;
+    align-items: center; /* for vertical centering of text */
   }
 
   h2 {
@@ -120,7 +133,7 @@
 /* Things to do with the custom title bar */
 .title-bar {
   position: fixed;
-  margin: 5px;
+  padding: 5px;
   height: 1.5rem;
   background-color: aliceblue;
   top: 0;
@@ -135,8 +148,48 @@
   -webkit-app-region: drag;
 }
 
+.test {
+  background: rgba(255, 255, 255, 0.447);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
 
+.progress-bar {
+    box-shadow: 
+      inset 0 8px 8px -6px rgba(0, 0, 0, 0.3),  /* Top */
+      inset 0 -8px 8px -6px rgba(0, 0, 0, 0.3); /* Bottom */
+}
 
+.timer-text {
+  font-size: 50px;
+  margin: 0px;
+  background: linear-gradient(45deg, #101010, #535353);
+  
+  background-clip: text;
+  -webkit-background-clip: text;
+  
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* For subtask progress bar stuff */
+
+.subtask-progress-bar {
+  background-color: #0078d4;
+  border-radius: var(--input-border-radius);
+
+  border: 1px solid #0000005f;
+  width: 65%;
+  margin: 10px;
+  block-size: 1.2em;
+}
+
+.progress-bar-text {
+  position: absolute; 
+  margin: 0px; 
+}
 </style>
 
 <!DOCTYPE html>

@@ -6,6 +6,7 @@ export type PomodoroRendererExports = {
     onUnsubUpdate: () => void;
     attemptClose: (data: PomodoroTimerInfo) => void;
     onClosed: (callback: () => void) => void;
+    changeSize: (x: number, y: number) => void;
 };
 
 export enum PomoActivityType { ACTIVE, CHILL, UNKNOWN }

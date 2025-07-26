@@ -77,7 +77,7 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
     , alwaysOnTop: true
   });
 
-  pomodoro.setMinimumSize(300, 500);
+  pomodoro.setMinimumSize(275, 200);
   pomodoro.loadURL(POMODORO_TIMER_WEBPACK_ENTRY);
 
   // This looks so goofy  
@@ -101,6 +101,10 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
   
 ipcMain.on('closed-pomodoro', () => {
   pomodoro.close();
+});
+
+ipcMain.on('change-window-size', (_, x: number, y: number) => {
+  pomodoro.setSize(x, y);
 });
 
 ipcMain.on('save-data', (_, data: UserData) => {
