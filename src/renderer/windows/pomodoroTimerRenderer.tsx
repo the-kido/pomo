@@ -103,7 +103,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
 
 
-  const subtaskProgressBarColor = `linear-gradient(-90deg,rgba(255, 255, 255, 0) ${(1 - progress) * 100}%,rgba(100, 176, 85, 1) ${(1- progress) * 100}%)`
+  const subtaskProgressBarColor = `linear-gradient(-90deg,rgba(255, 255, 255, 0) ${(1 - progress) * 100}%,var(--subtask-progress-green) ${(1 - progress) * 100}%)`
 
   return <div ref={pomoWindow} className="pomo">
     <Header onClose={onPomodoroClose} isShrunk={isShrunk} toggleSize={onToggleSize} />
@@ -132,7 +132,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     </div>
       { info.subtasks.length > 0 && <>
       {/* For the "progress bar" */}
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
         <h2 className='progress-bar-text'> 
            {`${completeTaskIndicies.length}/${info.subtasks.length}`}
         </h2>

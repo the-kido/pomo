@@ -151,7 +151,7 @@ export default function Timer({workTime, breakTime, onPomoFinished} : {workTime:
   const isPauseButtonEnabled = () => currentState == TimerStates.WorkPaused || currentState == TimerStates.WorkTimer || currentState == TimerStates.JustOpened;
   const isSwitchButtonEnabled = () => currentState == TimerStates.WorkFinished || currentState == TimerStates.BreakFinished || currentState == TimerStates.BreakTimer;
 
-  const progressBarColor = `linear-gradient(-90deg,rgb(206, 202, 202) ${percentLeft * 100}%,rgb(243, 73, 73) ${percentLeft * 100}%)`
+  const progressBarColor = `linear-gradient(-90deg, var(--timer-progress-left) ${percentLeft * 100}%,var(--timer-progress-done) ${percentLeft * 100}%)`
   return <>
     {/* Pop-up related stuff */}
     <Popup usePopupStore={usePausePopupStore}>

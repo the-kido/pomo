@@ -105,6 +105,7 @@ ipcMain.on('closed-pomodoro', () => {
 
 ipcMain.on('change-window-size', (_, x: number, y: number) => {
   pomodoro.setSize(x, y);
+  pomodoro.setMinimumSize(x, y);
 });
 
 ipcMain.on('save-data', (_, data: UserData) => {
