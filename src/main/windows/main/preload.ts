@@ -2,6 +2,7 @@
 import { PomodoroRendererExports, PomodoroTimerInfo } from '/src/types/Pomodoro'
 import { contextBridge, ipcRenderer } from 'electron'
 import { UserData } from '/src/types/UserData';
+import { LLMResult } from '/src/main/ai/ollama';
 
 declare global {
     interface Window {
@@ -9,6 +10,9 @@ declare global {
         app: { 
             onDidFinishLoad: (callback: (data: UserData) => void) => void,
             saveData: (data: UserData) => void,
+        },
+        ollama: {
+            generateText: (prompt: string) => Promise<LLMResult>
         }
     }
 }
@@ -44,4 +48,8 @@ contextBridge.exposeInMainWorld('app', {
     saveData: (data: UserData) => {
         ipcRenderer.send('save-data', data);
     }
+});
+
+contextBridge.exposeInMainWorld('ollama', {
+  generateText: (prompt: string) : Promise<LLMResult> => ipcRenderer.invoke('generate', prompt),
 });

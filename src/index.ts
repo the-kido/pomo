@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import '/src/main/data/load'
+import '/src/main/ai/ai'
 
 //#region Main Window
 
