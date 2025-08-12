@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { useGoalStore, useRewardsStore } from "/src/main/states/states"
+import { useGoalStore, useRewardsStore } from "../../main/states/userDataStates"
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "./PomodoroList";
 import { AppContext } from "../App";

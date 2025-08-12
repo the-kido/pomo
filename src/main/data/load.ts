@@ -2,7 +2,7 @@ import { app } from 'electron';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { UserData } from '/src/types/UserData'
-import { DEFAULT_USERDATA } from '../states/states';
+import { DEFAULT_USERDATA } from '../states/userDataStates';
 
 const dataFilePath = path.join(app.getPath('userData'), 'userData.json');
 

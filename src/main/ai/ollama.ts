@@ -1,12 +1,15 @@
 import { ipcMain } from 'electron';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { useOllamaStateStore } from '/src/main/states/appStates';
+
 
 import ollama, { ChatRequest } from 'ollama'
+import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
+const POLL_TIME = 5000; // in milliseconds
 
 const schema = z.object({
-    productiveOrDistraction: z.enum(['PRODUCTIVE', 'DISTRACTION']),
-    siteContentSummary: z.string(),
+    productiveOrDistraction: z.enum([PRODUCTIVE, UNPRODUCTIVE]),
     reason: z.string()
 });
 
@@ -15,7 +18,6 @@ export type LLMResult = z.infer<typeof schema>;
 const IsOllamaActive = async () => {
     try {
         var models = await ollama.list(); 
-        console.log(models.models);
     } catch (e) {
         console.log("uh oh bad bad");
         return false;
@@ -78,3 +80,18 @@ export const generate = async (prompt : string) : Promise<SuccessResult | ErrorR
 }
 
 ipcMain.handle('generate', async (_, prompt: string) => generate(prompt));
+
+let mainWindow: Electron.BrowserWindow | null = null;
+
+export function setMainWindowForAI(win: Electron.BrowserWindow) {
+    mainWindow = win;
+}
+
+// Poll to check if ollama is on or not.
+setInterval(async () => {
+    const isActive = await IsOllamaActive();
+    useOllamaStateStore.getState().setOllamaActive(isActive)
+    if (mainWindow != null) {
+        mainWindow.webContents.send('ollama-state-changed', isActive)
+    }
+}, POLL_TIME); 

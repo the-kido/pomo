@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import CreatePomodoro from "./main/CreatePomodoro";
 import PomodoroList from "./main/PomodoroList";
-import { useUserDataStore } from "../main/states/states";
+import { useUserDataStore } from "../main/states/userDataStates";
 import { UserData } from "../types/UserData";
 
-import '/src/main/states/states'
+import '../main/states/userDataStates'
 import { createContext } from "react";
+import Sidebar from "./main/Sidebar";
 
 export interface AppContext {
     saveData: () => void,
@@ -29,13 +30,23 @@ export default function App() {
 	// Band-aid solution to "entirely" reset CreatePomodoro
 	const [key, setKey] = useState<number>(0);
 
-	return <AppContext.Provider value={{saveData: saveData}} >
-		<button onClick={() => window.ollama.generateText("Given a website titled a - Google Search (https://www.google.com/search?client=firefox-b-d&q=a+), briefly summarize its likely content and explain if it's PRODUCTIVE or a DISTRACTION.").then(a => console.log(a)) } >test</button>
-		<div className="main">
-			<h1> Create a Pomodoro </h1>
-			<CreatePomodoro key={key} reset={() => setKey(key => key + 1)} />
-			<h1> Saved Pomodoros </h1>
-			<PomodoroList />
-		</div>
+	return <AppContext.Provider value={{saveData: saveData}}> 
+		<div className="app" >
+			{/* Sidebar */}
+			<Sidebar />
+			
+			{/* Main container */} 
+			<div className="main-container">
+				{/* Top Overlayed Bar */}
+				<div className="top-bar"> </div>
+				
+				<div className="main-content" style={{maxWidth: "38rem"}}>
+					<h1> Create a Pomodoro </h1>
+					<CreatePomodoro key={key} reset={() => setKey(key => key + 1)} />
+					<h1> Saved Pomodoros </h1>
+					<PomodoroList />
+				</div>
+			</div>
+		</div> 
 	</AppContext.Provider>
 }

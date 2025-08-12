@@ -1,9 +1,5 @@
 <style>
-  .main {
-    margin: auto;
-    max-width: 38rem;
-    padding: 2rem;
-  }
+ 
 
   .creator {
     border: 1px solid #888;
@@ -200,6 +196,59 @@
     font-weight: 400;
     font-size: medium;
   }
+
+
+
+  /* App stuff */
+
+  html, body, #root, .app-container {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+  }
+
+  .app {
+    display: flex;
+    height: 100vh;
+  }
+
+  .side-bar {
+    position: sticky;
+    background: rgb(221, 222, 223);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .main-container {
+    height: 100vh;
+    flex: 1 1 auto;
+    overflow-y: scroll;
+  }
+
+  .top-bar {
+    position: sticky;
+    padding: 0.5rem;
+    height: 1rem;
+    top: 0px;
+    z-index: 999;
+
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
+  
+  .main-content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: auto;
+    width: 100%;
+  }
+
 </style>
 
 <!DOCTYPE html>

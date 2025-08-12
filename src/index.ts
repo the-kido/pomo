@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import '/src/main/data/load'
 import '/src/main/ai/ai'
+import { useAppStateStore } from '/src/main/states/appStates'
 
 //#region Main Window
 
@@ -11,6 +12,8 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 import { readData, writeData } from '/src/main/data/load';
 import { UserData } from './types/UserData';
+import { setMainWindow as setMainWindowForWebserver } from './main/ai/webserver';
+import { setMainWindowForAI } from './main/ai/ollama';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -39,6 +42,9 @@ const createWindow = async (): Promise<void> => {
   mainWindow.webContents.on('did-frame-finish-load', () => {
     mainWindow.webContents.send('hydrate-user-data', data);
   });
+
+  setMainWindowForWebserver(mainWindow)
+  setMainWindowForAI(mainWindow)
 };
 
 app.on('ready', createWindow);
@@ -68,6 +74,8 @@ let pomodoro: BrowserWindow | null = null;
 
 ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electron.BaseWindowConstructorOptions) => {
   
+  useAppStateStore.getState().setActivePomodoro(timerInfo)
+
   pomodoro = new BrowserWindow({
     height: options.height,
     width: options.width,
@@ -94,6 +102,8 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
   });
 
   pomodoro.on('close', (event) => {
+    useAppStateStore.getState().stopPomodoro()
+
     event.preventDefault();
     pomodoro.hide();
     mainWindow.webContents.send('pomodoro-window-closed');

@@ -1,14 +1,15 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { generate, LLMResult } from './ollama';
+import { generate } from './ollama';
 import { addUnblockedSite, IsURLUnblocked } from './blocked-sites'
 import { Website, MessageType, InboundMessage, EntertainmentPayload } from 'prod-app-shared';
-// import { createDeterWindow, closeDeterWindow} from './sites';
+import { useAppStateStore, useExtensionStateStore } from '/src/main/states/appStates';
+import { PomodoroTimerInfo } from '/src/types/Pomodoro';
+import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
 
 const UNBLOCKED_SITE_DELAY_IN_SECONDS = 60 * 15; 
 
-const getPromptText = (title: string, url: string): string => {
-    return `Given a website titled "${title}" (${url}), briefly summarize its likely content and explain if it's PRODUCTIVE or a DISTRACTION.`;
-}
+const getPromptText = (title: string, url: string, currentPomodoro: PomodoroTimerInfo): string => 
+  `In one sentence, is "${title}" (${url}) ${PRODUCTIVE} or ${UNPRODUCTIVE} where productivity is relative to the user-set task of "${currentPomodoro.task}"${currentPomodoro.goal != undefined ? ` with the goal to "${currentPomodoro.goal}"` : ""}? Give a 1-sentence reason. Be concise. User intention over anything else.`
 
 const sendMessageToClient = (client : WebSocket, msg : InboundMessage) => {
     if (client.readyState !== WebSocket.OPEN) return; 
@@ -32,6 +33,10 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 const handleSiteEntered = async (website : Website) =>
 {
+    const currentPomo = useAppStateStore.getState().state
+
+    if (!currentPomo.isActive) return;
+    
     // This deals with entering a bad "SITE", not a bad app!
 
     if (IsURLUnblocked(website.url) == true) {
@@ -40,12 +45,8 @@ const handleSiteEntered = async (website : Website) =>
     }
     console.log(">> Entered site: ", website)
 
-    // const result: LLMResult = await withTimeout(
-    //     generate(getPromptText(website.title, website.url)),
-    //     5000
-    // );
 
-    const generatedOutput = await generate(getPromptText(website.title, website.url));
+    const generatedOutput = await generate(getPromptText(website.title, website.url, currentPomo.timer));
     
     if (generatedOutput.success == false) {
         if (generatedOutput.type == 'ABORTED') {
@@ -64,7 +65,7 @@ const handleSiteEntered = async (website : Website) =>
     // console.log(result.reason);
     if (!result.productiveOrDistraction || !result.reason) throw("The LLM did not give and answer or reason")
     
-    if (result.productiveOrDistraction == 'PRODUCTIVE') return;
+    if (result.productiveOrDistraction == PRODUCTIVE) return;
     
     console.log("Sending for entertainment reasons: ", website.title);
     webSocketServer.clients.forEach((client) => {
@@ -86,9 +87,21 @@ const handleEnterFlaggedSite = (website: Website) => {
     addUnblockedSite(website, UNBLOCKED_SITE_DELAY_IN_SECONDS);
 }
 
-const webSocketServer = new WebSocketServer({ port: 8080 });
+// We inject main window 
+let mainWindow: Electron.BrowserWindow | null = null;
+
+export function setMainWindow(win: Electron.BrowserWindow) {
+    mainWindow = win;
+}
+
+const webSocketServer = new WebSocketServer({ port: 8081 });
 
 webSocketServer.on('connection', (webSocket) => {
+    if (mainWindow == null) return;
+
+    useExtensionStateStore.getState().setExtensionConnected(true);
+    mainWindow.webContents.send('extension-state-changed', true)
+
     console.log("WS was connected!");
 
     webSocket.on('message', (rawData) => {
@@ -118,5 +131,7 @@ webSocketServer.on('connection', (webSocket) => {
     // Handle client disconnection
     webSocket.on('close', () => {
         console.log('Client disconnected');
+        useExtensionStateStore.getState().setExtensionConnected(false);
+        mainWindow.webContents.send('extension-state-changed', false)
     });
 });

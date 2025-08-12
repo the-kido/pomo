@@ -4,7 +4,7 @@ import ListedPomodoro from "./ListedPomodoro";
 import { useContext, useEffect, useState } from "react";
 import Warn from "../misc/Warn";
 import { AppContext } from "../App";
-import { useWindowSizeStore } from "/src/main/states/states";
+import { useWindowSizeStore } from "../../main/states/userDataStates";
 
 interface Pomodoros {
     list: PomodoroTimerInfo[],

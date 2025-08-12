@@ -13,6 +13,10 @@ declare global {
         },
         ollama: {
             generateText: (prompt: string) => Promise<LLMResult>
+        },
+        states: {
+            onOllamaStateChanged: (callback: (isOllamaActive: boolean) => void) => void,
+            onExtensionStateChanged: (callback: (isExtensionConnected: boolean) => void) => void
         }
     }
 }
@@ -53,3 +57,8 @@ contextBridge.exposeInMainWorld('app', {
 contextBridge.exposeInMainWorld('ollama', {
   generateText: (prompt: string) : Promise<LLMResult> => ipcRenderer.invoke('generate', prompt),
 });
+
+contextBridge.exposeInMainWorld('states', {
+    onOllamaStateChanged: (callback: (isOllamaActive: boolean) => void) => ipcRenderer.addListener('ollama-state-changed', (_, change) => callback(change)),
+    onExtensionStateChanged: (callback: (isExtensionConnected: boolean) => void) => ipcRenderer.addListener('extension-state-changed', (_, change) => callback(change))
+})
