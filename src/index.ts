@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import '/src/main/data/load'
 import '/src/main/ai/ai'
+import '/src/main/rpc/discord'
 import { useAppStateStore } from '/src/main/states/appStates'
 
 //#region Main Window
@@ -12,8 +13,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 import { readData, writeData } from '/src/main/data/load';
 import { UserData } from './types/UserData';
-import { setMainWindow as setMainWindowForWebserver } from './main/ai/webserver';
-import { setMainWindowForAI } from './main/ai/ollama';
+import { MAIN_WINDOW_CREATED, mainProcessEvents } from './main/events/events';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -43,8 +43,7 @@ const createWindow = async (): Promise<void> => {
     mainWindow.webContents.send('hydrate-user-data', data);
   });
 
-  setMainWindowForWebserver(mainWindow)
-  setMainWindowForAI(mainWindow)
+  mainProcessEvents.emit(MAIN_WINDOW_CREATED, mainWindow)
 };
 
 app.on('ready', createWindow);

@@ -5,6 +5,7 @@ import { Website, MessageType, InboundMessage, EntertainmentPayload } from 'prod
 import { useAppStateStore, useExtensionStateStore } from '/src/main/states/appStates';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
+import { mainProcessEvents } from '../events/events';
 
 const UNBLOCKED_SITE_DELAY_IN_SECONDS = 60 * 15; 
 
@@ -90,9 +91,9 @@ const handleEnterFlaggedSite = (website: Website) => {
 // We inject main window 
 let mainWindow: Electron.BrowserWindow | null = null;
 
-export function setMainWindow(win: Electron.BrowserWindow) {
-    mainWindow = win;
-}
+mainProcessEvents.on('main-window-created', (window) => {
+    mainWindow = window;
+})
 
 const webSocketServer = new WebSocketServer({ port: 8081 });
 

@@ -17,6 +17,11 @@ export const PomoActivityTypeDisplay: Record<PomoActivityType, string> = {
   [PomoActivityType.UNKNOWN]: "❓ Unknown"
 };
 
+interface Subtask {
+    subtask: string,
+    completed: boolean
+}
+
 export interface PomodoroTimerInfo {
     // Listed in order of what is inputted by the pomodoro creator
     type: PomoActivityType,

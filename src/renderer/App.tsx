@@ -34,7 +34,7 @@ export default function App() {
 		<div className="app" >
 			{/* Sidebar */}
 			<Sidebar />
-			
+	
 			{/* Main container */} 
 			<div className="main-container">
 				{/* Top Overlayed Bar */}

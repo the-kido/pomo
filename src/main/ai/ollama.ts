@@ -6,6 +6,7 @@ import { useOllamaStateStore } from '/src/main/states/appStates';
 
 import ollama, { ChatRequest } from 'ollama'
 import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
+import { mainProcessEvents } from '../events/events';
 const POLL_TIME = 5000; // in milliseconds
 
 const schema = z.object({
@@ -82,10 +83,9 @@ export const generate = async (prompt : string) : Promise<SuccessResult | ErrorR
 ipcMain.handle('generate', async (_, prompt: string) => generate(prompt));
 
 let mainWindow: Electron.BrowserWindow | null = null;
-
-export function setMainWindowForAI(win: Electron.BrowserWindow) {
-    mainWindow = win;
-}
+mainProcessEvents.on('main-window-created', (window) => {
+    mainWindow = window;
+})
 
 // Poll to check if ollama is on or not.
 setInterval(async () => {
