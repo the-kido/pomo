@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import CreatePomodoro from "./main/CreatePomodoro";
+import CreatePomodoro from "./main/createPomodoro/CreatePomodoro";
 import PomodoroList from "./main/PomodoroList";
 import { useUserDataStore } from "../main/states/userDataStates";
 import { UserData } from "../types/UserData";

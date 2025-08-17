@@ -24,6 +24,20 @@ export interface PomodoroTimerInfo {
     timeCreated: number,
 }
 
+export const DEFAULT_POMO_TIMER: PomodoroTimerInfo = {
+  type: PomoActivityType.UNKNOWN,
+  task: '',
+  motivation: '',
+  nextReward: '',
+  subtasks: [],
+  subtasksCompletedIndicies: [],
+  startTimeSeconds: 25 * 60,
+  breakTimeSeconds: 300,
+  received: false,
+  completed: 0,
+  timeCreated: Date.now(),
+}
+
 export interface Window {
     pomodoro: PomodoroRendererExports
 }

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro";
-import CreatePomodoro from "./CreatePomodoro";
+import CreatePomodoro from "./createPomodoro/CreatePomodoro";
 import { AppContext } from "../App";
 
 interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void }
