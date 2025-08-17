@@ -7,6 +7,7 @@ import { useOllamaStateStore } from '/src/main/states/appStates';
 import ollama, { ChatRequest } from 'ollama'
 import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
 import { mainProcessEvents } from '../events/events';
+import { CHANNELS } from '/src/types/IPC';
 const POLL_TIME = 5000; // in milliseconds
 
 const schema = z.object({
@@ -20,7 +21,6 @@ const IsOllamaActive = async () => {
     try {
         var models = await ollama.list(); 
     } catch (e) {
-        console.log("uh oh bad bad");
         return false;
     }
     
@@ -92,6 +92,6 @@ setInterval(async () => {
     const isActive = await IsOllamaActive();
     useOllamaStateStore.getState().setOllamaActive(isActive)
     if (mainWindow != null) {
-        mainWindow.webContents.send('ollama-state-changed', isActive)
+        mainWindow.webContents.send(CHANNELS.fromMainProcess.ollamaStateChanged, isActive)
     }
 }, POLL_TIME); 

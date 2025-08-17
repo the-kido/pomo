@@ -1,13 +1,4 @@
-export type PomodoroRendererExports = {
-    createWindow: (fileToLoad: PomodoroTimerInfo, options: Electron.BrowserWindowConstructorOptions) => void,
-    onInit: (callback: (data: PomodoroTimerInfo) => void) => void;
-    sendUpdate: (data: PomodoroTimerInfo) => void;
-    onUpdate: (callback: (data: PomodoroTimerInfo) => void) => void;
-    onUnsubUpdate: () => void;
-    attemptClose: (data: PomodoroTimerInfo) => void;
-    onClosed: (callback: () => void) => void;
-    changeSize: (x: number, y: number) => void;
-};
+import { PomodoroRendererExports } from "./IPC";
 
 export enum PomoActivityType { ACTIVE, CHILL, UNKNOWN }
 

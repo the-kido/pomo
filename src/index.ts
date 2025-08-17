@@ -14,6 +14,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 import { readData, writeData } from '/src/main/data/load';
 import { UserData } from './types/UserData';
 import { MAIN_WINDOW_CREATED, mainProcessEvents } from './main/events/events';
+import { CHANNELS } from './types/IPC';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -36,11 +37,11 @@ const createWindow = async (): Promise<void> => {
   const data = await readData();
 
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.send('hydrate-user-data', data);
+    mainWindow.webContents.send(CHANNELS.fromMainProcess.hydrateUserData, data);
   });
 
   mainWindow.webContents.on('did-frame-finish-load', () => {
-    mainWindow.webContents.send('hydrate-user-data', data);
+    mainWindow.webContents.send(CHANNELS.fromMainProcess.hydrateUserData, data);
   });
 
   mainProcessEvents.emit(MAIN_WINDOW_CREATED, mainWindow)
@@ -71,7 +72,7 @@ declare const POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY: string;
 
 let pomodoro: BrowserWindow | null = null;
 
-ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electron.BaseWindowConstructorOptions) => {
+ipcMain.handle(CHANNELS.fromMainRenderer.onCreateWindow, (_, timerInfo: PomodoroTimerInfo, options: Electron.BaseWindowConstructorOptions) => {
   
   useAppStateStore.getState().setActivePomodoro(timerInfo)
 
@@ -81,14 +82,13 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
     webPreferences: {preload: POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY},
     frame: false,
     // expose window controls in Windows/Linux
-    ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {})
-    , alwaysOnTop: true
+    ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}), 
+    alwaysOnTop: true
   });
 
   pomodoro.setMinimumSize(275, 200);
   pomodoro.loadURL(POMODORO_TIMER_WEBPACK_ENTRY);
 
-  // This looks so goofy  
   pomodoro.on('maximize', () => {
     pomodoro.unmaximize();
   });
@@ -97,7 +97,7 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
   pomodoro.webContents.openDevTools();
 
   pomodoro.webContents.on('did-finish-load', () => {
-    pomodoro.webContents.send('init-pomodoro', timerInfo);
+    pomodoro.webContents.send(CHANNELS.fromPomodoroMain.onInit, timerInfo);
   });
 
   pomodoro.on('close', (event) => {
@@ -105,25 +105,28 @@ ipcMain.handle('createWindow', (_, timerInfo: PomodoroTimerInfo, options: Electr
 
     event.preventDefault();
     pomodoro.hide();
-    mainWindow.webContents.send('pomodoro-window-closed');
+    mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onClose);
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
   });
 })
   
-ipcMain.on('closed-pomodoro', () => {
+ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
   pomodoro.close();
 });
 
-ipcMain.on('change-window-size', (_, x: number, y: number) => {
+ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number) => {
   pomodoro.setSize(x, y);
   pomodoro.setMinimumSize(x, y);
 });
 
-ipcMain.on('save-data', (_, data: UserData) => {
+ipcMain.on(CHANNELS.fromPomodoroRenderer.onSaveData, (_, data: UserData) => {
   writeData(data);
 });
 
-ipcMain.on('sending-pomo-update', (_, data: PomodoroTimerInfo) => {
-  mainWindow.webContents.send('update-pomodoro', data);
+ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendUpdate, (_, data: PomodoroTimerInfo) => {
+  mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onSendUpdate, data);
 });
 
 //#endregion Pomodoro Window

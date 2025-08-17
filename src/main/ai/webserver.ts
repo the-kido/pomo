@@ -6,6 +6,7 @@ import { useAppStateStore, useExtensionStateStore } from '/src/main/states/appSt
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
 import { mainProcessEvents } from '../events/events';
+import { CHANNELS } from '/src/types/IPC';
 
 const UNBLOCKED_SITE_DELAY_IN_SECONDS = 60 * 15; 
 
@@ -101,7 +102,7 @@ webSocketServer.on('connection', (webSocket) => {
     if (mainWindow == null) return;
 
     useExtensionStateStore.getState().setExtensionConnected(true);
-    mainWindow.webContents.send('extension-state-changed', true)
+    mainWindow.webContents.send(CHANNELS.fromMainProcess.onExtensionStateChanged, true)
 
     console.log("WS was connected!");
 
@@ -133,6 +134,6 @@ webSocketServer.on('connection', (webSocket) => {
     webSocket.on('close', () => {
         console.log('Client disconnected');
         useExtensionStateStore.getState().setExtensionConnected(false);
-        mainWindow.webContents.send('extension-state-changed', false)
+        mainWindow.webContents.send(CHANNELS.fromMainProcess.onExtensionStateChanged, false)
     });
 });
