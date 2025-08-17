@@ -17,7 +17,12 @@ const StagesCleared = createContext<StagesCompletedType | undefined>(undefined);
 function Subtask({subtask, completed, index, onRemove} : {subtask: string, completed: boolean, index: number, onRemove: () => void}) {
 	return <div className="subtask">
 		<div>
-			<span style={{fontWeight: '400', marginRight: '10px', textDecoration: completed ? 'line-through' : 'none' }}>{`${index + 1}.`}</span>{subtask}
+			<span style={{fontWeight: '400', marginRight: '10px'}}>
+        {`${index + 1}.`}
+      </span>
+      <span style={{textDecoration: completed ? 'line-through' : 'none'}} >
+        {subtask}
+      </span>
 		</div> 
 		<button className="delete-button" onClick={onRemove} >
 			<span className="delete-button-x">✖</span>
@@ -25,9 +30,10 @@ function Subtask({subtask, completed, index, onRemove} : {subtask: string, compl
 	</div>
 }
 
-function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimerInfo, stageAt: Stages, onSubtasksChanged: (subtasks: string[]) => void} ) {
+function SubtaskList({info, stageAt, onSubtasksChanged, onIndiciesChanged} : {info? : PomodoroTimerInfo, stageAt: Stages, onSubtasksChanged: (subtasks: string[]) => void, onIndiciesChanged: (subtasks: number[]) => void} ) {
 	const listRef = useRef<HTMLUListElement>(null);
 	const [subtasks, setSubtasks] = useState<string[]>(info ? info.subtasks : []);
+	const [completedIndicies, setCompletedIndicies] = useState<number[]>(info ? info.subtasksCompletedIndicies : []);
 	
 	const stagesCompletedContext = useContext(StagesCleared);
 	useEffect(() => {
@@ -37,23 +43,33 @@ function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimer
 		updateStageCleared(true, Stages.SUBTASKS, stagesCompletedContext, stageAt);
 	}, [subtasks]);
 
-	return <>
-		<ul ref={listRef} className="subtasks">
-				{subtasks.map((task, index) => (
-					<Subtask 
-						key={index} 
-						subtask={task} 
-						completed={info?.subtasksCompletedIndicies?.includes(index) ?? false}
-						index={index} 
-						onRemove={() => { 
-							var newSubtasks = subtasks.filter((_, i) => i != index);
-							setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) 
-						}}
-					/>
-				))}
-			<AddSubtask subtasks={subtasks} setSubtasks={(newSubtasks) => { setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) }} />
-		</ul>
-	</>
+	return <ul ref={listRef} className="subtasks">
+    {subtasks.map((task, index) => (
+      <Subtask 
+        key={index} 
+        subtask={task} 
+        completed={completedIndicies.includes(index)}
+        index={index} 
+        onRemove={() => {
+          // Deal with the completed subtask indicies (the one we deleted should go bye bye. The indicides larger than it decrement)
+          console.log("Before", completedIndicies)
+          const newIndicies = completedIndicies
+            .filter(value => value !== index)
+            .map(value => value > index ? value - 1 : value);
+          console.log("After", newIndicies)
+          
+          setCompletedIndicies(newIndicies);
+          onIndiciesChanged(newIndicies)
+          
+          // Update the subtasks
+          const newSubtasks = subtasks.filter((_, i) => i != index);
+          setSubtasks(newSubtasks);
+          onSubtasksChanged(newSubtasks);
+        }}
+      />
+    ))}
+    <AddSubtask subtasks={subtasks} setSubtasks={(newSubtasks) => { setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) }} />
+  </ul>
 }
 
 function AddSubtask({ subtasks, setSubtasks}: {subtasks: string[], setSubtasks: (subtasks: string[]) => void}) {
@@ -227,6 +243,7 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 	const onMotivationChanged = (string: string) => newPomo.motivation = string;
 	const onRewardChanged = (string: string) => newPomo.nextReward = string;
 	const onSubtasksChanged = (subtasks: string[]) => newPomo.subtasks = subtasks;
+	const onSubtaskCompletedIndiciesChanged = (indicies: number[]) => newPomo.subtasksCompletedIndicies = indicies;
 
 	return <> <div className="creator"> 
 		<div className="creator-content">
@@ -241,7 +258,16 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 				</div>
 				{/* Right */}
 				<div>
-					{canEnterStage(Stages.SUBTASKS) && <SubtaskList info={info} stageAt={stageAt} onSubtasksChanged={ (change) => onSubtasksChanged(change) } />}
+					{canEnterStage(Stages.SUBTASKS) && <SubtaskList 
+            info={info} 
+            stageAt={stageAt} 
+            onSubtasksChanged = { 
+              (change) => onSubtasksChanged(change) 
+            }
+            onIndiciesChanged = {
+              (change) => onSubtaskCompletedIndiciesChanged(change)
+            } 
+          />}
 				</div>
 			</StagesCleared.Provider>
 			</div>
