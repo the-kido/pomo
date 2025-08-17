@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { DEFAULT_POMO_TIMER, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "../PomodoroList";
 import { AppContext } from "../../App";
-import SubtaskList, { SelectFirstRewardStage, TaskStage, TypeStage } from "./SubtaskList";
+import SubtaskList, { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
 
 type StagesCompletedType = {
 	updateStageCleared: (isCompleted: boolean, stage: Stages) => void
@@ -46,7 +46,6 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 			let newIndex = Math.min(stagesRequired.indexOf(largest) + 1, stagesRequired.length - 1);
 			setFurthestStageReached(newIndex);
 		}
-
 	}, [stagesCleared, furthestStageReached])
 	
 	function temp(isCompleted: boolean, stage: Stages) {
@@ -60,10 +59,10 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 	const isStartButtonDisabled = () => !stagesRequired.every(required => stagesCleared.includes(required));
 	const canEnterStage = (stage: Stages) => stagesRequired.includes(stage) && furthestStageReached >= stage;
 
-	const savePomodoro = () => onSaved(newPomo);
+	const savePomodoro = () =>{ console.log(newPomo); onSaved(newPomo);}
 	const cancelUpdate = () => onSaved(info);
 
-	return <> <div className="creator"> 
+	return <div className="creator"> 
 		<div className="creator-content">
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 				
@@ -89,18 +88,28 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 				<div>
 					{canEnterStage(Stages.SUBTASKS) && <SubtaskList 
             info={info} 
-            onSubtasksChanged = { newSubtasks => setNewPomo({ ...newPomo, subtasks: newSubtasks }) }
+            onSubtasksChanged = { newSubtasks => {newPomo.subtasks = newSubtasks;  console.log(newSubtasks)} }
             onIndiciesChanged = { newCompletedTaskIndicies => setNewPomo({ ...newPomo, subtasksCompletedIndicies: newCompletedTaskIndicies }) } 
-          />}
+					/>}
 				</div>
 			</StagesCleared.Provider>
 			</div>
 		</div>
 		<div style={{ display: 'flex', padding: '10px', gap: '8px'}} >
-			<button disabled={ isStartButtonDisabled() } onClick={() => info ? savePomodoro() : createPomodoro()} >{info ? "Save" : "Create"} </button>
-			<button className="reset-button" onClick={() => info ? cancelUpdate() : resetFields()} > {info ? "Cancel" : "Reset" } </button>
+			<button 
+				disabled={ isStartButtonDisabled() } 
+				onClick={() => info ? savePomodoro() : createPomodoro()} 
+			> 
+				{info ? "Save" : "Create"} 
+			</button>
+			<button 
+				className="reset-button" 
+				onClick={() => info ? cancelUpdate() : resetFields()} 
+			>
+				{info ? "Cancel" : "Reset" } 
+			</button>
 		</div>
-	</div> </> 
+	</div>
 }
 
 export default CreatePomodoro;

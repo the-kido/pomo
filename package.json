@@ -44,6 +44,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
     "@types/discord-rpc": "^4.0.9",
     "discord-rpc": "^4.0.1",
     "electron-squirrel-startup": "^1.0.1",
