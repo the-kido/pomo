@@ -42,7 +42,7 @@ export default function App() {
 				
 				<div className="main-content" style={{maxWidth: "38rem"}}>
 					<h1> Create a Pomodoro </h1>
-					<CreatePomodoro key={key} reset={() => setKey(key => key + 1)} />
+					<CreatePomodoro key={key} resetFields={() => setKey(key => key + 1)} />
 					<h1> Saved Pomodoros </h1>
 					<PomodoroList />
 				</div>
