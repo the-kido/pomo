@@ -112,6 +112,7 @@ ipcMain.handle(CHANNELS.fromMainRenderer.onCreateWindow, (_, timerInfo: Pomodoro
   
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
   pomodoro.close();
+    mainProcessEvents.emit('on-close-pomodoro')
 });
 
 ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number) => {

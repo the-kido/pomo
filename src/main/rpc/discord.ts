@@ -8,13 +8,10 @@ const clientId = '1405193043988189205';
 RPC.register(clientId);
 const rpc = new RPC.Client({ transport: 'ipc' });
 
-function getMenuActivity() : RPC.Presence {
+function getMenuPresence() : RPC.Presence {
     return {
         details: 'On menu',
         startTimestamp: new Date(),
-        // largeImageKey: 'app_logo',
-        // largeImageText: 'MyCoolApp',
-        // smallImageKey: 'small_icon',
         instance: false,
     }
 }
@@ -22,27 +19,32 @@ function getMenuActivity() : RPC.Presence {
 mainProcessEvents.on('pomodoro-updated', (pomoInfo: PomodoroTimerInfo) => {
     console.log("HI!", pomoInfo)
     if (rpc) {
-        rpc.setActivity(getPomodoroActivity(pomoInfo));
+        rpc.setActivity(getPomodoroPresence(pomoInfo));
     }
 });
 
-function getPomodoroActivity(pomoInfo: PomodoroTimerInfo) : RPC.Presence {
+mainProcessEvents.on('on-close-pomodoro', () => {
+    if (rpc) {
+        rpc.setActivity(getMenuPresence());
+    }
+})
+
+function getPomodoroPresence(pomoInfo: PomodoroTimerInfo) : RPC.Presence {
+    const taskString = `Task: ${pomoInfo.task}`
+    const subtaskString = `Subtasks: ${pomoInfo.subtasksCompletedIndicies.length}/${pomoInfo.subtasks.length}`
+    const completedString = `🍅 x${pomoInfo.completed}`
+    const stateString = pomoInfo.subtasks.length != 0 ? subtaskString + ' — ' + completedString : completedString
+
     return {
-        details: `Task: ${pomoInfo.task}`,
-        state: 'Subtasks completed',
+        details: taskString,
+        state: stateString,
         startTimestamp: new Date(),
-        // largeImageKey: 'app_logo',
-        // largeImageText: 'MyCoolApp',
-        // smallImageKey: 'small_icon',
         instance: false,
-        // partyId: "101",
-        partySize: 2,
-        partyMax: 2,
     }
 }
 
 rpc.on('ready', () => {
-    rpc.setActivity(getMenuActivity());
+    rpc.setActivity(getMenuPresence());
     console.log('Rich Presence is active');
 });
 

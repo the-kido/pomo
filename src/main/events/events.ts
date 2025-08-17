@@ -8,7 +8,7 @@ export type MainProcessEventMap = {
   'pomodoro-updated': [pomoInfo: PomodoroTimerInfo];
   
   // For tracking pomodoro state.  
-  'app-state-changed-to-menu': []; 
+  'on-close-pomodoro': []; 
 };
 
 export class TypedEventEmitter<T extends Record<string, any[]>> {
