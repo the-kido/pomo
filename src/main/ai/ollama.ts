@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { useOllamaStateStore } from '/src/main/states/appStates';
@@ -88,7 +88,7 @@ mainProcessEvents.on('main-window-created', (window) => {
 })
 
 // Poll to check if ollama is on or not.
-setInterval(async () => {
+var pollForOllamaActivity = setInterval(async () => {
     const isActive = await IsOllamaActive();
     useOllamaStateStore.getState().setOllamaActive(isActive)
     if (mainWindow != null) {

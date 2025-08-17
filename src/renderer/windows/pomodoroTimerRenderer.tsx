@@ -24,7 +24,7 @@ const useUpdatingState = create<UpdateDescription>(set => ({
 
 function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
-  const [completeTaskIndicies, setCompleteTaskIndicies] = useState<Array<number>>([]);
+  const [subtasksCompletedIndicies, setSubtasksCompletedIndicies] = useState<number[]>(info.subtasksCompletedIndicies);
   const [pomosCompleted, setPomosCompleted] = useState<number>(info.completed);
   const discTextField = useRef<HTMLTextAreaElement>(null);
 
@@ -36,6 +36,10 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     window.pomodoro.sendUpdate({...info, completed: pomosCompleted});
   }, [pomosCompleted])
 
+  useEffect(() => {
+    window.pomodoro.sendUpdate({...info, subtasksCompletedIndicies: subtasksCompletedIndicies});
+  }, [subtasksCompletedIndicies])
+
   const setupSubtasks = (): {array: JSX.Element[], leftover: number} => {
     
     let out: JSX.Element[] = [];
@@ -44,7 +48,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     <Subtask 
       setTaskComplete={() => { 
         completed = true; 
-        setCompleteTaskIndicies([...completeTaskIndicies, subtaskIndex]) 
+        setSubtasksCompletedIndicies([...subtasksCompletedIndicies, subtaskIndex]) 
       }} 
       completed={completed} 
       taskDescription={info.subtasks[subtaskIndex]} 
@@ -54,15 +58,15 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     
     // first, populate with tasks that "aren't" complete
     for (let i = 0; i < info.subtasks.length && out.length < 3; i++) {
-      if (completeTaskIndicies.includes(i)) continue;
+      if (subtasksCompletedIndicies.includes(i)) continue;
       
       out.push(makeSubtask(i, false));
     }
     
     // Then populate with tasks that "are" complete.
     // This comes w/ the bonus of adding the items depending on which was completed first!
-    for (let i = 0; i < completeTaskIndicies.length && out.length < 3; i++) {
-      const a = completeTaskIndicies[i];
+    for (let i = 0; i < subtasksCompletedIndicies.length && out.length < 3; i++) {
+      const a = subtasksCompletedIndicies[i];
       out.push(makeSubtask(a, true));
     }
     
@@ -96,7 +100,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
   
   var tasks = setupSubtasks();
-  var progress = 1.0 * completeTaskIndicies.length / info.subtasks.length;
+  var progress = 1.0 * subtasksCompletedIndicies.length / info.subtasks.length;
   
   const updating = useUpdatingState(state => state.updating);
   const setDescription = useUpdatingState(state => state.setDescription);
@@ -134,7 +138,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
       {/* For the "progress bar" */}
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
         <h2 className='progress-bar-text'> 
-           {`${completeTaskIndicies.length}/${info.subtasks.length}`}
+           {`${subtasksCompletedIndicies.length}/${info.subtasks.length}`}
         </h2>
         <div className='subtask-progress-bar' style={{background: subtaskProgressBarColor, height: '10px'}} ></div>
       </div>

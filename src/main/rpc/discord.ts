@@ -1,6 +1,7 @@
 import RPC from 'discord-rpc';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
-import { mainProcessEvents, POMODORO_UPDATED } from '../events/events';
+import { mainProcessEvents } from '../events/events';
+import { useUserDataStore } from '../states/userDataStates';
 
 const clientId = '1405193043988189205';
 
@@ -18,7 +19,8 @@ function getMenuActivity() : RPC.Presence {
     }
 }
 
-mainProcessEvents.on(POMODORO_UPDATED, (pomoInfo: PomodoroTimerInfo) => {
+mainProcessEvents.on('pomodoro-updated', (pomoInfo: PomodoroTimerInfo) => {
+    console.log("HI!", pomoInfo)
     if (rpc) {
         rpc.setActivity(getPomodoroActivity(pomoInfo));
     }

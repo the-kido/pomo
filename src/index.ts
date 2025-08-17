@@ -13,7 +13,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 import { readData, writeData } from '/src/main/data/load';
 import { UserData } from './types/UserData';
-import { MAIN_WINDOW_CREATED, mainProcessEvents } from './main/events/events';
+import { mainProcessEvents } from './main/events/events';
 import { CHANNELS } from './types/IPC';
 
 if (require('electron-squirrel-startup')) app.quit();
@@ -44,12 +44,13 @@ const createWindow = async (): Promise<void> => {
     mainWindow.webContents.send(CHANNELS.fromMainProcess.hydrateUserData, data);
   });
 
-  mainProcessEvents.emit(MAIN_WINDOW_CREATED, mainWindow)
+  mainProcessEvents.emit('main-window-created', mainWindow)
 };
 
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
+  console.log("DONE")
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -106,9 +107,6 @@ ipcMain.handle(CHANNELS.fromMainRenderer.onCreateWindow, (_, timerInfo: Pomodoro
     event.preventDefault();
     pomodoro.hide();
     mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onClose);
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
   });
 })
   
@@ -127,6 +125,7 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onSaveData, (_, data: UserData) => {
 
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendUpdate, (_, data: PomodoroTimerInfo) => {
   mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onSendUpdate, data);
+  mainProcessEvents.emit('pomodoro-updated', data)
 });
 
 //#endregion Pomodoro Window

@@ -2,9 +2,6 @@ import { EventEmitter } from 'events';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import { BrowserWindow } from 'electron';
 
-export const POMODORO_UPDATED = "pomodoro-updated"
-export const MAIN_WINDOW_CREATED = "main-window-created"
-
 // Define all possible events and their argument types
 export type MainProcessEventMap = {
   'main-window-created': [window: BrowserWindow]; 
@@ -13,7 +10,6 @@ export type MainProcessEventMap = {
   // For tracking pomodoro state.  
   'app-state-changed-to-menu': []; 
 };
-
 
 export class TypedEventEmitter<T extends Record<string, any[]>> {
   private emitter = new EventEmitter();

@@ -35,49 +35,49 @@ export default function PomodoroList() {
     const windowHeight = useWindowSizeStore(state => state.height);
 
     const launchPomo = (idx: number) => {
-		window.pomodoro.createWindow(pomoList[idx], {width: windowWidth, height: windowHeight})
-		setLaunchedPomo(idx);
-	}
+      window.pomodoro.createWindow(pomoList[idx], {width: windowWidth, height: windowHeight})
+      setLaunchedPomo(idx);
+    }
 
     useEffect(() => {
-        window.pomodoro.onClosed( () => {
-			setLaunchedPomo(null);
-		})
+      window.pomodoro.onClosed( () => {
+        setLaunchedPomo(null);
+      })
     }, [])
 
     const appContext = useContext<AppContext>(AppContext);
     
     useEffect(() => {
-        window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
-            if (launchedPomo != null) {
-                updatePomodoro(launchedPomo, data);
-                appContext.saveData();
-            }
-        });
-        return () => {
-            window.pomodoro.onUnsubUpdate();
+      window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
+        if (launchedPomo != null) {
+          updatePomodoro(launchedPomo, data);
+          appContext.saveData();
         }
+      });
+      return () => {
+          window.pomodoro.onUnsubUpdate();
+      }
     }, [launchedPomo]);
     
     if (pomoList.length == 0) return <p>You have no saved pomodoros! 🍃</p>
 
-    return <>
-        {promptToDelete.state && <Warn 
-            confirmText="Are you sure you want to delete this pomodoro?"
-            onYes={() => {
-                removePomodoro(promptToDelete.idx); 
-                setPromptToDelete({state: false});
-                appContext.saveData();
-            }}
-            onNo={() => setPromptToDelete({state: false})}
-        />}
-        {pomodoros.map((pomoInfo, idx) => <ListedPomodoro 
-            info={pomoInfo} 
-            key={idx} 
-            onUpdate={(newPomo) => updatePomodoro(idx, newPomo)}
-            status={launchedPomo == null ? 'launchable' : (launchedPomo == idx ? 'launched' : 'cant launch')}
-            onLaunch={() => launchPomo(idx)}
-            onDelete={() => setPromptToDelete({state: true, idx: idx})}
-        />)}
-    </>
+  return <>
+    {promptToDelete.state && <Warn 
+      confirmText="Are you sure you want to delete this pomodoro?"
+      onYes={() => {
+        removePomodoro(promptToDelete.idx); 
+        setPromptToDelete({state: false});
+        appContext.saveData();
+      }}
+      onNo={() => setPromptToDelete({state: false})}
+    />}
+    {pomodoros.map((pomoInfo, idx) => <ListedPomodoro 
+      info={pomoInfo} 
+      key={idx} 
+      onUpdate={(newPomo) => updatePomodoro(idx, newPomo)}
+      status={launchedPomo == null ? 'launchable' : (launchedPomo == idx ? 'launched' : 'cant launch')}
+      onLaunch={() => launchPomo(idx)}
+      onDelete={() => setPromptToDelete({state: true, idx: idx})}
+    />)}
+  </>
 }

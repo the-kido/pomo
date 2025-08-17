@@ -11,7 +11,7 @@ interface TimerState {
 
 enum TimerStates { JustOpened, WorkTimer, WorkPaused, WorkFinished, BreakTimer, BreakFinished }
 
-export default function Timer({workTime, breakTime, onPomoFinished} : {workTime: number, breakTime: number, pomosFinished: number, onPomoFinished: () => void} ) {
+export default function Timer({workTime, breakTime, pomosFinished, onPomoFinished} : {workTime: number, breakTime: number, pomosFinished: number, onPomoFinished: () => void} ) {
 
   const [currentState, setCurrentState] = useState<TimerStates>(TimerStates.JustOpened);
 

@@ -14,10 +14,10 @@ type StagesCompletedType = {
 
 const StagesCleared = createContext<StagesCompletedType | undefined>(undefined);
 
-function Subtask({subtask, index, onRemove} : {subtask: string, index: number, onRemove: () => void}) {
+function Subtask({subtask, completed, index, onRemove} : {subtask: string, completed: boolean, index: number, onRemove: () => void}) {
 	return <div className="subtask">
 		<div>
-			<span style={{fontWeight: '400', marginRight: '10px'}}>{`${index + 1}.`}</span>{subtask}
+			<span style={{fontWeight: '400', marginRight: '10px', textDecoration: completed ? 'line-through' : 'none' }}>{`${index + 1}.`}</span>{subtask}
 		</div> 
 		<button className="delete-button" onClick={onRemove} >
 			<span className="delete-button-x">✖</span>
@@ -40,10 +40,16 @@ function SubtaskList({info, stageAt, onSubtasksChanged} : {info? : PomodoroTimer
 	return <>
 		<ul ref={listRef} className="subtasks">
 				{subtasks.map((task, index) => (
-					<Subtask key={index} subtask={task} index={index} onRemove={() => { 
-						var newSubtasks = subtasks.filter((_, i) => i != index);
-						setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) 
-					}}/>
+					<Subtask 
+						key={index} 
+						subtask={task} 
+						completed={info?.subtasksCompletedIndicies?.includes(index) ?? false}
+						index={index} 
+						onRemove={() => { 
+							var newSubtasks = subtasks.filter((_, i) => i != index);
+							setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) 
+						}}
+					/>
 				))}
 			<AddSubtask subtasks={subtasks} setSubtasks={(newSubtasks) => { setSubtasks(newSubtasks); onSubtasksChanged(newSubtasks) }} />
 		</ul>
@@ -174,6 +180,7 @@ function CreatePomodoro({info, onSaved, reset} : {info? : PomodoroTimerInfo, onS
 		motivation: '',
 		nextReward: '',
 		subtasks: [],
+		subtasksCompletedIndicies: [],
 		startTimeSeconds: 25 * 60,
 		breakTimeSeconds: 300,
 		received: false,
