@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { UserData, UserDataStore } from '/src/types/UserData';
-import { usePomodorosStore } from '/src/renderer/main/PomodoroList';
+import { useCompletedPomodorosStore, usePomodorosStore } from '/src/renderer/main/PomodoroList';
 
 export const DEFAULT_USERDATA: UserData = {
 	user: {
@@ -14,7 +14,8 @@ export const DEFAULT_USERDATA: UserData = {
 		width: 0,
 		height: 0
 	},
-	storedPomos: []
+	storedPomos: [],
+	storedCompletedPomos: []
 }
 
 const SHORT_BREAK_MAYBE_TOO_LONG = 15 * 60;
@@ -45,17 +46,18 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				height: length,
 			},
 			storedPomos: usePomodorosStore.getState().list,
+			storedCompletedPomos: useCompletedPomodorosStore.getState().list
 		};
 	}, loadUserData: (data) => {
-		useGoalStore.getState().setGoals([...data.user.goals]);
+		useGoalStore.getState().setGoals([...data.user.goals] );
 		useRewardsStore.getState().setRewards([...data.user.rewards]);
 		usePomodoroTimerStore.getState().setBreakTime(data.user.breakTime);
 		usePomodoroTimerStore.getState().setLongBreakTime(data.user.longBreakTime);
 		usePomodoroTimerStore.getState().setWorkTime(data.user.workTime);
-		
 		useWindowSizeStore.getState().setSize(data.window.width, data.window.height);
-		usePomodorosStore.getState().setPomodoros(data.storedPomos);
-	},
+		usePomodorosStore.getState().setPomodoros([...data.storedPomos]);
+		useCompletedPomodorosStore.getState().setPomodoros([...data.storedCompletedPomos])
+	}
 }))
 
 interface Goals {

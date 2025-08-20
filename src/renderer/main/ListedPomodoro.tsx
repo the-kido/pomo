@@ -2,14 +2,15 @@ import { useContext, useState } from "react";
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./createPomodoro/CreatePomodoro";
 import { AppContext } from "../App";
+import { Check } from "lucide-react";
 
-interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void }
+interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void, onMarkAsComplete: () => void }
 
 /*
 Represents an entry of a created pomodoro timer within the
 pomodoro list present on the main screen.
 */
-export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDelete  }: ListedPomodoroProps) {
+export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDelete, onMarkAsComplete }: ListedPomodoroProps) {
 	
 	const [editing, setEditing] = useState<boolean>(false);
 	
@@ -76,7 +77,8 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
 				<button disabled={status == 'launched'} onClick={() => setEditing(true)} > Edit </button>
 				<button disabled={status != 'launchable'} onClick={() => onLaunch()} > { status != 'launched' ? 'Launch 🚀' : 'Launched' } </button>
 			</div>
-			<div>
+			<div style={{ display: 'flex', gap: '8px'}}>
+				<button onClick={() => onMarkAsComplete()} > <Check /> </button>
 				<button onClick={() => onDelete()} > 🗑️ </button>
 			</div>
 		</div>

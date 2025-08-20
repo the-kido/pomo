@@ -230,9 +230,9 @@ function SortableSubtask(props: {id: string, subtask: string, completed: boolean
   };
 
   return (
-    <li ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style}>
       <Subtask {...props} dragAttributes={attributes} dragListeners={listeners} />
-    </li>
+    </div>
   );
 }
 

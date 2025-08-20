@@ -13,6 +13,7 @@ export interface UserData {
     height: number;
   };
   storedPomos: Array<PomodoroTimerInfo>;
+  storedCompletedPomos: Array<PomodoroTimerInfo>;
 }
 
 export interface UserDataStore {
