@@ -9,12 +9,17 @@
 }
 
 .modal-content {
+	display: flex;
+	flex-direction: row;
+
+	max-height: 70vh;
+	
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	background-color: white;
-	border-radius: 8px;
+	border-radius: var(--input-border-radius);
 	z-index: 1000;
 	min-width: 50vw;
 	min-height: 70vh;
@@ -27,7 +32,6 @@
 	align-items: center;
 	border-bottom: 1px solid #eee;
 	padding-bottom: 10px;
-	margin-bottom: 15px;
 }
 
 .modal-header h2 {
@@ -42,8 +46,121 @@
 }
 
 .settings-menu {
+	border-top-left-radius: var(--input-border-radius);
+	border-bottom-left-radius: var(--input-border-radius);
 	width: 10em;
-
+	background-color: #b0b0b0;
 	gap: 0.5em;
+	display: flex;
+	flex-direction: column;
+}
 
+.settings-content {
+	display: flex;
+	flex-direction: column;
+	flex: 1; /* fill remaining space */
+}
+
+/* terrible name */
+.settings-main-content {
+	flex: 1;
+	overflow: auto;
+	padding: 0px;
+}
+.sticky-content-header {
+	padding: 0px 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.settings-buttons {
+	margin: auto;
+    margin-top: 0px;
+    width: 8em;
+    display: flex;
+    flex-direction: column;
+	gap: 0.3em;
+}
+
+.settings-menu-item {
+	background: none;
+	border: none;
+}
+.settings-menu-item:hover {
+	background: #ffffff71;
+}
+.settings-menu-item:active {
+	background: rgb(205, 94, 94);
+}
+
+.settings-menu-item-active {
+	border: none;
+	filter: none;
+	background: rgb(209, 196, 196);
+}
+
+.settings-menu-item-active:hover {
+	background: rgb(207, 153, 153);
+}
+.settings-menu-item-active:active {
+	background: rgb(205, 94, 94);
+}
+
+/* 
+
+
+*/
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0px;
+  border-bottom: 1px solid rgb(171, 171, 171);
+}
+
+.setting-item:last-child {
+  border-bottom: none; /* no dangling line */
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-label {
+  font-weight: 500;
+}
+
+.setting-description {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+/* 
+
+
+*/
+
+::-webkit-scrollbar {
+  width: 4px;   /* vertical scrollbar */
+  height: 12px;  /* horizontal scrollbar */
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background: #f0f0f000;
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* On hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

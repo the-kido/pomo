@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { DEFAULT_POMO_TIMER, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "../PomodoroList";
 import { AppContext } from "../../App";
-import SubtaskList, { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
+import { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
+import { TestTing } from "/src/main/components/EditableList";
 
 type StagesCompletedType = {
 	updateStageCleared: (isCompleted: boolean, stage: Stages) => void
@@ -86,10 +87,10 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 				</div>
 				{/* Right */}
 				<div>
-					{canEnterStage(Stages.SUBTASKS) && <SubtaskList 
-            info={info} 
-            onSubtasksChanged = { newSubtasks => {newPomo.subtasks = newSubtasks;  console.log(newSubtasks)} }
-            onIndiciesChanged = { newCompletedTaskIndicies => setNewPomo({ ...newPomo, subtasksCompletedIndicies: newCompletedTaskIndicies }) } 
+					{canEnterStage(Stages.SUBTASKS) && <TestTing 
+						info={info} 
+						onSubtasksChanged = { newSubtasks => {newPomo.subtasks = newSubtasks;  console.log(newSubtasks)} }
+						onIndiciesChanged = { newCompletedTaskIndicies => setNewPomo({ ...newPomo, subtasksCompletedIndicies: newCompletedTaskIndicies }) } 
 					/>}
 				</div>
 			</StagesCleared.Provider>

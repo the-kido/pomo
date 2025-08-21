@@ -31,8 +31,6 @@ export default function App() {
 	// Band-aid solution to "entirely" reset CreatePomodoro
 	const [key, setKey] = useState<number>(0);
 
-	// const cal: CalHeatmap = new CalHeatmap();
-
 
 	return <AppContext.Provider value={{saveData: saveData}}> 
 		<div className="app" >
@@ -49,8 +47,6 @@ export default function App() {
 					<CreatePomodoro key={key} resetFields={() => setKey(key => key + 1)} />
 					<h1> Saved Pomodoros </h1>
 					<PomodoroList />
-
-					{/* TEST */}
 				</div>
 			</div>
 		</div> 

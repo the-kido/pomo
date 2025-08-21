@@ -6,7 +6,7 @@ import { PomoActivityType, PomodoroTimerInfo, PomoActivityTypeDisplay } from "/s
 const NONE: string = "None"
 const PLEASE_SELECT: string = "Please Select"
 
-interface SubtaskItem {
+export interface SubtaskItem {
   id: string;
   text: string;
 }
@@ -106,175 +106,175 @@ export function SelectFirstRewardStage(props: { info? : PomodoroTimerInfo, onRew
 }
 
 //#region Subtask Stage
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+// import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+// import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+// import { useSortable } from '@dnd-kit/sortable';
+// import { CSS } from '@dnd-kit/utilities';
 
-export default function SubtaskList({info, onSubtasksChanged, onIndiciesChanged} : {info? : PomodoroTimerInfo, onSubtasksChanged: (subtasks: string[]) => void, onIndiciesChanged: (subtasks: number[]) => void} ) {
-  const listRef = useRef<HTMLUListElement>(null);
+// export default function SubtaskList({info, onSubtasksChanged, onIndiciesChanged} : {info? : PomodoroTimerInfo, onSubtasksChanged: (subtasks: string[]) => void, onIndiciesChanged: (subtasks: number[]) => void} ) {
+//   const listRef = useRef<HTMLUListElement>(null);
 
-  // Use the new SubtaskItem interface and generate initial IDs
-  const [subtasks, setSubtasks] = useState<SubtaskItem[]>(
-    info ? info.subtasks.map((text) => ({ id: crypto.randomUUID(), text })) : []
-  );
+//   // Use the new SubtaskItem interface and generate initial IDs
+//   const [subtasks, setSubtasks] = useState<SubtaskItem[]>(
+//     info ? info.subtasks.map((text) => ({ id: crypto.randomUUID(), text })) : []
+//   );
   
-  const [completedIndicies, setCompletedIndicies] = useState<number[]>(info ? (info.subtasksCompletedIndicies || []) : []);
+//   const [completedIndicies, setCompletedIndicies] = useState<number[]>(info ? (info.subtasksCompletedIndicies || []) : []);
   
-  const stagesCompletedContext = useContext(StagesCleared);
+//   const stagesCompletedContext = useContext(StagesCleared);
   
-  const onRemove = (idToRemove: string) => {
-    const indexToRemove = subtasks.findIndex(task => task.id === idToRemove);
-    if (indexToRemove === -1) return;
+//   const onRemove = (idToRemove: string) => {
+//     const indexToRemove = subtasks.findIndex(task => task.id === idToRemove);
+//     if (indexToRemove === -1) return;
 
-    // Deal with the completed subtask indicies
-    const newIndicies = completedIndicies
-      .filter(value => value !== indexToRemove)
-      .map(value => value > indexToRemove ? value - 1 : value);
+//     // Deal with the completed subtask indicies
+//     const newIndicies = completedIndicies
+//       .filter(value => value !== indexToRemove)
+//       .map(value => value > indexToRemove ? value - 1 : value);
     
-    setCompletedIndicies(newIndicies);
-    onIndiciesChanged(newIndicies)
+//     setCompletedIndicies(newIndicies);
+//     onIndiciesChanged(newIndicies)
     
-    // Update the subtasks
-    const newSubtasks = subtasks.filter(task => task.id !== idToRemove);
-    setSubtasks(newSubtasks);
-    onSubtasksChanged(newSubtasks.map(task => task.text));
-  }
+//     // Update the subtasks
+//     const newSubtasks = subtasks.filter(task => task.id !== idToRemove);
+//     setSubtasks(newSubtasks);
+//     onSubtasksChanged(newSubtasks.map(task => task.text));
+//   }
   
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+//   const sensors = useSensors(
+//     useSensor(PointerSensor),
+//     useSensor(KeyboardSensor, {
+//       coordinateGetter: sortableKeyboardCoordinates,
+//     })
+//   );
 
-   const handleDragEnd = (event: DragEndEvent) => {
-    const {active, over} = event;
+//    const handleDragEnd = (event: DragEndEvent) => {
+//     const {active, over} = event;
 
-    if (over && active.id !== over.id) {
-      const oldIndex = subtasks.findIndex(task => task.id === active.id);
-      const newIndex = subtasks.findIndex(task => task.id === over.id);
+//     if (over && active.id !== over.id) {
+//       const oldIndex = subtasks.findIndex(task => task.id === active.id);
+//       const newIndex = subtasks.findIndex(task => task.id === over.id);
 
-      // 1. Reorder the subtasks array
-      const reorderedSubtasks = arrayMove(subtasks, oldIndex, newIndex);
-      setSubtasks(reorderedSubtasks);
-      onSubtasksChanged(reorderedSubtasks.map(task => task.text));
+//       // 1. Reorder the subtasks array
+//       const reorderedSubtasks = arrayMove(subtasks, oldIndex, newIndex);
+//       setSubtasks(reorderedSubtasks);
+//       onSubtasksChanged(reorderedSubtasks.map(task => task.text));
 
-      // 2. Remap the completed indicies to their new positions
-      const remappedCompleted = completedIndicies.map(completedIndex => {
-        if (completedIndex === oldIndex) return newIndex;
-        if (completedIndex >= newIndex && completedIndex < oldIndex) return completedIndex + 1;
-        if (completedIndex <= newIndex && completedIndex > oldIndex) return completedIndex - 1;
-        return completedIndex;
-      });
+//       // 2. Remap the completed indicies to their new positions
+//       const remappedCompleted = completedIndicies.map(completedIndex => {
+//         if (completedIndex === oldIndex) return newIndex;
+//         if (completedIndex >= newIndex && completedIndex < oldIndex) return completedIndex + 1;
+//         if (completedIndex <= newIndex && completedIndex > oldIndex) return completedIndex - 1;
+//         return completedIndex;
+//       });
 
-      setCompletedIndicies(remappedCompleted);
-      onIndiciesChanged(remappedCompleted);
-    }
-  }
+//       setCompletedIndicies(remappedCompleted);
+//       onIndiciesChanged(remappedCompleted);
+//     }
+//   }
 
-  useEffect(() => {
-        if (listRef.current) {
-            listRef.current.scrollTop = listRef.current.scrollHeight;
-        }
-        stagesCompletedContext.updateStageCleared(true, Stages.SUBTASKS);
-    }, [subtasks]);
+//   useEffect(() => {
+//         if (listRef.current) {
+//             listRef.current.scrollTop = listRef.current.scrollHeight;
+//         }
+//         stagesCompletedContext.updateStageCleared(true, Stages.SUBTASKS);
+//     }, [subtasks]);
 
-    return (
-    <DndContext 
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext 
-        items={subtasks.map(task => task.id)} // Use stable IDs
-        strategy={verticalListSortingStrategy}
-      >
-        <ul ref={listRef} className="subtasks">
-          {subtasks.map((task, index) => (
-            <SortableSubtask 
-              key={task.id} // Use stable ID for React key
-              id={task.id} // Use stable ID for dnd-kit
-              subtask={task.text} 
-              completed={completedIndicies.includes(index)}
-              index={index}
-              onRemove={() => onRemove(task.id)}
-            />
-          ))}
-          <AddSubtask 
-            onAddSubtask={(text) => {
-              const newSubtasks = [...subtasks, { id: crypto.randomUUID(), text }];
-              setSubtasks(newSubtasks);
-              onSubtasksChanged(newSubtasks.map(task => task.text));
-            }} 
-            nextIndex={subtasks.length + 1}
-          />
-        </ul>
-      </SortableContext>
-    </DndContext>
-  )
-}
+//     return (
+//     <DndContext 
+//       sensors={sensors}
+//       collisionDetection={closestCenter}
+//       onDragEnd={handleDragEnd}
+//     >
+//       <SortableContext 
+//         items={subtasks.map(task => task.id)} // Use stable IDs
+//         strategy={verticalListSortingStrategy}
+//       >
+//         <ul ref={listRef} className="subtasks">
+//           {subtasks.map((task, index) => (
+//             <SortableSubtask 
+//               key={task.id} // Use stable ID for React key
+//               id={task.id} // Use stable ID for dnd-kit
+//               subtask={task.text} 
+//               completed={completedIndicies.includes(index)}
+//               index={index}
+//               onRemove={() => onRemove(task.id)}
+//             />
+//           ))}
+//           <AddSubtask 
+//             onAddSubtask={(text) => {
+//               const newSubtasks = [...subtasks, { id: crypto.randomUUID(), text }];
+//               setSubtasks(newSubtasks);
+//               onSubtasksChanged(newSubtasks.map(task => task.text));
+//             }} 
+//             nextIndex={subtasks.length + 1}
+//           />
+//         </ul>
+//       </SortableContext>
+//     </DndContext>
+//   )
+// }
 
-function SortableSubtask(props: {id: string, subtask: string, completed: boolean, index: number, onRemove: () => void}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({id: props.id}); // Use the stable ID
+// function SortableSubtask(props: {id: string, subtask: string, completed: boolean, index: number, onRemove: () => void}) {
+//   const {
+//     attributes,
+//     listeners,
+//     setNodeRef,
+//     transform,
+//     transition,
+//   } = useSortable({id: props.id}); // Use the stable ID
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+//   const style = {
+//     transform: CSS.Transform.toString(transform),
+//     transition,
+//   };
 
-  return (
-    <div ref={setNodeRef} style={style}>
-      <Subtask {...props} dragAttributes={attributes} dragListeners={listeners} />
-    </div>
-  );
-}
+//   return (
+//     <div ref={setNodeRef} style={style}>
+//       <Subtask {...props} dragAttributes={attributes} dragListeners={listeners} />
+//     </div>
+//   );
+// }
 
-function Subtask({subtask, completed, index, onRemove, dragAttributes, dragListeners} : {subtask: string, completed: boolean, index: number, onRemove: () => void, dragAttributes: any, dragListeners: any}) {
-  return <div className="subtask" {...dragAttributes} {...dragListeners}>
-    <div>
-      <span style={{fontWeight: '400', marginRight: '10px'}}>
-        {`${index + 1}.`}
-      </span>
-      <span style={{textDecoration: completed ? 'line-through' : 'none'}} >
-        {subtask}
-      </span>
-    </div> 
-    <button className="delete-button" onClick={onRemove} >
-      <span className="delete-button-x">✖</span>
-    </button>
-  </div>
-}
+// function Subtask({subtask, completed, index, onRemove, dragAttributes, dragListeners} : {subtask: string, completed: boolean, index: number, onRemove: () => void, dragAttributes: any, dragListeners: any}) {
+//   return <div className="subtask" {...dragAttributes} {...dragListeners}>
+//     <div>
+//       <span style={{fontWeight: '400', marginRight: '10px'}}>
+//         {`${index + 1}.`}
+//       </span>
+//       <span style={{textDecoration: completed ? 'line-through' : 'none'}} >
+//         {subtask}
+//       </span>
+//     </div> 
+//     <button className="delete-button" onClick={onRemove} >
+//       <span className="delete-button-x">✖</span>
+//     </button>
+//   </div>
+// }
 
-function AddSubtask({ onAddSubtask, nextIndex }: { onAddSubtask: (text: string) => void, nextIndex: number }) {
-  const [newTask, setNewTask] = useState<string>('')
-  const input = useRef<HTMLInputElement>(null);
+// function AddSubtask({ onAddSubtask, nextIndex }: { onAddSubtask: (text: string) => void, nextIndex: number }) {
+//   const [newTask, setNewTask] = useState<string>('')
+//   const input = useRef<HTMLInputElement>(null);
 
-  const onAddSubtaskPressed = () => {
-    onAddSubtask(newTask);
-    setNewTask('');
-    input.current.value = '';
-  }
+//   const onAddSubtaskPressed = () => {
+//     onAddSubtask(newTask);
+//     setNewTask('');
+//     input.current.value = '';
+//   }
   
-  return <p className="subtask">
-    { `${nextIndex}.` } 
-    <input
-      ref={input}
-      type="text" 
-      className="inline-input" 
-      onChange={(e) => setNewTask(e.target.value)}
-      placeholder="Add a subtask"
-    />
-    <button disabled={newTask === ''} onClick={onAddSubtaskPressed}>
-      Add
-    </button>
-  </p>
-}
+//   return <p className="subtask">
+//     { `${nextIndex}.` } 
+//     <input
+//       ref={input}
+//       type="text" 
+//       className="inline-input" 
+//       onChange={(e) => setNewTask(e.target.value)}
+//       placeholder="Add a subtask"
+//     />
+//     <button disabled={newTask === ''} onClick={onAddSubtaskPressed}>
+//       Add
+//     </button>
+//   </p>
+// }
 
 //#endregion
