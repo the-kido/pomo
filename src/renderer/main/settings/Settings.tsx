@@ -1,14 +1,12 @@
 import './settings.css'; // Import the styles
 import './temp.css'; // Import the styles
-import { JSX, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useUiStore } from '../Sidebar';
-import { Menu, Settings, Sticker } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { SortableSubtask, SubtaskList } from '/src/main/components/EditableList';
-import { DragEndEvent } from '@dnd-kit/core/dist';
 import { SubtaskItem } from '../createPomodoro/Stages';
-import { DEFAULT_POMO_TIMER } from '/src/types/Pomodoro';
 import { AppContext } from '../../App';
-import { useRewardsStore, useUserSettingsStore } from '/src/main/states/userDataStates';
+import { useGoalStore, useRewardsStore, useUserSettingsStore } from '/src/main/states/userDataStates';
 
 enum Menus {
   BUILDING,
@@ -23,11 +21,7 @@ const MENU_LABELS: Record<Menus, string> = {
 
 export default function SettingsModal() {
   const { isSettingsOpen, closeSettings } = useUiStore();
-
-  // Settings stuff
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<Menus>(Menus.BUILDING);
-
 
   // If the modal is not open, render nothing.
   if (!isSettingsOpen) {
@@ -61,8 +55,6 @@ export default function SettingsModal() {
             </div>
           </div>
           {/* Right content bar */}
-          {/* <div style={{}} > */}
-
           <div className="settings-content">
             <div className='sticky-content-header'>
               <h2>{MENU_LABELS[selectedMenu]}</h2>
@@ -72,29 +64,22 @@ export default function SettingsModal() {
               <div style={{padding: '0px 10px'}} >
 
               {selectedMenu === Menus.BUILDING && (
-                <>
-                  <h2>Stages Shown</h2>
-                </>
+                <BuildingPomoPage />
               )}
               {selectedMenu === Menus.APPEARANCE && (
-                <>
-                  <ToggleSwitch isOn={isDarkMode} handleToggle={() => {
-                    setIsDarkMode(old => !old)
-                  }} />
-                  <span>Dark Mode</span>
-                </>
+               <AppearancePage/>
                 )}
               {selectedMenu === Menus.ABOUT && (
-                <BuildingPomoPage />
+                <p>
+                  Made by kido!
+                </p>
               )}
               {/* Spacer */}
               <div style={{height: '100px'}} ></div>
             </div>
               </div>
           </div>
-          </div>
-
-      {/* </div> */}
+      </div>
     </>
   );
 }
@@ -167,14 +152,14 @@ export function ToggleSwitch({ isOn, handleToggle }: ToggleSwitchProps) {
   );
 }
 
-function SettingItem({ label, description, control }: {label: string, description: string, control: JSX.Element}) {
+function SettingItem({ label, description, children }: {label: string, description: string, children:  React.ReactNode} ) {
   return (
     <div className="setting-item">
       <div className="setting-info">
         <div className="setting-label">{label}</div>
         {description && <div className="setting-description">{description}</div>}
       </div>
-      <div className="setting-control">{control}</div>
+      <div className="setting-control">{children}</div>
     </div>
   );
 }
@@ -198,58 +183,110 @@ function BuildingPomoPage() {
     <h2> Toggle Creation Features </h2>
     <div>
       <SettingItem
-      label="Task Type"
-      description="Lets you specify the type of task to orient you"
-      control={
+        label="Task Type"
+        description="Lets you specify the type of task to orient you"
+      > 
         <ToggleSwitch 
           isOn={enabledTaskType} 
           handleToggle={() => setShowTaskType(old => !old)} 
         />
-      }
-      />
-    <SettingItem
-      label="Task Rewards"
-      description="Lets you choose what you get once a timer switches to break"
-      control={
-        <ToggleSwitch 
+      </SettingItem>
+      <SettingItem
+        label="Task Rewards"
+        description="Lets you choose what you get once a timer switches to break"
+      > 
+      <ToggleSwitch 
           isOn={enableTaskRewards}
           handleToggle={() => setShowTaskRewards(old => !old)} 
         />
-      }
-      />
+      </SettingItem>
     </div>
 
     <h2> Your Creation Options </h2>
     
     <div>
       <SettingItem
+        label='Goals'
+        description='Edit the list of goals you set to achieve for active tasks'
+      >
+      <SubtaskList 
+          initialItems={useGoalStore.getState().goals}
+          renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
+            key={task.id} 
+            id={task.id} 
+            subtask={task.text} 
+            completed={false} 
+            index={index} 
+            onRemove={() => {console.log(task.id, "HELLO"); remove(task.id)}} 
+          />}
+          onRemove={(subtasks: SubtaskItem[], id: string) => {
+            const itemToRemove = subtasks.find(task => task.id === id);
+            console.log(itemToRemove)
+            if (itemToRemove == null) return
+            useGoalStore.getState().removeGoal(itemToRemove.text)
+            appContext.saveData()
+          }}
+          onSubtasksChanged={(subtasks: string[], added: string): void => {
+            useGoalStore.getState().setGoals(subtasks)
+            appContext.saveData()
+          }} 
+        />        
+      </SettingItem>
+
+      <SettingItem
         label='Rewards'
         description='Edit the set rewards you can give yourself when switching to break'
-        control={
-          <SubtaskList 
-            initialItems={useRewardsStore.getState().rewards}
-            renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
-              key={task.id} 
-              id={task.id} 
-              subtask={task.text} 
-              completed={false} 
-              index={index} 
-              onRemove={() => {console.log(task.id, "HELLO"); remove(task.id)}} 
-            />}
-            onRemove={(subtasks: SubtaskItem[], id: string) => {
-              const itemToRemove = subtasks.find(task => task.id === id);
-              console.log(itemToRemove)
-              if (itemToRemove == null) return
-              useRewardsStore.getState().removeReward(itemToRemove.text)
-              appContext.saveData()
-            }}
-            onSubtasksChanged={(subtasks: string[], added: string): void => {
-              useRewardsStore.getState().setRewards(subtasks)
-              appContext.saveData()
-            }} 
-          />        
-        }
-      />
+      >
+        <SubtaskList 
+          initialItems={useRewardsStore.getState().rewards}
+          renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
+            key={task.id} 
+            id={task.id} 
+            subtask={task.text} 
+            completed={false} 
+            index={index} 
+            onRemove={() => {console.log(task.id, "HELLO"); remove(task.id)}} 
+          />}
+          onRemove={(subtasks: SubtaskItem[], id: string) => {
+            const itemToRemove = subtasks.find(task => task.id === id);
+            console.log(itemToRemove)
+            if (itemToRemove == null) return
+            useRewardsStore.getState().removeReward(itemToRemove.text)
+            appContext.saveData()
+          }}
+          onSubtasksChanged={(subtasks: string[], added: string): void => {
+            useRewardsStore.getState().setRewards(subtasks)
+            appContext.saveData()
+          }} 
+          >
+        </SubtaskList>   
+      </SettingItem>
     </div>
   </>
+}
+
+function AppearancePage() {
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  const appContext = useContext(AppContext)
+
+  useEffect(() => {
+    useUserSettingsStore.getState().setUsingDarkMode(isDarkMode)
+    appContext.saveData()  
+  }, [isDarkMode])
+
+  return <div>
+    <SettingItem 
+      label={'Dark Mode'} 
+      description={'Need I say more?'}
+    >
+      <ToggleSwitch 
+        isOn={isDarkMode} 
+        handleToggle={() => {
+          setIsDarkMode(old => !old)
+        }}
+      />
+    </SettingItem>
+  </div>
 }

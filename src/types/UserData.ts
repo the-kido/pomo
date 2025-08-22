@@ -9,6 +9,7 @@ export interface UserData {
     workTime: number,
     enabledTaskType: boolean,
 		enabledTaskRewards: boolean,
+    darkMode: boolean,
   };
   window: {
     width: number;

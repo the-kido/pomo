@@ -11,6 +11,7 @@ export const DEFAULT_USERDATA: UserData = {
 		workTime: 25 * 60,
 		enabledTaskType: true,
 		enabledTaskRewards: true,
+		darkMode: false,
 	},
 	window: {
 		width: 0,
@@ -34,6 +35,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		var workTime = usePomodoroTimerStore.getState().workTime;
 		var enabledTaskType = useUserSettingsStore.getState().enabledTaskType;
 		var enabledTaskRewards = useUserSettingsStore.getState().enabledTaskRewards;
+		var darkMode = useUserSettingsStore.getState().darkMode;
 		var length = useWindowSizeStore.getState().height;
 		var width = useWindowSizeStore.getState().width;
 
@@ -46,6 +48,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				workTime: workTime,
 				enabledTaskType: enabledTaskType,
 				enabledTaskRewards: enabledTaskRewards,
+				darkMode: darkMode,
 			},
 			window: {
 				width: width,
@@ -231,13 +234,17 @@ export const useWindowSizeStore = create<WindowSize>((set) => ({
 interface UserSettings {
 	enabledTaskType: boolean;
 	enabledTaskRewards: boolean;
+	darkMode: boolean,
 	setEnabledTaskType: (value: boolean) => void;
 	setEnabledTaskRewards: (value: boolean) => void;
+	setUsingDarkMode: (value: boolean) => void;
 }
 
 export const useUserSettingsStore = create<UserSettings>((set) => ({
 	enabledTaskType: true,
 	enabledTaskRewards: true,
+	darkMode: false,
 	setEnabledTaskType: (value) => set({ enabledTaskType: value }),
 	setEnabledTaskRewards: (value) => set({ enabledTaskRewards: value }),
+	setUsingDarkMode: (value) => set({ darkMode: value })
 }));
