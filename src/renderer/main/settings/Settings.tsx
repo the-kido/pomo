@@ -7,6 +7,7 @@ import { SortableSubtask, SubtaskList } from '/src/main/components/EditableList'
 import { SubtaskItem } from '../createPomodoro/Stages';
 import { AppContext } from '../../App';
 import { useGoalStore, useRewardsStore, useUserSettingsStore } from '/src/main/states/userDataStates';
+import ServiceStatuses from '../ServiceStatuses';
 
 enum Menus {
   BUILDING,
@@ -70,9 +71,13 @@ export default function SettingsModal() {
                <AppearancePage/>
                 )}
               {selectedMenu === Menus.ABOUT && (
-                <p>
+                <>
+                  <Divider text={"Service Statuses"}/> 
+                  <ServiceStatuses/>
+
+                  <Divider text={"Credits"} />
                   Made by kido!
-                </p>
+                </>
               )}
               {/* Spacer */}
               <div style={{height: '100px'}} ></div>
@@ -84,58 +89,10 @@ export default function SettingsModal() {
   );
 }
 
-function ListOfRewards() {
-  const [rewards, setRewards] = useState<string[]>([]);
-  const [newReward, setNewReward] = useState("");
-
-  const addReward = () => {
-    if (newReward.trim()) {
-      setRewards([...rewards, newReward.trim()]);
-      setNewReward("");
-    }
-  };
-
-  const deleteReward = (index: number) => {
-    setRewards(rewards.filter((_, i) => i !== index));
-  };
-
-  return (
-    <div>
-      <h3>Rewards</h3>
-      <ul>
-        {rewards.map((reward, idx) => (
-          <li key={idx} style={{ display: "flex", alignItems: "center" }}>
-            <span>{reward}</span>
-            <button
-              style={{ marginLeft: "8px" }}
-              onClick={() => deleteReward(idx)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-        <input
-          type="text"
-          value={newReward}
-          onChange={e => setNewReward(e.target.value)}
-          placeholder="Add a reward"
-        />
-        <button onClick={addReward}>Add</button>
-      </div>
-    </div>
-  );
-}
-
 function SettingsMenuButton({ selected, label, onClick }: { selected: boolean; label: string; onClick: () => void; }) {
   return (
     <button className={`settings-menu-item${selected ? '-active' : ''}`} onClick={onClick} > {label} </button>
   );
-}
-
-function Info({text} : {text: string}) {
-  
 }
 
 interface ToggleSwitchProps {
@@ -164,6 +121,12 @@ function SettingItem({ label, description, children }: {label: string, descripti
   );
 }
 
+function Divider({text}: {text: string}) {
+  return <h3 style={{paddingTop: '1em'}}>
+    {text}
+  </h3>
+}
+
 function BuildingPomoPage() {
   const appContext = useContext(AppContext)
 
@@ -180,7 +143,7 @@ function BuildingPomoPage() {
   }, [enabledTaskType, enableTaskRewards])
 
   return <>
-    <h2> Toggle Creation Features </h2>
+    <Divider text='Toggle Creation Features' />
     <div>
       <SettingItem
         label="Task Type"
@@ -202,7 +165,7 @@ function BuildingPomoPage() {
       </SettingItem>
     </div>
 
-    <h2> Your Creation Options </h2>
+    <Divider text='Your Creation Options' />
     
     <div>
       <SettingItem
@@ -277,6 +240,7 @@ function AppearancePage() {
   }, [isDarkMode])
 
   return <div>
+    <Divider text='Theme' />
     <SettingItem 
       label={'Dark Mode'} 
       description={'Need I say more?'}

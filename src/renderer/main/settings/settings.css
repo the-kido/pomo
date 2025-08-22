@@ -110,9 +110,9 @@
 .setting-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 0px;
-  border-bottom: 1px solid var(--border-color);
+  align-items: flex-start;
+  padding: 8px 0px;
+  /* border-bottom: 1px solid var(--border-color); */
 }
 
 .setting-item:last-child {

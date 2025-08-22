@@ -53,10 +53,6 @@
     border-radius: var(--input-border-radius);
   }
 
-  span {
-    font-weight: 600;
-  }
-
   button {
     height: 25px;
     filter: grayscale(100%);

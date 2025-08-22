@@ -1,19 +1,17 @@
-import { useStore } from "zustand";
 import { useExtensionStateStore, useOllamaStateStore } from "/src/main/states/appStates";
-import React, { useEffect } from "react";
-import { ipcRenderer } from "electron";
+import { useEffect } from "react";
 
 
 interface StatusProps {
     label: string;
-    status: "active" | "inactive" | "error";
+    status: "Active" | "Inactive" | "Error";
     info: string;
 }
 
 const statusColors: Record<StatusProps["status"], string> = {
-    active: "green",
-    inactive: "gray",
-    error: "red",
+    Active: "green",
+    Inactive: "gray",
+    Error: "red",
 };
 
 export function Status({ label, status, info }: StatusProps) {
@@ -29,7 +27,7 @@ export function Status({ label, status, info }: StatusProps) {
                     background: statusColors[status],
                     marginLeft: 8,
                     cursor: "pointer",
-                    border: "1px solid #ccc",
+                    border: "1px solid var(--text-color)",
                 }}
             />
         </div>
@@ -55,13 +53,13 @@ export default function ServiceStatuses()
     return <>
         <Status
             label="Ollama"
-            status={isOllamaActive ? "active" : "inactive"}
-            info="Something?"
+            status={isOllamaActive ? "Active" : "Inactive"}
+            info={isOllamaActive ? "Ollama is running. LLM features will be available." : "Ollama is not running. LLM features are unavailable."}
         />
         <Status
             label="Extension"
-            status={isExtensionConnected ? "active" : "inactive"}
-            info="Other?"
+            status={isExtensionConnected ? "Active" : "Inactive"}
+            info={isExtensionConnected ? "The sibling extension is connected." : "The sibling extension is not connected."}
         />
     </>
 }

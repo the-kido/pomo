@@ -1,4 +1,3 @@
-import ServiceStatuses from "./ServiceStatuses";
 import { Settings } from "lucide-react";
 
 import { create } from 'zustand';
@@ -16,24 +15,23 @@ export const useUiStore = create<UiState>((set) => ({
 }));
 
 export default function Sidebar() {
-    const openSettings = useUiStore((state) => state.openSettings);
+	const openSettings = useUiStore((state) => state.openSettings);
 
-    return <div className="side-bar">
-        {/* Top */}
-        <div>
-            <button 
-                style={{background: 'none', border: 'none' }} 
-                title="Settings"
-                onClick={openSettings}
-            >
-                <Settings />
-            </button>
-        </div>
+	return <div className="side-bar">
+		{/* Top */}
+		<div>
+			<button 
+				style={{background: 'none', border: 'none' }} 
+				title="Settings"
+				onClick={openSettings}
+			>
+				<Settings />
+			</button>
+		</div>
 
-        {/* Bottom */}
-        <div>
-            <ServiceStatuses />
-            The Pomo App © 2025
-        </div>
-    </div>
+		{/* Bottom */}
+		<div>
+			The Pomo App © 2025
+		</div>
+	</div>
 }
