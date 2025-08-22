@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { DEFAULT_POMO_TIMER, PomodoroTimerInfo } from "/src/types/Pomodoro"
+import { DEFAULT_POMO_TIMER, NONE, PLEASE_SELECT, PomoActivityType, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "../PomodoroList";
 import { AppContext } from "../../App";
 import { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
 import { TestTing } from "/src/main/components/EditableList";
+import { useUserSettingsStore } from "/src/main/states/userDataStates";
 
 type StagesCompletedType = {
 	updateStageCleared: (isCompleted: boolean, stage: Stages) => void
@@ -18,12 +19,32 @@ export enum Stages {
 	SUBTASKS
 }
 
+function getStagesRequired() {
+	const state = useUserSettingsStore.getState()
+	let stagesRequired: Stages[] = []
+	let stagesNotRequired: Stages[] = []
+	
+	if (state.enabledTaskType) stagesRequired.push(Stages.TYPE)
+	else stagesNotRequired.push(Stages.TYPE)
+
+	stagesRequired.push(Stages.TASK)
+
+	if (state.enabledTaskRewards) stagesRequired.push(Stages.FIRST_REWARD)
+	else stagesNotRequired.push(Stages.FIRST_REWARD)
+
+	stagesRequired.push(Stages.SUBTASKS)
+
+	return {stagesRequired: stagesRequired, stagesNotRequired: stagesNotRequired}
+}
+
 function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimerInfo, onSaved?: (newPomo: PomodoroTimerInfo) => void, resetFields?: () => void }) {
-	const stagesRequired = [ Stages.TYPE, Stages.TASK, Stages.FIRST_REWARD, Stages.SUBTASKS ];
+	const stagesRequired = getStagesRequired().stagesRequired;
 	
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [furthestStageReached, setFurthestStageReached] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
 	const [newPomo, setNewPomo] = useState<PomodoroTimerInfo>(info ? {...info} : DEFAULT_POMO_TIMER);
+	
+
 
 	const addPomodoro = usePomodorosStore(store => store.addPomodoro)
 	
@@ -34,6 +55,27 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 		resetFields();
 		appContext.saveData();
 	}
+
+	const enabledTaskType = useUserSettingsStore(a => a.enabledTaskType)
+	const enabledTaskRewards = useUserSettingsStore(a => a.enabledTaskRewards)
+	useEffect(() => {
+		setFurthestStageReached(info ? Stages.SUBTASKS : stagesRequired[0])
+		setStagesCleared(info ? stagesRequired : [])
+		
+		// For the stages we don't have, we must 
+		const notRequired = getStagesRequired().stagesNotRequired;
+
+		if (notRequired.includes(Stages.TYPE))
+		{
+			setNewPomo(old => ({...old, type: PomoActivityType.UNKNOWN, goal: PLEASE_SELECT}))
+		}
+		
+		if (notRequired.includes(Stages.FIRST_REWARD))
+		{
+			setNewPomo(old => ({...old, nextReward: NONE}))
+		}
+
+	}, [enabledTaskType, enabledTaskRewards])
 	
 	useEffect(() => {
 		// If no stages are complete, then the stage at is just the first required stage.
@@ -45,7 +87,7 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 				largest = Math.max(largest, stage);
 			});
 			let newIndex = Math.min(stagesRequired.indexOf(largest) + 1, stagesRequired.length - 1);
-			setFurthestStageReached(newIndex);
+			setFurthestStageReached(stagesRequired[newIndex]);
 		}
 	}, [stagesCleared, furthestStageReached])
 	
@@ -57,8 +99,11 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 		}
 	}
 	
-	const isStartButtonDisabled = () => !stagesRequired.every(required => stagesCleared.includes(required));
-	const canEnterStage = (stage: Stages) => stagesRequired.includes(stage) && furthestStageReached >= stage;
+	const isStartButtonDisabled = () => 
+		!stagesRequired.every(required => stagesCleared.includes(required));
+
+	const canEnterStage = (stage: Stages) => 
+		stagesRequired.includes(stage) && furthestStageReached >= stage;
 
 	const savePomodoro = () =>{ console.log(newPomo); onSaved(newPomo);}
 	const cancelUpdate = () => onSaved(info);

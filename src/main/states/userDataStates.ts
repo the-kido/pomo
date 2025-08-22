@@ -9,6 +9,8 @@ export const DEFAULT_USERDATA: UserData = {
 		breakTime: 5 * 60,
 		longBreakTime: 25 * 60,
 		workTime: 25 * 60,
+		enabledTaskType: true,
+		enabledTaskRewards: true,
 	},
 	window: {
 		width: 0,
@@ -30,6 +32,8 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		var breaktime = usePomodoroTimerStore.getState().breakTime;
 		var longBreakTime = usePomodoroTimerStore.getState().longBreakTime;
 		var workTime = usePomodoroTimerStore.getState().workTime;
+		var enabledTaskType = useUserSettingsStore.getState().enabledTaskType;
+		var enabledTaskRewards = useUserSettingsStore.getState().enabledTaskRewards;
 		var length = useWindowSizeStore.getState().height;
 		var width = useWindowSizeStore.getState().width;
 
@@ -40,6 +44,8 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				breakTime: breaktime,
 				longBreakTime: longBreakTime,
 				workTime: workTime,
+				enabledTaskType: enabledTaskType,
+				enabledTaskRewards: enabledTaskRewards,
 			},
 			window: {
 				width: width,
@@ -220,4 +226,18 @@ export const useWindowSizeStore = create<WindowSize>((set) => ({
 	width: 300,
 	height: 500,
 	setSize: (width, height) => set({ width: width, height: height }),
+}));
+
+interface UserSettings {
+	enabledTaskType: boolean;
+	enabledTaskRewards: boolean;
+	setEnabledTaskType: (value: boolean) => void;
+	setEnabledTaskRewards: (value: boolean) => void;
+}
+
+export const useUserSettingsStore = create<UserSettings>((set) => ({
+	enabledTaskType: true,
+	enabledTaskRewards: true,
+	setEnabledTaskType: (value) => set({ enabledTaskType: value }),
+	setEnabledTaskRewards: (value) => set({ enabledTaskRewards: value }),
 }));

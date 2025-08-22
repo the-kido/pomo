@@ -138,6 +138,16 @@
   color: #aaa;
 }
 
+.setting-control{
+	margin-left: 1em;
+	max-height: 10em;
+	overflow: auto;
+	min-width: 230px;
+
+	display: flex;
+    justify-content: flex-end;
+}
+
 /* 
 
 

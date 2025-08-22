@@ -1,12 +1,14 @@
 import './settings.css'; // Import the styles
 import './temp.css'; // Import the styles
-import { JSX, useState } from 'react';
+import { JSX, useContext, useEffect, useState } from 'react';
 import { useUiStore } from '../Sidebar';
-import { Menu, Settings } from 'lucide-react';
+import { Menu, Settings, Sticker } from 'lucide-react';
 import { SortableSubtask, SubtaskList } from '/src/main/components/EditableList';
 import { DragEndEvent } from '@dnd-kit/core/dist';
 import { SubtaskItem } from '../createPomodoro/Stages';
 import { DEFAULT_POMO_TIMER } from '/src/types/Pomodoro';
+import { AppContext } from '../../App';
+import { useRewardsStore, useUserSettingsStore } from '/src/main/states/userDataStates';
 
 enum Menus {
   BUILDING,
@@ -26,7 +28,6 @@ export default function SettingsModal() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<Menus>(Menus.BUILDING);
 
-  const [myStrings, setMyStrings] = useState<string[]>([]);
 
   // If the modal is not open, render nothing.
   if (!isSettingsOpen) {
@@ -77,43 +78,14 @@ export default function SettingsModal() {
               )}
               {selectedMenu === Menus.APPEARANCE && (
                 <>
-                  <ToggleSwitch isOn={true} handleToggle={() => {}} />
+                  <ToggleSwitch isOn={isDarkMode} handleToggle={() => {
+                    setIsDarkMode(old => !old)
+                  }} />
                   <span>Dark Mode</span>
                 </>
                 )}
               {selectedMenu === Menus.ABOUT && (
-                <>
-                  <h2> Toggle Creation Features </h2>
-                   <SettingItem
-                    label="Task Type"
-                    description="Lets you specify the type of task to orient you"
-                    control={
-                      <ToggleSwitch isOn={true} handleToggle={() => {}} />
-                    }
-                  />
-                  <SettingItem
-                    label="Task Rewards"
-                    description="Lets you choose what you get once a timer switches to break"
-                    control={
-                      <ToggleSwitch isOn={true} handleToggle={() => {}} />
-                    }
-                  />
-                  
-                  <SubtaskList 
-                    renderItem={ (task: SubtaskItem, index: number, remove: (id: string) => void): JSX.Element => 
-                      <SortableSubtask id={task.id} subtask={task.text} key={task.id} index={index} completed={false} onRemove={() => remove(task.id)} />
-                    } 
-                    
-                    onHandleDragEnd={(event: DragEndEvent, oldIndex: number, newIndex: number): void => {
-                    }} 
-                    onSubtasksChanged={(subtasks: string[]): void => {
-                    }} 
-                    onRemove={function (subtasks: SubtaskItem[], id: string): void {
-                    }}
-                    onUpdate={function (): void {
-                    }}
-                  />                
-                  </>
+                <BuildingPomoPage />
               )}
               {/* Spacer */}
               <div style={{height: '100px'}} ></div>
@@ -205,4 +177,79 @@ function SettingItem({ label, description, control }: {label: string, descriptio
       <div className="setting-control">{control}</div>
     </div>
   );
+}
+
+function BuildingPomoPage() {
+  const appContext = useContext(AppContext)
+
+  const [enabledTaskType, setShowTaskType] = useState(useUserSettingsStore.getState().enabledTaskType);
+  const [enableTaskRewards, setShowTaskRewards] = useState(useUserSettingsStore.getState().enabledTaskRewards);
+
+  useEffect(() => {
+    const store = useUserSettingsStore.getState()
+
+    store.setEnabledTaskType(enabledTaskType) 
+    store.setEnabledTaskRewards(enableTaskRewards)
+
+    appContext.saveData()
+  }, [enabledTaskType, enableTaskRewards])
+
+  return <>
+    <h2> Toggle Creation Features </h2>
+    <div>
+      <SettingItem
+      label="Task Type"
+      description="Lets you specify the type of task to orient you"
+      control={
+        <ToggleSwitch 
+          isOn={enabledTaskType} 
+          handleToggle={() => setShowTaskType(old => !old)} 
+        />
+      }
+      />
+    <SettingItem
+      label="Task Rewards"
+      description="Lets you choose what you get once a timer switches to break"
+      control={
+        <ToggleSwitch 
+          isOn={enableTaskRewards}
+          handleToggle={() => setShowTaskRewards(old => !old)} 
+        />
+      }
+      />
+    </div>
+
+    <h2> Your Creation Options </h2>
+    
+    <div>
+      <SettingItem
+        label='Rewards'
+        description='Edit the set rewards you can give yourself when switching to break'
+        control={
+          <SubtaskList 
+            initialItems={useRewardsStore.getState().rewards}
+            renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
+              key={task.id} 
+              id={task.id} 
+              subtask={task.text} 
+              completed={false} 
+              index={index} 
+              onRemove={() => {console.log(task.id, "HELLO"); remove(task.id)}} 
+            />}
+            onRemove={(subtasks: SubtaskItem[], id: string) => {
+              const itemToRemove = subtasks.find(task => task.id === id);
+              console.log(itemToRemove)
+              if (itemToRemove == null) return
+              useRewardsStore.getState().removeReward(itemToRemove.text)
+              appContext.saveData()
+            }}
+            onSubtasksChanged={(subtasks: string[], added: string): void => {
+              useRewardsStore.getState().setRewards(subtasks)
+              appContext.saveData()
+            }} 
+          />        
+        }
+      />
+    </div>
+  </>
 }

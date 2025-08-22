@@ -7,6 +7,8 @@ export interface UserData {
     breakTime: number,
     longBreakTime: number,
     workTime: number,
+    enabledTaskType: boolean,
+		enabledTaskRewards: boolean,
   };
   window: {
     width: number;

@@ -1,10 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Stages, StagesCleared } from "./CreatePomodoro";
 import { useGoalStore, useRewardsStore } from "../../../main/states/userDataStates"
-import { PomoActivityType, PomodoroTimerInfo, PomoActivityTypeDisplay } from "/src/types/Pomodoro";
+import { PomoActivityType, PomodoroTimerInfo, PomoActivityTypeDisplay, PLEASE_SELECT, NONE } from "/src/types/Pomodoro";
 
-const NONE: string = "None"
-const PLEASE_SELECT: string = "Please Select"
+
 
 export interface SubtaskItem {
   id: string;
@@ -53,7 +52,7 @@ export function TaskStage({ info, onTaskChanged, onMotivationChanged} : { info? 
 
   return <div className="section">
     <p style={{margin: '0px'}}>
-      I will <input 
+      I will: <input 
         type="text" 
         className="inline-input" 
         defaultValue={task} 

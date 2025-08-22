@@ -8,6 +8,9 @@ export const PomoActivityTypeDisplay: Record<PomoActivityType, string> = {
   [PomoActivityType.UNKNOWN]: "❓ Unknown"
 };
 
+export const NONE: string = "None"
+export const PLEASE_SELECT: string = "Please Select"
+
 export interface PomodoroTimerInfo {
     // Listed in order of what is inputted by the pomodoro creator
     type: PomoActivityType,

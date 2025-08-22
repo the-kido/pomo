@@ -3,7 +3,7 @@
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
-import { CSS, subtract } from '@dnd-kit/utilities';
+import { CSS } from '@dnd-kit/utilities';
 import { JSX, useContext, useEffect, useRef, useState } from 'react';
 import { Stages, StagesCleared } from '/src/renderer/main/createPomodoro/CreatePomodoro';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
@@ -20,7 +20,7 @@ export function TestTing({onIndiciesChanged, info, onSubtasksChanged}: {onIndici
     const stagesCompletedContext = useContext(StagesCleared);
 
     return <SubtaskList 
-        info={info}
+        initialItems={info ? info.subtasks : [] }
         onRemove={(subtasks, idToRemove: string) => {
             const indexToRemove = subtasks.findIndex(task => task.id === idToRemove);
             if (indexToRemove === -1) return;
@@ -35,7 +35,7 @@ export function TestTing({onIndiciesChanged, info, onSubtasksChanged}: {onIndici
 
             // Update the subtasks
         }}
-        onHandleDragEnd={(event: DragEndEvent, oldIndex: number, newIndex: number) => {
+        onHandleDragEnd={(oldIndex: number, newIndex: number) => {
        
             // 2. Remap the completed indicies to their new positions
             const remappedCompleted = completedIndicies.map(completedIndex => {
@@ -49,28 +49,34 @@ export function TestTing({onIndiciesChanged, info, onSubtasksChanged}: {onIndici
             onIndiciesChanged(remappedCompleted);
         
         }}
-        onUpdate={() => stagesCompletedContext.updateStageCleared(true, Stages.SUBTASKS)}
+        onSubtasksUpdated={() => stagesCompletedContext.updateStageCleared(true, Stages.SUBTASKS)}
         renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
-            key={task.id} // Use stable ID for React key
-            id={task.id} // Use stable ID for dnd-kit
-            subtask={task.text}
-            completed={completedIndicies.includes(index)}
-            index={index}
-            onRemove={() => remove(task.id)} />
-        } 
+          key={task.id} // Use stable ID for React key
+          id={task.id} // Use stable ID for dnd-kit
+          subtask={task.text}
+          completed={completedIndicies.includes(index)}
+          index={index}
+          onRemove={() => remove(task.id)} 
+        />} 
         onSubtasksChanged={onSubtasksChanged}        
     ></SubtaskList>
 }
 
+interface SubtaskListProps {
+  renderItem: (task: SubtaskItem, index: number, remove: (id: string) => void ) => JSX.Element, 
+  onHandleDragEnd?: (oldIndex: number, newIndex: number) => void, initialItems : string[], 
+  onSubtasksChanged: (subtasks: string[], changedItem? : string) => void, 
+  onRemove: (subtasks: SubtaskItem[], idToRemove: string) => void, 
+  onSubtasksUpdated?: () => void
+} 
 
-export function SubtaskList({ renderItem, onHandleDragEnd, info, onSubtasksChanged, onRemove, onUpdate} : {renderItem: (task: SubtaskItem, index: number, remove: (id: string) => void ) => JSX.Element, onHandleDragEnd: (event: DragEndEvent, oldIndex: number, newIndex: number) => void, info? : PomodoroTimerInfo, onSubtasksChanged: (subtasks: string[]) => void, onRemove: (subtasks: SubtaskItem[], id: string) => void, onUpdate: () => void} ) {
+export function SubtaskList({ renderItem, onHandleDragEnd, initialItems, onSubtasksChanged, onRemove, onSubtasksUpdated} : SubtaskListProps) {
   const listRef = useRef<HTMLUListElement>(null);
 
   // Use the new SubtaskItem interface and generate initial IDs
   const [subtasks, setSubtasks] = useState<SubtaskItem[]>(
-    info ? info.subtasks.map((text) => ({ id: crypto.randomUUID(), text })) : []
+    initialItems.map((text) => ({ id: crypto.randomUUID(), text }))
   );
-  
   
   const remove = (idToRemove: string) => {
 
@@ -78,6 +84,7 @@ export function SubtaskList({ renderItem, onHandleDragEnd, info, onSubtasksChang
     setSubtasks(newSubtasks);
     onSubtasksChanged(newSubtasks.map(task => task.text));
 
+    console.log("?????", newSubtasks)
     onRemove(subtasks, idToRemove)
   }
 
@@ -93,7 +100,7 @@ export function SubtaskList({ renderItem, onHandleDragEnd, info, onSubtasksChang
         setSubtasks(reorderedSubtasks);
         onSubtasksChanged(reorderedSubtasks.map(task => task.text));
 
-        onHandleDragEnd(event, oldIndex, newIndex)
+        if(onHandleDragEnd) onHandleDragEnd(oldIndex, newIndex)
     }
   }
   
@@ -106,12 +113,11 @@ export function SubtaskList({ renderItem, onHandleDragEnd, info, onSubtasksChang
  
     useEffect(() => {
         console.log("brbrbr, ", subtasks)
-        console.log("brbrbr, ", info)
 
         if (listRef.current) {
             listRef.current.scrollTop = listRef.current.scrollHeight;
         }
-        onUpdate()
+        if (onSubtasksUpdated) { onSubtasksUpdated(); }
     }, [subtasks]);
 
     console.log(subtasks, "?")
@@ -133,7 +139,7 @@ export function SubtaskList({ renderItem, onHandleDragEnd, info, onSubtasksChang
             onAddSubtask={(text) => {
               const newSubtasks = [...subtasks, { id: crypto.randomUUID(), text }];
               setSubtasks(newSubtasks);
-              onSubtasksChanged(newSubtasks.map(task => task.text));
+              onSubtasksChanged(newSubtasks.map(task => task.text), text);
             }} 
             nextIndex={subtasks.length + 1}
           />
@@ -159,21 +165,24 @@ export function SortableSubtask({id, subtask, completed, index, onRemove}: {id: 
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Subtask subtask={subtask} onRemove={onRemove} completed={completed} index={index} dragAttributes={attributes} dragListeners={listeners}/>
+      <Subtask subtask={subtask} onRemove={ onRemove} completed={completed} index={index} dragAttributes={attributes} dragListeners={listeners}/>
     </div>
   );
 }
 
 function Subtask({subtask, completed, index, onRemove, dragAttributes, dragListeners} : {subtask: string, completed: boolean, index: number, onRemove: () => void, dragAttributes: any, dragListeners: any}) {
-  return <div className="subtask" {...dragAttributes} {...dragListeners}>
+  return <div className="subtask">
     <div>
-      <span style={{fontWeight: '400', marginRight: '10px'}}>
-        {`${index + 1}.`}
-      </span>
-      <span style={{textDecoration: completed ? 'line-through' : 'none'}} >
-        {subtask}
-      </span>
-    </div> 
+      {/* main content */}
+      <div {...dragAttributes} {...dragListeners} >
+        <span style={{fontWeight: '400', marginRight: '10px'}}>
+          {`${index + 1}.`}
+        </span>
+        <span style={{textDecoration: completed ? 'line-through' : 'none'}} >
+          {subtask}
+        </span>
+      </div> 
+    </div>
     <button className="delete-button" onClick={onRemove} >
       <span className="delete-button-x">✖</span>
     </button>
