@@ -1,4 +1,6 @@
-import '../../index.css';
+import '../../master.css';
+import './main.css'
+
 import { createRoot } from 'react-dom/client';
 import App from '../App';
 

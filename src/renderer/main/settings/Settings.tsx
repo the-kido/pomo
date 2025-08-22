@@ -1,5 +1,5 @@
 import './settings.css'; // Import the styles
-import './temp.css'; // Import the styles
+import './slider.css'; // Import the styles
 import { useContext, useEffect, useState } from 'react';
 import { useUiStore } from '../Sidebar';
 import { Settings } from 'lucide-react';
@@ -267,7 +267,7 @@ function BuildingPomoPage() {
 
 function AppearancePage() {
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(useUserSettingsStore.getState().darkMode);
   
   const appContext = useContext(AppContext)
 

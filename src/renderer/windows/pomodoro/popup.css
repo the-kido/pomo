@@ -1,0 +1,28 @@
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 900;
+  opacity: 1;
+  transition: opacity 0.3s;
+  pointer-events: all;
+}
+
+.popup-overlay-close {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.popup-overlay-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.popup {
+	background-color: red;
+  position: absolute;
+  border-radius: 8px;
+  padding: 2em;
+  z-index: 1000;
+	transform: translateX(-100%),
+}

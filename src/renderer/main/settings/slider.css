@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--unselect);
   transition: .1s;
   border-radius: 28px;
 }
@@ -33,13 +33,13 @@
   width: 20px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: var(--background-color);
   transition: .03s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #4a90e2; /* Or your preferred 'on' color */
+  background-color: var(--select-accent); /* Or your preferred 'on' color */
 }
 
 input:checked + .slider:before {

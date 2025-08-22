@@ -1,4 +1,5 @@
-import '../../index.css';
+import '../../../src/master.css';
+import './timer.css'
 
 import { createRoot } from 'react-dom/client';
 import { JSX, useEffect, useRef, useState } from 'react';

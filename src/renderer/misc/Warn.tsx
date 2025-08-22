@@ -1,10 +1,12 @@
+import './warn.css'
+
 interface WarnProps {confirmText: string, onYes: () => void, onNo: () => void}
 
 export default function Warn({confirmText, onYes, onNo}: WarnProps) {
     return <>
-        <div className={`popup-overlay`} />
+        <div className={`warn-overlay`} />
         <div>
-            <div className="popup">
+            <div className="warn">
                 <h2>{confirmText}</h2>
                 <p>This action cannot be undone.</p>
                 <div style={{display: 'flex', justifyContent: 'space-between'}}>

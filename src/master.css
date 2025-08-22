@@ -1,0 +1,115 @@
+:root {
+
+  --input-border-radius: 5px;
+  
+  --select-background: #f0f8ff;
+  --select-accent: #85b3e2;
+  --unselect: #b7b7b7;
+  
+  --warn: rgb(246, 134, 134);
+  
+  --border-color: rgb(148, 148, 148);
+  --light-border-color: #ccc;
+  
+  --background-color: rgb(255, 255, 255);
+  --background-alt-color: rgb(214 218 222);
+  
+  --subtask-progress-green: rgb(143, 199, 131);
+  --timer-progress-done: rgb(247, 127, 127);
+  --timer-progress-left: rgb(232, 232, 232);
+
+  --text-color: rgb(0, 0, 0);
+  --text-color-light: rgb(40, 40, 40);
+}
+
+.dark {
+  --background-color: #1d1d1d;
+  --background-alt-color: #131313;
+  --border-color: #505050;
+  --light-border-color: #333;
+  --select-background: #23272f;
+  --unselect: #383838;
+  --select-accent: #60aaff;
+  --warn: #ff6b6b;
+  --subtask-progress-green: #6fcf97;
+  --timer-progress-done: #ff6b6b;
+  --timer-progress-left: #444;
+
+  --text-color: rgb(255, 255, 255);
+  --text-color-light: rgb(160, 160, 160);
+}
+
+@font-face {
+  font-family: 'Zain';
+  src: url('../assets/Zain-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, input {
+  background-color: var(--background-color);
+
+  font-family: 'Zain', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+h4 {
+  line-height: 1.5; /* or px value like 24px */
+  font-weight: 300;
+}
+
+select, button {
+  font-family: inherit;
+  border-radius: var(--input-border-radius);
+  border-width: 1px;
+
+  
+  line-height: 1.5rem;
+  font-size:medium;
+}
+
+.chip {
+  margin-top: 0px;
+  padding-left: 4px;
+  margin-right: 8px;
+  padding-right: 4px;
+  border: 1px solid gray;
+  border-radius: var(--input-border-radius);
+}
+
+h1, h2, h3, h4, h5, div, input {
+  color: var(--text-color)
+}
+
+svg {
+  stroke: var(--text-color-light);
+}
+
+select, button {
+  border-radius: var(--input-border-radius);
+  border-color: var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
+
+  transition: scale 0.05s ease-out;
+}
+
+select:hover, button:hover {
+  cursor: pointer;
+}
+
+button:hover {
+  scale: 1.05;
+}
+
+button:active {
+  scale: 0.9;
+}
+
+button:disabled {
+  opacity: 0.3;
+}
+
+button:disabled:hover {
+  cursor: not-allowed;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CreatePomodoro from "./main/createPomodoro/CreatePomodoro";
 import PomodoroList from "./main/PomodoroList";
-import { useUserDataStore } from "../main/states/userDataStates";
+import { useUserDataStore, useUserSettingsStore } from "../main/states/userDataStates";
 import { UserData } from "../types/UserData";
 
 import '../main/states/userDataStates'
@@ -9,30 +9,43 @@ import { createContext } from "react";
 import Sidebar from "./main/Sidebar";
 import SettingsModal from "./main/settings/Settings";
 
+enum USER_ACTIONS {
+	EDITING_POMODORO = "editing_pomodoro",
+	VIEWING_SETTINGS = "viewing_settings",
+}
+
 export interface AppContext {
     saveData: () => void,
+	currentUserActions: USER_ACTIONS[]
 }
 
 export const AppContext = createContext<AppContext>(undefined)
 
 export default function App() {
 
+	const darkMode = useUserSettingsStore(store => store.darkMode);
+
 	const saveData = () => {
 		window.app.saveData(useUserDataStore.getState().getUserData());
 	};
 
 	useEffect(() => {
+
 		// Deal with recieving the initial loaded data from the main process
 		window.app.onDidFinishLoad((data: UserData) => {
 			useUserDataStore.getState().loadUserData(data);
 		});
 	}, []);
 
+	useEffect( () => {
+		document.body.classList.toggle("dark", darkMode);
+	}, [darkMode])
+
+
 	// Band-aid solution to "entirely" reset CreatePomodoro
 	const [key, setKey] = useState<number>(0);
 
-
-	return <AppContext.Provider value={{saveData: saveData}}> 
+	return <AppContext.Provider value={{ saveData: saveData, currentUserActions: [] }}> 
 		<div className="app" >
 			{/* Sidebar */}
 			<Sidebar />
