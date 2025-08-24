@@ -3,10 +3,9 @@ import 'react-calendar-heatmap/dist/styles.css';
 import './heatmap.css'
 import { useState } from 'react';
 import { YMDToFancy } from '/src/main/utils/utils';
-import { useWorkSessionHistoryStore } from '/src/main/states/userDataStates';
+import { DayWork, DayWorkDict } from '/src/types/Pomodoro';
  
-export function Heatmap(){
-	const history = useWorkSessionHistoryStore(store => store.history);
+export function Heatmap({history} : {history: DayWorkDict}){
 
 	const [startDate, setStartDate] = useState<Date>(() => {
 		const currentDate = new Date();
@@ -39,11 +38,12 @@ export function Heatmap(){
 				}}
 				showWeekdayLabels
 				showOutOfRangeDays
-				titleForValue={value =>
-					value && value.date
-					? `${YMDToFancy(value.date)}\nTasks completed: ${value.tasksCompleted}\nPomos completed: ${value.pomosCompleted}`
+				titleForValue={value =>{
+					var actual = value as unknown as DayWork & {date: string}
+					return value && actual.date
+					? `${YMDToFancy(actual.date)}\nTasks completed: ${actual.tasksCompleted.length}\nPomos completed: ${actual.pomodorosCompleted}`
 					: `No tasks completed`
-				}
+				}}
 			/>
 		</div>
 	</div>

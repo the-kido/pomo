@@ -6,7 +6,7 @@ import { Settings } from 'lucide-react';
 import { SortableSubtask, SubtaskList } from '/src/main/components/EditableList';
 import { SubtaskItem } from '../createPomodoro/Stages';
 import { AppContext } from '../../App';
-import { useGoalStore, useRewardsStore, useUserSettingsStore } from '/src/main/states/userDataStates';
+import { useGoalStore, useRewardsStore, useUserDataStore, useUserSettingsStore } from '/src/main/states/userDataStates';
 import ServiceStatuses from '../ServiceStatuses';
 
 enum Menus {
@@ -133,13 +133,37 @@ function BuildingPomoPage() {
   const [enabledTaskType, setShowTaskType] = useState(useUserSettingsStore.getState().enabledTaskType);
   const [enableTaskRewards, setShowTaskRewards] = useState(useUserSettingsStore.getState().enabledTaskRewards);
 
+  const goals = useGoalStore.getState().goals;
+
+  useEffect(() => {
+    appContext.saveData({user: {
+      ...useUserDataStore.getState().getUserData().user,
+      goals: goals
+    }})
+  }, [goals])
+
+  const rewards = useRewardsStore.getState().rewards;
+
+  useEffect(() => {
+    appContext.saveData({user: {
+      ...useUserDataStore.getState().getUserData().user,
+      rewards: rewards
+    }})
+  }, [rewards])
+
   useEffect(() => {
     const store = useUserSettingsStore.getState()
 
     store.setEnabledTaskType(enabledTaskType) 
     store.setEnabledTaskRewards(enableTaskRewards)
 
-    appContext.saveData()
+    appContext.saveData({
+      user: {
+        ...useUserDataStore.getState().getUserData().user, // Preserve all existing settings
+        enabledTaskRewards: enableTaskRewards,
+        enabledTaskType: enabledTaskType
+      }
+    });
   }, [enabledTaskType, enableTaskRewards])
 
   return <>
@@ -173,25 +197,22 @@ function BuildingPomoPage() {
         description='Edit the list of goals you set to achieve for active tasks'
       >
       <SubtaskList 
-          initialItems={useGoalStore.getState().goals}
+          initialItems={goals}
           renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
             key={task.id} 
             id={task.id} 
             subtask={task.text} 
             completed={false} 
             index={index} 
-            onRemove={() => {console.log(task.id, "HELLO"); remove(task.id)}} 
+            onRemove={() => remove(task.id)} 
           />}
           onRemove={(subtasks: SubtaskItem[], id: string) => {
             const itemToRemove = subtasks.find(task => task.id === id);
-            console.log(itemToRemove)
             if (itemToRemove == null) return
             useGoalStore.getState().removeGoal(itemToRemove.text)
-            appContext.saveData()
           }}
-          onSubtasksChanged={(subtasks: string[], added: string): void => {
+          onSubtasksChanged={(subtasks: string[]): void => {
             useGoalStore.getState().setGoals(subtasks)
-            appContext.saveData()
           }} 
         />        
       </SettingItem>
@@ -201,7 +222,7 @@ function BuildingPomoPage() {
         description='Edit the set rewards you can give yourself when switching to break'
       >
         <SubtaskList 
-          initialItems={useRewardsStore.getState().rewards}
+          initialItems={rewards}
           renderItem={(task: SubtaskItem, index: number, remove: (id: string) => void) => <SortableSubtask
             key={task.id} 
             id={task.id} 
@@ -212,14 +233,12 @@ function BuildingPomoPage() {
           />}
           onRemove={(subtasks: SubtaskItem[], id: string) => {
             const itemToRemove = subtasks.find(task => task.id === id);
-            console.log(itemToRemove)
+            
             if (itemToRemove == null) return
             useRewardsStore.getState().removeReward(itemToRemove.text)
-            appContext.saveData()
           }}
           onSubtasksChanged={(subtasks: string[], added: string): void => {
             useRewardsStore.getState().setRewards(subtasks)
-            appContext.saveData()
           }} 
           >
         </SubtaskList>   
@@ -230,13 +249,16 @@ function BuildingPomoPage() {
 
 function AppearancePage() {
 
-  const [isDarkMode, setIsDarkMode] = useState(useUserSettingsStore.getState().darkMode);
+  const isDarkMode = useUserSettingsStore.getState().darkMode;
+  const setUsingDarkMode = useUserSettingsStore.getState().setUsingDarkMode;
   
   const appContext = useContext(AppContext)
 
   useEffect(() => {
-    useUserSettingsStore.getState().setUsingDarkMode(isDarkMode)
-    appContext.saveData()  
+    appContext.saveData({user: {
+      ...useUserDataStore.getState().getUserData().user,
+      darkMode: isDarkMode}
+    })
   }, [isDarkMode])
 
   return <div>
@@ -248,7 +270,7 @@ function AppearancePage() {
       <ToggleSwitch 
         isOn={isDarkMode} 
         handleToggle={() => {
-          setIsDarkMode(old => !old)
+          setUsingDarkMode(!isDarkMode)
         }}
       />
     </SettingItem>

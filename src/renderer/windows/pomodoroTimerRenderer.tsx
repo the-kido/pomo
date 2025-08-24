@@ -24,7 +24,6 @@ const useUpdatingState = create<UpdateDescription>(set => ({
 }))
 
 function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
-
   const [subtasksCompletedIndicies, setSubtasksCompletedIndicies] = useState<number[]>(info.subtasksCompletedIndicies);
   const [pomosCompleted, setPomosCompleted] = useState<number>(info.completed);
   const discTextField = useRef<HTMLTextAreaElement>(null);
@@ -54,7 +53,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
     let out: JSX.Element[] = [];
 
-    const makeSubtask = (subtaskIndex: number, completed: boolean) =>
+    const makeSubtask = (subtaskIndex: number, completed: boolean) => (
       <Subtask
         setTaskComplete={() => {
           completed = true;
@@ -64,7 +63,8 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
         taskDescription={info.subtasks[subtaskIndex]}
         percent={SUBTASK_ARRAY_WEIGHTS[out.length]}
         key={subtaskIndex}
-      />
+      /> 
+    )
 
     // first, populate with tasks that "aren't" complete
     for (let i = 0; i < info.subtasks.length && out.length < 3; i++) {

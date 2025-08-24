@@ -1,5 +1,5 @@
 // import {} from 'prod-app-shared'
-import { PomodoroTimerInfo } from '/src/types/Pomodoro'
+import { DayWorkDict, PomodoroTimerInfo } from '/src/types/Pomodoro'
 import { contextBridge, ipcRenderer } from 'electron'
 import { UserData } from '/src/types/UserData';
 import { LLMResult } from '/src/main/ai/ollama';
@@ -10,7 +10,7 @@ declare global {
 		pomodoro: PomodoroRendererExports,
 		app: { 
 			onDidFinishLoad: (callback: (data: UserData) => void) => void,
-			saveData: (data: UserData) => void,
+			saveData: (data: Partial<UserData>) => void,
 		},
 		ollama: {
 			generateText: (prompt: string) => Promise<LLMResult>
@@ -23,19 +23,36 @@ declare global {
 }
 
 var prevOnPomoUpdateListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
+var prevOnSessionUpdateListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
 var prevOnClosedListener: (event: Electron.IpcRendererEvent) => void;
 
 contextBridge.exposeInMainWorld('pomodoro', {
-	createWindow: (fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
-		ipcRenderer.invoke(CHANNELS.fromMainRenderer.onCreateWindow, fileToLoad, options)
+	createWindow: (idx: number, fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
+		ipcRenderer.send(CHANNELS.fromMainRenderer.onCreateWindow, idx, fileToLoad, options)
 	},
-	onPomodoroUpdate: (callback: (data: PomodoroTimerInfo) => void) => {
-		prevOnPomoUpdateListener = (_event, data) => callback(data)
-		ipcRenderer.on(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, prevOnPomoUpdateListener)
+	onUpdateData: (callback: (data: UserData) => void) => {
+		console.log('On update data');
+		prevOnPomoUpdateListener = (_event, data) => {console.log("callback!", data); callback(data)}
+		ipcRenderer.on(CHANNELS.fromMainProcess.onUpdate, prevOnPomoUpdateListener)
 	},
-	onUnsubUpdate: () => {
-		ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, prevOnPomoUpdateListener)
+	onUnsubUpdateData: () => {
+		
 	},
+
+	// onPomodoroUpdate: (callback: (data: PomodoroTimerInfo) => void) => {
+	// 	prevOnPomoUpdateListener = (_event, data) => callback(data)
+	// 	ipcRenderer.on(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, prevOnPomoUpdateListener)
+	// },
+	// onUnsubPomoUpdate: () => {
+	// 	ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, prevOnPomoUpdateListener)
+	// },
+	// onSessionUpdate: (callback: (data: DayWorkDict) => void) => {
+	// 	prevOnSessionUpdateListener = (_event, data) => callback(data)
+	// 	ipcRenderer.on(CHANNELS.fromPomodoroMain.onSendSessionUpdate, prevOnSessionUpdateListener)
+	// },
+	// onUnsubSessionUpdate: () => {
+	// 	ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onSendSessionUpdate, prevOnSessionUpdateListener)
+	// },
 	onClosed: (callback: () => void) => {
 		if (prevOnClosedListener) {
 			ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onClose, prevOnClosedListener)
@@ -49,7 +66,8 @@ contextBridge.exposeInMainWorld('app', {
 	onDidFinishLoad: (callback: (data: UserData) => void) => {
 		ipcRenderer.addListener(CHANNELS.fromMainProcess.hydrateUserData, (_, data: UserData) => callback(data))
 	},
-	saveData: (data: UserData) => {
+	saveData: (data: Partial<UserData>) => {
+		console.log("??")
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onSaveData, data);
 	}
 });

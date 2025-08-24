@@ -23,15 +23,11 @@ export const usePomodorosStore = create<Pomodoros>(set => ({
     updatePomodoro: (idxToReplace, toReplace) => set(state => ({list: state.list.map((previous, idx) => (idx == idxToReplace ? toReplace : previous))})),
     removePomodoro: (idxToRemove) => {set(state => ({ list: state.list.filter((_, itemIdx) => itemIdx !== idxToRemove )  }))},
     markPomodoroAsComplete: (idxToMark) => {
-      console.log("CALLED?", idxToMark)
       console.log(useCompletedPomodorosStore.getState().list)
       set(state => {
-        console.log("CALLED?", state.list.map( item => item.task))
         const completedPomo = state.list[idxToMark];
         if (!completedPomo) return {};
-        console.log("CALLED?", completedPomo)
         useCompletedPomodorosStore.getState().addPomodoro(completedPomo);
-        console.log("HIHI")
         // useCompletedPomodorosStore.getState().addPomodoro(completedPomo);
         return { list: state.list.filter((_, itemIdx) => itemIdx !== idxToMark) };
       });
@@ -53,9 +49,9 @@ export const useCompletedPomodorosStore = create<CompletedPomodoros>(set => ({
   removePomodoro: (idxToRemove) => set(state => ({ list: state.list.filter((_, itemIdx) => itemIdx !== idxToRemove) }))
 }))
 
+
 export default function PomodoroList() {
-	const [launchedPomo, setLaunchedPomo ] = useState<number>(null);
-    const pomodoros = usePomodorosStore(state => state.list);
+	  const [launchedPomo, setLaunchedPomo ] = useState<number>(null);
     const [promptToDelete, setPromptToDelete] = useState<{state: boolean, idx?: number}>({state: false});
     const [promptToMarkAsComplete, setPromptToMarkAsComplete] = useState<{state: boolean, idx?: number}>({state: false});
     
@@ -79,18 +75,11 @@ export default function PomodoroList() {
 
     const appContext = useContext<AppContext>(AppContext);
     
-    useEffect(() => {
-      window.pomodoro.onPomodoroUpdate((data: PomodoroTimerInfo) => {
-        if (launchedPomo != null) {
-          updatePomodoro(launchedPomo, data);
-          appContext.saveData();
-        }
-      });
-      return () => {
-          window.pomodoro.onUnsubUpdate();
-      }
-    }, [launchedPomo]);
-    
+    useEffect( () => {
+      appContext.saveData({storedPomos: pomoList});
+      console.log("Saving pomo list stuff", pomoList)
+    }, [pomoList])
+
     if (pomoList.length == 0) return <p>You have no saved pomodoros! 🍃</p>
 
   return <>
@@ -99,7 +88,6 @@ export default function PomodoroList() {
       onYes={() => {
         removePomodoro(promptToDelete.idx); 
         setPromptToDelete({state: false});
-        appContext.saveData();
       }}
       onNo={() => setPromptToDelete({state: false})}
     />}
@@ -109,11 +97,10 @@ export default function PomodoroList() {
         console.log("TEAST")
         markPomodoroAsComplete(promptToMarkAsComplete.idx); 
         setPromptToMarkAsComplete({state: false});
-        appContext.saveData();
       }}
       onNo={() => setPromptToMarkAsComplete({state: false})}
     />}
-    {pomodoros.map((pomoInfo, idx) => <ListedPomodoro 
+    {pomoList.map((pomoInfo, idx) => <ListedPomodoro 
       info={pomoInfo} 
       key={idx} 
       onUpdate={(newPomo) => updatePomodoro(idx, newPomo)}

@@ -14,12 +14,9 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
 	
 	const [editing, setEditing] = useState<boolean>(false);
 	
-	const appContext = useContext<AppContext>(AppContext);
-	
-	const onSaved = (newPomo: PomodoroTimerInfo ) => {
+	const onSaved = (newPomo: PomodoroTimerInfo) => {
 		onUpdate(newPomo);
 		setEditing(false);
-		appContext.saveData()
 	}
 	
 	if (editing) return <CreatePomodoro onSaved={onSaved} info={info} />

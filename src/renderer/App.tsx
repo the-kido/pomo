@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CreatePomodoro from "./main/createPomodoro/CreatePomodoro";
 import PomodoroList from "./main/PomodoroList";
-import { useUserDataStore, useUserSettingsStore } from "../main/states/userDataStates";
+import { useUserDataStore, useUserSettingsStore, useWorkSessionHistoryStore } from "../main/states/userDataStates";
 import { UserData } from "../types/UserData";
 
 import { Heatmap } from "./main/heatmap/Heatmap";
@@ -17,7 +17,7 @@ enum USER_ACTIONS {
 }
 
 export interface AppContext {
-    saveData: () => void,
+	saveData: (data: Partial<UserData>) => void,
 	currentUserActions: USER_ACTIONS[]
 }
 
@@ -34,8 +34,19 @@ export default function App() {
 	const darkMode = useUserSettingsStore(store => store.darkMode);
 	const [ menuAt, setMenuAt ] = useState<Menu>(Menu.HOME_PAGE) 
 
-	const saveData = () => {
-		window.app.saveData(useUserDataStore.getState().getUserData());
+	useEffect(() => {
+		console.log("SUBBING TO ONUPDATEDATA")
+		window.pomodoro.onUpdateData((data: UserData) => {
+			console.log("LOADING")
+			useUserDataStore.getState().loadUserData(data);
+		});
+		return () => {
+			window.pomodoro.onUnsubUpdateData();
+		}
+	}, []);
+
+	const saveData = (data: Partial<UserData>) => {
+		window.app.saveData(data);
 	};
 
 	useEffect(() => {
@@ -49,7 +60,7 @@ export default function App() {
 		document.body.classList.toggle("dark", darkMode);
 	}, [darkMode])
 
-	return <AppContext.Provider value={{ saveData: saveData, currentUserActions: [] }}> 
+	return <AppContext.Provider value={{ saveData, currentUserActions: [] }}> 
 		<div className="app" >
 			{/* Sidebar */}
 			<Sidebar menuAt={menuAt} setMenuAt={(newMenu) => setMenuAt(newMenu) } />
@@ -90,9 +101,11 @@ function QuickPomoMenu() {
 }
 
 function StatsMenu() {
+	const history = useWorkSessionHistoryStore(store => store.history);
+
 	return <>
 		<h1> Your Statistics </h1>
-		<Heatmap />
+		<Heatmap history={history}/>
 	</>
 }
 

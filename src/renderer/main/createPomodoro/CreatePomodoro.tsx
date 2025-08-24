@@ -43,17 +43,12 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [furthestStageReached, setFurthestStageReached] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
 	const [newPomo, setNewPomo] = useState<PomodoroTimerInfo>(info ? {...info} : getDefaultPomoTimer());
-	
-
 
 	const addPomodoro = usePomodorosStore(store => store.addPomodoro)
 	
-	const appContext = useContext<AppContext>(AppContext);
-
 	const createPomodoro = () => {
 		addPomodoro(newPomo);
 		resetFields();
-		appContext.saveData();
 	}
 
 	const enabledTaskType = useUserSettingsStore(a => a.enabledTaskType)
