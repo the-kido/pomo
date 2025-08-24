@@ -81,7 +81,7 @@ h1, h2, h3, h4, h5, div, input {
   color: var(--text-color)
 }
 
-svg {
+.icon {
   stroke: var(--text-color-light);
 }
 
@@ -112,4 +112,48 @@ button:disabled {
 
 button:disabled:hover {
   cursor: not-allowed;
+}
+
+
+/* For selection menus */
+.menu-button {
+	background: none;
+	border: none;
+}
+.menu-button-item:hover {
+	background: var(--select-background);
+}
+
+.menu-button-active {
+	border: none;
+	filter: none;
+	background: var(--select-background);
+}
+
+.menu-button-active:hover {
+	background: var(--select-background);
+}
+
+/* Scrollbar stuff */
+
+::-webkit-scrollbar {
+  width: 4px;   /* vertical scrollbar */
+  height: 8px;  /* horizontal scrollbar */
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background: #f0f0f000;
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+/* On hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-color);
 }

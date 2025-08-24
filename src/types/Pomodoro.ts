@@ -25,22 +25,34 @@ export interface PomodoroTimerInfo {
     received: boolean,
     completed: number,
     timeCreated: number,
+    id: string,
 }
 
-export const DEFAULT_POMO_TIMER: PomodoroTimerInfo = {
-  type: PomoActivityType.UNKNOWN,
-  task: '',
-  motivation: '',
-  nextReward: '',
-  subtasks: [],
-  subtasksCompletedIndicies: [],
-  startTimeSeconds: 25 * 60,
-  breakTimeSeconds: 300,
-  received: false,
-  completed: 0,
-  timeCreated: Date.now(),
+export function getDefaultPomoTimer(): PomodoroTimerInfo {
+  return {
+    type: PomoActivityType.UNKNOWN,
+    task: '',
+    motivation: '',
+    nextReward: '',
+    subtasks: [],
+    subtasksCompletedIndicies: [],
+    startTimeSeconds: 25 * 60,
+    breakTimeSeconds: 300,
+    received: false,
+    completed: 0,
+    timeCreated: Date.now(),
+    id: crypto.randomUUID()
+  }
 }
 
 export interface Window {
     pomodoro: PomodoroRendererExports
 }
+
+// For storing how well you worked!
+export interface DayWork {
+  tasksCompleted: string[];
+  pomodorosCompleted: number;
+}
+
+export type DayWorkDict = Record<string, DayWork>;

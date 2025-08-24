@@ -10,3 +10,18 @@ export const timeToWords = (minutes: number, seconds: number) => {
     else if (hours != 0) return `${hoursEnglish}, ${minutesEnglish}, and ${secondsEnglish}`
     else return `${minutes} minutes and ${seconds} seconds`
 } 
+
+
+export const YMDToFancy = (date: string) => {
+    // Expects date in "YYYY-MM-DD" format
+    const [year, month, day] = date.split('-').map(Number);
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    return `${months[month - 1]} ${day}, ${year}`;
+}
+
+export function getYMD(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}

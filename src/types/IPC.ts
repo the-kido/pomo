@@ -1,10 +1,11 @@
-import { PomodoroTimerInfo } from "./Pomodoro";
+import { DayWork, PomodoroTimerInfo } from "./Pomodoro";
 
 export type PomodoroRendererExports = {
 	createWindow: (fileToLoad: PomodoroTimerInfo, options: Electron.BrowserWindowConstructorOptions) => void,
 	onInit: (callback: (data: PomodoroTimerInfo) => void) => void;
-	sendUpdate: (data: PomodoroTimerInfo) => void;
-	onUpdate: (callback: (data: PomodoroTimerInfo) => void) => void;
+	incrementPomosDone: () => void;
+	sendPomodoroUpdate: (data: PomodoroTimerInfo) => void;
+	onPomodoroUpdate: (callback: (data: PomodoroTimerInfo) => void) => void;
 	onUnsubUpdate: () => void;
 	attemptClose: (data: PomodoroTimerInfo) => void;
 	onClosed: (callback: () => void) => void;
@@ -15,13 +16,15 @@ export const CHANNELS = {
 	fromPomodoroMain: {
 		onInit: 'init-pomodoro',
 		onClose: 'pomodoro-window-closed',
-		onSendUpdate: 'update-pomodoro'
+		onSendPomodoroUpdate: 'update-pomodoro',
+		onSendSessionUpdate: 'update-session'
 	} as const,
 	fromPomodoroRenderer: {
 		onClose: 'closed-pomodoro',
 		changeWindowSize: 'change-window-size',
 		onSaveData: 'save-data',
-		onSendUpdate: 'sending-pomo-update'
+		onSendPomodoroUpdate: 'sending-pomo-update',
+		onIncrementPomosDone: 'sending-increment-pomos-done'
 	} as const,
 	fromMainProcess: {
 		hydrateUserData: 'hydrate-user-data',

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { DEFAULT_POMO_TIMER, NONE, PLEASE_SELECT, PomoActivityType, PomodoroTimerInfo } from "/src/types/Pomodoro"
+import { getDefaultPomoTimer, NONE, PLEASE_SELECT, PomoActivityType, PomodoroTimerInfo } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "../PomodoroList";
 import { AppContext } from "../../App";
 import { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
@@ -42,7 +42,7 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 	
 	const [stagesCleared, setStagesCleared] = useState<Stages[]>(info ? stagesRequired : []);
 	const [furthestStageReached, setFurthestStageReached] = useState<Stages>(info ? Stages.SUBTASKS : stagesRequired[0]);
-	const [newPomo, setNewPomo] = useState<PomodoroTimerInfo>(info ? {...info} : DEFAULT_POMO_TIMER);
+	const [newPomo, setNewPomo] = useState<PomodoroTimerInfo>(info ? {...info} : getDefaultPomoTimer());
 	
 
 

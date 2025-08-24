@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { UserData, UserDataStore } from '/src/types/UserData';
 import { useCompletedPomodorosStore, usePomodorosStore } from '/src/renderer/main/PomodoroList';
+import { DayWork, DayWorkDict } from '/src/types/Pomodoro';
+import { getYMD } from '../utils/utils';
 
 export const DEFAULT_USERDATA: UserData = {
 	user: {
@@ -18,7 +20,8 @@ export const DEFAULT_USERDATA: UserData = {
 		height: 0
 	},
 	storedPomos: [],
-	storedCompletedPomos: []
+	storedCompletedPomos: [],
+	workSessionHistory: {}
 }
 
 const SHORT_BREAK_MAYBE_TOO_LONG = 15 * 60;
@@ -38,6 +41,9 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		var darkMode = useUserSettingsStore.getState().darkMode;
 		var length = useWindowSizeStore.getState().height;
 		var width = useWindowSizeStore.getState().width;
+		var workSessionHistory = useWorkSessionHistoryStore.getState().history
+
+		console.log("TEST!!!! ", workSessionHistory)
 
 		return {
 			user: {
@@ -55,7 +61,8 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				height: length,
 			},
 			storedPomos: usePomodorosStore.getState().list,
-			storedCompletedPomos: useCompletedPomodorosStore.getState().list
+			storedCompletedPomos: useCompletedPomodorosStore.getState().list,
+			workSessionHistory: workSessionHistory
 		};
 	}, loadUserData: (data) => {
 		useGoalStore.getState().setGoals([...data.user.goals] );
@@ -66,6 +73,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		useWindowSizeStore.getState().setSize(data.window.width, data.window.height);
 		usePomodorosStore.getState().setPomodoros([...data.storedPomos]);
 		useCompletedPomodorosStore.getState().setPomodoros([...data.storedCompletedPomos])
+		useWorkSessionHistoryStore.getState().setHistory(data.workSessionHistory)
 	}
 }))
 
@@ -248,3 +256,73 @@ export const useUserSettingsStore = create<UserSettings>((set) => ({
 	setEnabledTaskRewards: (value) => set({ enabledTaskRewards: value }),
 	setUsingDarkMode: (value) => set({ darkMode: value })
 }));
+
+interface WorkSessionHistory {
+	history: DayWorkDict;
+	setHistory: (history: DayWorkDict) => void;
+	incrementPomosCompleted: () => void;
+	addCompletedTask: (id: string) => void;
+	removeCompletedTask: (id: string) => void;
+	clearHistory: () => void;
+	getTodaysSession: () => DayWork;
+}
+
+export const useWorkSessionHistoryStore = create<WorkSessionHistory>((set, get) => ({
+	history: {},
+	setHistory: (history) => set({ history }),
+	incrementPomosCompleted: () =>
+		set((state) => {
+			const key = getYMD(new Date())
+			const dayWork = state.history[key] || { pomodorosCompleted: 0, tasksCompleted: [] };
+			console.log("HELLO WHAT ", {
+				...state.history,
+				[key]: { ...dayWork, pomodorosCompleted: dayWork.pomodorosCompleted + 1 }
+			})
+
+			return {
+				history: {
+					...state.history,
+					[key]: { ...dayWork, pomodorosCompleted: dayWork.pomodorosCompleted + 1 }
+				}
+			}
+		}
+	),
+	addCompletedTask: (id: string) => {
+		set((state) => {
+			const key = getYMD(new Date());
+			const dayWork = state.history[key] || { pomodorosCompleted: 0, tasksCompleted: [] };
+			return {
+				history: {
+					...state.history,
+					[key]: {
+						...dayWork,
+						tasksCompleted: [...dayWork.tasksCompleted, id]
+					}
+				}
+			};
+		});
+	},
+	removeCompletedTask: (id: string) => {
+		set((state) => {
+			const key = getYMD(new Date());
+			const dayWork = state.history[key] || { pomodorosCompleted: 0, tasksCompleted: [] };
+			
+			if (!dayWork) return state;
+			
+			return {
+				history: {
+					...state.history,
+					[key]: {
+						...dayWork,
+						tasksCompleted: dayWork.tasksCompleted.filter(taskId => taskId !== id)
+					}
+				}
+			};
+		});
+	},
+	clearHistory: () => set({ history: {} }),
+	getTodaysSession: () => {
+		const key = getYMD(new Date());
+		const history = get().history;
+		return history[key] || { pomodorosCompleted: 0, tasksCompleted: [] };
+}}));

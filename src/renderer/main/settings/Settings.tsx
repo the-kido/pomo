@@ -38,7 +38,7 @@ export default function SettingsModal() {
           {/* Left menu bar */}
           <div className="settings-menu" style={{display: 'flex', flexDirection: 'column' }}>
             <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Settings style={{paddingRight: '4px'}} />Settings
+              <Settings className='icon' style={{paddingRight: '4px'}} />Settings
             </h2>
             <div className='settings-buttons'>
               
@@ -91,7 +91,7 @@ export default function SettingsModal() {
 
 function SettingsMenuButton({ selected, label, onClick }: { selected: boolean; label: string; onClick: () => void; }) {
   return (
-    <button className={`settings-menu-item${selected ? '-active' : ''}`} onClick={onClick} > {label} </button>
+    <button className={`menu-button${selected ? '-active' : ''}`} onClick={onClick} > {label} </button>
   );
 }
 

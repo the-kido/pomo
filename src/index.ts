@@ -15,6 +15,7 @@ import { readData, writeData } from '/src/main/data/load';
 import { UserData } from './types/UserData';
 import { mainProcessEvents } from './main/events/events';
 import { CHANNELS } from './types/IPC';
+import { useWorkSessionHistoryStore } from './main/states/userDataStates';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -121,12 +122,17 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: num
 });
 
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onSaveData, (_, data: UserData) => {
+  console.log("Writing data")
   writeData(data);
 });
 
-ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendUpdate, (_, data: PomodoroTimerInfo) => {
-  mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onSendUpdate, data);
+ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendPomodoroUpdate, (_, data: PomodoroTimerInfo) => {
+  mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, data);
   mainProcessEvents.emit('pomodoro-updated', data)
+});
+
+ipcMain.on(CHANNELS.fromPomodoroRenderer.onIncrementPomosDone, (_, __) => {
+  mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onSendSessionUpdate);
 });
 
 //#endregion Pomodoro Window

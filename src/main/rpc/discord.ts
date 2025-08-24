@@ -17,7 +17,6 @@ function getMenuPresence() : RPC.Presence {
 }
 
 mainProcessEvents.on('pomodoro-updated', (pomoInfo: PomodoroTimerInfo) => {
-    console.log("HI!", pomoInfo)
     if (rpc) {
         rpc.setActivity(getPomodoroPresence(pomoInfo));
     }

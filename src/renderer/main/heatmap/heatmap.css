@@ -1,0 +1,20 @@
+.color-github-1 {
+    background-color: #ebedf0;
+}
+
+.color-github-2 {
+    background-color: #c6e48b;
+}
+
+.color-github-3 {
+    background-color: #7bc96f;
+}
+
+.color-github-4 {
+    background-color: #239a3b;
+}
+
+rect {
+    rx: 4px;
+    ry: 4px;
+}

@@ -13,13 +13,16 @@ contextBridge.exposeInMainWorld('pomodoro', {
 	onInit: (callback: (data: PomodoroTimerInfo) => void) => {
 		ipcRenderer.on(CHANNELS.fromPomodoroMain.onInit, (_event: any, data: any) => callback(data))
 	},
-	attemptClose: (data: PomodoroTimerInfo) =>{
-		// "send FROM renderer to main process"
+	attemptClose: (data: PomodoroTimerInfo) => {
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onClose, data)
 	},
-	sendUpdate: (data: PomodoroTimerInfo) => {
-		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onSendUpdate, data)
+	sendPomodoroUpdate: (data: PomodoroTimerInfo) => {
+		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onSendPomodoroUpdate, data)
 	},
-	changeSize : (x: number, y: number) => 
+	incrementPomosDone: () => {
+		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onIncrementPomosDone)
+	},
+	changeSize : (x: number, y: number) => {
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.changeWindowSize, x, y)
+	}
 });

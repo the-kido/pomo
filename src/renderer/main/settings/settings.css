@@ -84,23 +84,7 @@
 	gap: 0.3em;
 }
 
-.settings-menu-item {
-	background: none;
-	border: none;
-}
-.settings-menu-item:hover {
-	background: var(--select-background);
-}
 
-.settings-menu-item-active {
-	border: none;
-	filter: none;
-	background: var(--select-background);
-}
-
-.settings-menu-item-active:hover {
-	background: var(--select-background);
-}
 
 /* 
 
@@ -147,25 +131,3 @@
 
 
 */
-
-::-webkit-scrollbar {
-  width: 4px;   /* vertical scrollbar */
-  height: 12px;  /* horizontal scrollbar */
-}
-
-/* Scrollbar track (background) */
-::-webkit-scrollbar-track {
-  background: #f0f0f000;
-  border-radius: 10px;
-}
-
-/* Scrollbar thumb (the draggable part) */
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-/* On hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}

@@ -80,7 +80,7 @@ export default function PomodoroList() {
     const appContext = useContext<AppContext>(AppContext);
     
     useEffect(() => {
-      window.pomodoro.onUpdate((data: PomodoroTimerInfo) => {
+      window.pomodoro.onPomodoroUpdate((data: PomodoroTimerInfo) => {
         if (launchedPomo != null) {
           updatePomodoro(launchedPomo, data);
           appContext.saveData();

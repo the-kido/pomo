@@ -1,4 +1,4 @@
-import { PomodoroTimerInfo } from "./Pomodoro";
+import { DayWork, DayWorkDict, PomodoroTimerInfo } from "./Pomodoro";
 
 export interface UserData {
   user: {
@@ -17,6 +17,7 @@ export interface UserData {
   };
   storedPomos: Array<PomodoroTimerInfo>;
   storedCompletedPomos: Array<PomodoroTimerInfo>;
+  workSessionHistory: DayWorkDict
 }
 
 export interface UserDataStore {
