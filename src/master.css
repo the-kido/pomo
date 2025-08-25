@@ -31,6 +31,7 @@
   /* size constants */
   --window-control-size: 18px;
   --small-padding: 5px;
+  --menu-padding: 20px;
 }
 
 .dark {

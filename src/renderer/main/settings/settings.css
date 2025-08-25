@@ -62,13 +62,17 @@
 }
 
 /* terrible name */
-.settings-main-content {
+.settings-main-content-scroll-area {
 	flex: 1;
 	overflow: auto;
 	padding: 0px;
 }
+.settings-main-content {
+	padding: 0px var(--menu-padding)
+}
+
 .sticky-content-header {
-	padding: 0px 20px;
+	padding: 0px var(--menu-padding);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -76,15 +80,12 @@
 }
 
 .settings-buttons {
-	margin: auto;
+	padding: 0px var(--menu-padding);
     margin-top: 0px;
-    width: 8em;
     display: flex;
     flex-direction: column;
 	gap: 0.3em;
 }
-
-
 
 /* 
 

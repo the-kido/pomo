@@ -61,28 +61,28 @@ export default function SettingsModal() {
               <h2>{MENU_LABELS[selectedMenu]}</h2>
               <button onClick={closeSettings} className="close-button">✖</button>
             </div>
-            <div className='settings-main-content'>
-              <div style={{padding: '0px 10px'}} >
-
-              {selectedMenu === Menus.BUILDING && (
-                <BuildingPomoPage />
-              )}
-              {selectedMenu === Menus.APPEARANCE && (
-               <AppearancePage/>
+            <div className='settings-main-content-scroll-area'>
+              <div className='settings-main-content' >
+                {selectedMenu === Menus.BUILDING && (
+                  <BuildingPomoPage />
                 )}
-              {selectedMenu === Menus.ABOUT && (
-                <>
-                  <Divider text={"Service Statuses"}/> 
-                  <ServiceStatuses/>
-
-                  <Divider text={"Credits"} />
-                  Made by kido!
-                </>
-              )}
-              {/* Spacer */}
-              <div style={{height: '100px'}} ></div>
-            </div>
+                {selectedMenu === Menus.APPEARANCE && (
+                  <AppearancePage/>
+                )}
+                {selectedMenu === Menus.ABOUT && (
+                  <>
+                    <Divider text={"Service Statuses"}>
+                      <ServiceStatuses/>
+                    </Divider> 
+                    <Divider text={"Credits"}>
+                      Made by kido!
+                    </Divider>
+                  </>
+                )}
+                {/* Spacer */}
+                <div style={{height: '100px'}} ></div>
               </div>
+            </div>
           </div>
       </div>
     </>
@@ -109,7 +109,7 @@ export function ToggleSwitch({ isOn, handleToggle }: ToggleSwitchProps) {
   );
 }
 
-function SettingItem({ label, description, children }: {label: string, description: string, children:  React.ReactNode} ) {
+function SettingItem({ label, description, children }: {label: string, description: string, children: React.ReactNode} ) {
   return (
     <div className="setting-item">
       <div className="setting-info">
@@ -121,10 +121,16 @@ function SettingItem({ label, description, children }: {label: string, descripti
   );
 }
 
-function Divider({text}: {text: string}) {
-  return <h3 style={{paddingTop: '1em'}}>
-    {text}
-  </h3>
+function Divider({ text, children }: { text: string; children: React.ReactNode }) {
+  return ( <>
+    <h3 style={{ paddingTop: '1em' }}>
+      {text}
+    </h3>
+    <div>
+      {children}
+    </div>
+  </>
+  )
 }
 
 function BuildingPomoPage() {
@@ -167,31 +173,31 @@ function BuildingPomoPage() {
   }, [enabledTaskType, enableTaskRewards])
 
   return <>
-    <Divider text='Toggle Creation Features' />
-    <div>
+    <Divider text='Toggle Creation Features'>
+
       <SettingItem
         label="Task Type"
         description="Lets you specify the type of task to orient you"
-      > 
+        > 
         <ToggleSwitch 
           isOn={enabledTaskType} 
           handleToggle={() => setShowTaskType(old => !old)} 
-        />
+          />
       </SettingItem>
       <SettingItem
         label="Task Rewards"
         description="Lets you choose what you get once a timer switches to break"
-      > 
+        > 
       <ToggleSwitch 
           isOn={enableTaskRewards}
           handleToggle={() => setShowTaskRewards(old => !old)} 
-        />
+          />
       </SettingItem>
-    </div>
-
-    <Divider text='Your Creation Options' />
     
-    <div>
+    </Divider>
+
+    <Divider text='Your Creation Options'>
+
       <SettingItem
         label='Goals'
         description='Edit the list of goals you set to achieve for active tasks'
@@ -243,7 +249,7 @@ function BuildingPomoPage() {
           >
         </SubtaskList>   
       </SettingItem>
-    </div>
+    </Divider>
   </>
 }
 
@@ -261,18 +267,19 @@ function AppearancePage() {
     })
   }, [isDarkMode])
 
-  return <div>
-    <Divider text='Theme' />
-    <SettingItem 
-      label={'Dark Mode'} 
-      description={'Need I say more?'}
-    >
-      <ToggleSwitch 
-        isOn={isDarkMode} 
-        handleToggle={() => {
-          setUsingDarkMode(!isDarkMode)
-        }}
-      />
-    </SettingItem>
-  </div>
+  return ( 
+    <Divider text='Theme'>
+      <SettingItem 
+        label={'Dark Mode'} 
+        description={'Need I say more?'}
+        >
+        <ToggleSwitch 
+          isOn={isDarkMode} 
+          handleToggle={() => {
+            setUsingDarkMode(!isDarkMode)
+          }}
+          />
+      </SettingItem>
+    </Divider>
+  )
 }

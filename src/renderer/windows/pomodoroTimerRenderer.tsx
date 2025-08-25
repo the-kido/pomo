@@ -87,7 +87,6 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     return { array: out, leftover: info.subtasks.length - out.length };
   }
 
-
   function onPomodoroClose() {
     window.pomodoro.attemptClose(info);
   }
@@ -97,10 +96,23 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
 
   useEffect(() => {
+    console.log('called at start or nah?', pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight)
     // This runs after isShrunk changes and the DOM/layout is updated
     window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight);
     // You can also measure the DOM here if needed
   }, [isShrunk]);
+
+  // Required to set pomodoro window to correct size on first load
+  useEffect(() => {
+    // Wait for the DOM to settle
+    const timer = setTimeout(() => {
+      if (pomoWindow.current) {
+        window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight);
+      }
+    }, 100); // Wait for some arbitrary time so all is set in stone
+
+    return () => clearTimeout(timer);
+  }, []);
 
   function onDescriptionChangeCancel() {
     finishSettingDescription();
