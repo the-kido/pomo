@@ -28,6 +28,8 @@ const createWindow = async (): Promise<void> => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+    autoHideMenuBar: true,
+    frame: false,
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -63,9 +65,8 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  
 });
 
 //#endregion Main Window
@@ -77,7 +78,7 @@ declare const POMODORO_TIMER_PRELOAD_WEBPACK_ENTRY: string;
 
 let pomodoro: BrowserWindow | null = null;
 
-ipcMain.on(CHANNELS.fromMainRenderer.onCreateWindow, (_, timerInfo: PomodoroTimerInfo, options: Electron.BaseWindowConstructorOptions) => {
+ipcMain.on(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, (_, timerInfo: PomodoroTimerInfo, options: Electron.BaseWindowConstructorOptions) => {
   
   // Update app state
   useAppStateStore.getState().setActivePomodoro(timerInfo)
@@ -119,6 +120,19 @@ ipcMain.on(CHANNELS.fromMainRenderer.onCreateWindow, (_, timerInfo: PomodoroTime
   });
 })
 
+ipcMain.on(CHANNELS.fromMainRenderer.maximizeMain, () => {
+  if (mainWindow.isMaximized()) mainWindow.unmaximize(); 
+  else mainWindow.maximize();
+})
+
+ipcMain.on(CHANNELS.fromMainRenderer.minimizeMain, () => {
+  mainWindow.minimize();
+});
+
+ipcMain.on(CHANNELS.fromMainRenderer.closeMain, () => {
+  mainWindow.close();
+});
+
 // Close the pomodoro and notify 
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
   pomodoro.close();
@@ -127,65 +141,19 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
 
 // Update minimum window size.
 ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number) => {
-  pomodoro.setMinimumSize(x, y);
-  pomodoro.setSize(x, y);
+  // TODO: make magic numbers go bye bye and make it scale with UI scale value when I implement that for the timer
+  const newX = Math.max(x, 275);
+  const newY = Math.max(y, 200);
+  pomodoro.setMinimumSize(newX, newY);
+  pomodoro.setSize(newX, newY);
 });
-
-/*
-ipcMain.on(CHANNELS.fromPomodoroRenderer.onSaveData, (_, data: UserData) => {
-  console.log("Writing data")
-  const savedData = data;
-  savedData.workSessionHistory = useWorkSessionHistoryStore.getState().history;
-  // Update the cannonic state
-  useUserDataStore.getState().loadUserData(savedData);
-  writeData(savedData);
-});
-
-⏯️ Done
-ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendPomodoroUpdate, (_, data: PomodoroTimerInfo) => {
-  // Save the new pomodoro data!
-
-  console.log("on send pomodoro update", data)
-  const savedData = useUserDataStore.getState().getUserData();
-  const idx = savedData.storedPomos.findIndex(pomo => pomo.id === data.id);
-  
-  if (idx !== -1) {
-    savedData.storedPomos[idx] = data;
-  } else {
-    console.log("Couldn't find pomodoro of index", idx);
-  }
-
-  // Update the cannonic state
-  useUserDataStore.getState().loadUserData(savedData);
-  writeData(savedData);
-  
-  mainWindow.webContents.send(CHANNELS.fromMainProcess.onUpdate, savedData);
-  mainProcessEvents.emit('pomodoro-updated', data)
-});
-
-⏯️ Done
-ipcMain.on(CHANNELS.fromPomodoroRenderer.onIncrementPomosDone, (_, __) => {
-  console.log("TRYNA DO THIS THING!")
-  
-  useWorkSessionHistoryStore.getState().incrementPomosCompleted();
-});
-
-⏯️ Done
-
-// TODO
-useWorkSessionHistoryStore.subscribe((state) => {
-  console.log("HELLO DID THIS WORK", state.history)
-  const userData = useUserDataStore.getState().getUserData();
-  writeData(userData);
-});
-*/
 
 /**
  * Central function to safely update specific parts of UserData
  * without overwriting other parts
  */
 
-function updateUserData(partialUpdate: Partial<UserData>, send: boolean = true) {
+function updateUserData(partialUpdate: Partial<UserData>, send: boolean = true, from: 'pomo' | 'main') {
   const currentData = useUserDataStore.getState().getUserData();
   
   // Create new object with only the fields that should be updated
@@ -201,14 +169,17 @@ function updateUserData(partialUpdate: Partial<UserData>, send: boolean = true) 
   writeData(newData);
   
   // Notify main window
-  if (send) mainWindow.webContents.send(CHANNELS.fromMainProcess.onUpdate, newData);
+  console.log("SENDING!")
+  
+  if (from == 'pomo') mainWindow.webContents.send(CHANNELS.fromMainProcess.onUpdate, newData);
+  if (from == 'main' && pomodoro) pomodoro.webContents.send(CHANNELS.fromMainProcess.onUpdate, newData);
 }
 
 // Replace your existing handlers with these:
 
-ipcMain.on(CHANNELS.fromPomodoroRenderer.onSaveData, (_, data: Partial<UserData>) => {
+ipcMain.on(CHANNELS.fromMainRenderer.onSaveData, (_, data: Partial<UserData>) => {
   console.log("hi")
-  updateUserData(data, false);
+  updateUserData(data, false, 'main');
 })
 
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendPomodoroUpdate, (_, data: PomodoroTimerInfo) => {
@@ -218,7 +189,7 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onSendPomodoroUpdate, (_, data: Pomodor
   const storedPomos = [...current.storedPomos];
   if (idx !== -1) {
     storedPomos[idx] = data;
-    updateUserData({ storedPomos });
+    updateUserData({ storedPomos }, true, 'pomo');
     mainProcessEvents.emit('pomodoro-updated', data);
   }
 });
@@ -229,7 +200,7 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onIncrementPomosDone, () => {
   dayWork.pomodorosCompleted += 1;
   useWorkSessionHistoryStore.getState().setTodaysSession(dayWork);
 
-  updateUserData({workSessionHistory: useWorkSessionHistoryStore.getState().history});
+  updateUserData({workSessionHistory: useWorkSessionHistoryStore.getState().history}, true, 'pomo');
 })
 
 //#endregion Pomodoro Window

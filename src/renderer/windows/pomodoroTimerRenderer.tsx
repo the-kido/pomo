@@ -3,11 +3,13 @@ import './timer.css'
 
 import { createRoot } from 'react-dom/client';
 import { JSX, useEffect, useRef, useState } from 'react';
-import { DayWork, PomoActivityTypeDisplay, PomodoroTimerInfo } from '/src/types/Pomodoro';
+import { PomoActivityTypeDisplay, PomodoroTimerInfo } from '/src/types/Pomodoro';
 import Subtask from './pomodoro/Subtask';
 import Timer from './pomodoro/Timer';
 import { create } from 'zustand';
 import Header from './pomodoro/Header';
+import { useUserDataStore, useUserSettingsStore } from '/src/main/states/userDataStates';
+import { UserData } from '/src/types/UserData';
 
 const SUBTASK_ARRAY_WEIGHTS = [1, 0.5, 0.325];
 
@@ -36,9 +38,11 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     window.pomodoro.sendPomodoroUpdate({ ...info, completed: pomosCompleted });
   }, [pomosCompleted])
   
+  const darkMode = useUserSettingsStore(store => store.darkMode);
+  
   useEffect(() => {
- 
-  }, [history])
+		document.body.classList.toggle("dark", darkMode);
+	}, [darkMode])
   
   const updatePomodorosCompleted = () => {
     window.pomodoro.incrementPomosDone();
@@ -169,6 +173,16 @@ function App() {
       setTimerInfo(receivedData);
     });
   }, []);
+
+  useEffect(() => {
+		window.pomodoro.onUpdateData((data: UserData) => {
+			useUserDataStore.getState().loadUserData(data);
+		});
+		return () => {
+			window.pomodoro.onUnsubUpdateData();
+		}
+	}, []);
+
   return timerInfo == 'Unset' ? <div> Loading... </div> : <Pomodoro info={timerInfo} />
 }
 

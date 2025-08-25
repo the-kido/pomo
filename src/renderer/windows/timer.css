@@ -1,120 +1,120 @@
-  body {
-    margin: 0px;
-  }
+body {
+  background-color: var(--background-color);
+  margin: 0px;
+}
 
-  .pomo {
-    /* Padding required to avoid colliding content with the header! */
-    padding-top: 34px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    flex-wrap: wrap;
-    width: 100%;
-  }
+.pomo {
+  /* Padding required to avoid colliding content with the header! */
+  padding-top: calc(var(--small-padding) * 2 + var(--window-control-size));
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+}
 
-  .main-info {
-    border-radius: 10px;
-    box-sizing: border-box;
-    width: 100%;
+.main-info {
+  border-radius: 10px;
+  box-sizing: border-box;
+  width: 100%;
 
-    background-color: white;
+  background-color: var(--background-color);
 
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
 
-  .misc-info {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-  }
+.misc-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
 
-  .timer {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
+.timer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
 
-  .subtask-box {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+.subtask-box {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 
-    background-color: white;
-    color: rgb(0, 0, 0, var(--percent));
+  background-color: var(--background-color);
+  color: rgb(0, 0, 0, var(--percent));
 
-    margin: 0px;
-    padding-right: 10px;
-    padding-left: 10px;
-    
-    margin: 10px;
-    margin-top: 0px;
-
-    border-radius: var(--input-border-radius);
-    border-style: dotted;
-    border-width: 2px;
-    box-sizing: border-box;
-  }
+  margin: 0px;
+  padding-right: 10px;
+  padding-left: 10px;
   
-  .subtask-box-incomplete {
-    border-color: rgba(168, 168, 168, var(--percent));
-  }
+  margin: 10px;
+  margin-top: 0px;
+
+  border-radius: var(--input-border-radius);
+  border-style: dotted;
+  border-width: 2px;
+  box-sizing: border-box;
+}
+
+.subtask-box-incomplete {
+  border-color: rgba(168, 168, 168, var(--percent));
+}
+
+.subtask-box-completed {
+  border: none;
+  background-color: var(--background-alt-color);
+}
+
+/* For the subtask text */
+h3 {
+  font-weight: 400;
+  line-height: 1em;
   
-  .subtask-box-completed {
-    border: none;
-    background-color: #eaeaea;
-  }
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
-  /* For the subtask text */
-  h3 {
-    font-weight: 400;
-    line-height: 1em;
-    
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
+.justification-input
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .justification-input
-  {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.description {
+  text-align: center;
+  cursor: text; 
+}
 
-  .description {
-    text-align: center;
-    cursor: text; 
-  }
+.button {
+  color: var(--text-color)
+}
 
+h1 {
+  line-height: normal;
+  display: flex;
+  align-items: center; /* for vertical centering of text */
+}
 
-  h1 {
-    line-height: normal;
-    display: flex;
-    align-items: center; /* for vertical centering of text */
-  }
+h2 {
+  margin: 0px;
+}
 
-  h2 {
-    margin: 0px;
-  }
-
-
-
-  h4 {
-    margin: 0px;
-  }
-
-
+h4 {
+  margin: 0px;
+}
 
 /* Things to do with the custom title bar */
 .title-bar {
   position: fixed;
-  padding: 5px;
-  height: 1.5rem;
-  background-color: white;
+  padding: var(--small-padding);
+  height: var(--window-control-size);
+  background-color: var(--background-color);
   top: 0;
   left: 0;
   width: calc(100% - 10px);
@@ -123,10 +123,7 @@
   justify-content: space-between;
 }
 
-.window-dragger {
-  -webkit-app-region: drag;
-}
-
+/* TODO */
 .test {
   background: rgba(255, 255, 255, 0.447);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -135,26 +132,25 @@
   border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-
 .timer-text {
   font-size: 50px;
   margin: 0px;
-  background: linear-gradient(45deg, #101010, #535353);
+  color: var(--text-color);
+  /* background: linear-gradient(45deg, #101010, #535353);
   
   background-clip: text;
   -webkit-background-clip: text;
   
   color: transparent;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent; */
 }
 
 /* For subtask progress bar stuff */
 
 .subtask-progress-bar {
-  background-color: #0078d4;
   border-radius: var(--input-border-radius);
 
-  border: 1px solid #0000005f;
+  border: 1px solid var(--border-color);
   width: 65%;
   margin: 10px;
   block-size: 1.2em;

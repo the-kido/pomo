@@ -1,16 +1,7 @@
-import { DayWork, DayWorkDict, PomodoroTimerInfo } from "./Pomodoro";
+import { DayWorkDict, PomodoroTimerInfo } from "./Pomodoro";
 
 export interface UserData {
-  user: {
-    goals: string[],
-    rewards: string[],
-    breakTime: number,
-    longBreakTime: number,
-    workTime: number,
-    enabledTaskType: boolean,
-		enabledTaskRewards: boolean,
-    darkMode: boolean,
-  };
+  user: UserPreferences;
   window: {
     width: number;
     height: number;
@@ -23,4 +14,15 @@ export interface UserData {
 export interface UserDataStore {
   loadUserData: (data: UserData) => void,
   getUserData: () => UserData,
+}
+
+export interface UserPreferences {
+  goals: string[],
+  rewards: string[],
+  breakTime: number,
+  longBreakTime: number,
+  workTime: number,
+  enabledTaskType: boolean,
+  enabledTaskRewards: boolean,
+  darkMode: boolean,
 }

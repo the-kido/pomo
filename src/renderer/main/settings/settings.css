@@ -21,7 +21,7 @@
 	background-color: var(--background-color);
 	border-radius: var(--input-border-radius);
 	z-index: 1000;
-	min-width: 50vw;
+	min-width: 60vw;
 	min-height: 70vh;
 	box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }

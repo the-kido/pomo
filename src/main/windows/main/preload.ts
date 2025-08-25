@@ -1,5 +1,3 @@
-// import {} from 'prod-app-shared'
-import { DayWorkDict, PomodoroTimerInfo } from '/src/types/Pomodoro'
 import { contextBridge, ipcRenderer } from 'electron'
 import { UserData } from '/src/types/UserData';
 import { LLMResult } from '/src/main/ai/ollama';
@@ -18,41 +16,30 @@ declare global {
 		states: {
 			onOllamaStateChanged: (callback: (isOllamaActive: boolean) => void) => void,
 			onExtensionStateChanged: (callback: (isExtensionConnected: boolean) => void) => void
+		},
+		windowControl: {
+			minimize: () => void,
+			maximize: () => void,
+			close: () => void
 		}
 	}
 }
 
-var prevOnPomoUpdateListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
-var prevOnSessionUpdateListener: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
+var onUpdateDataCallback: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
 var prevOnClosedListener: (event: Electron.IpcRendererEvent) => void;
 
 contextBridge.exposeInMainWorld('pomodoro', {
-	createWindow: (idx: number, fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
-		ipcRenderer.send(CHANNELS.fromMainRenderer.onCreateWindow, idx, fileToLoad, options)
+	launchPomodoroWindow: (idx: number, fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
+		ipcRenderer.send(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, idx, fileToLoad, options)
 	},
 	onUpdateData: (callback: (data: UserData) => void) => {
-		console.log('On update data');
-		prevOnPomoUpdateListener = (_event, data) => {console.log("callback!", data); callback(data)}
-		ipcRenderer.on(CHANNELS.fromMainProcess.onUpdate, prevOnPomoUpdateListener)
+		console.log('onUpdateData');
+		onUpdateDataCallback = (_event, data) => callback(data)
+		ipcRenderer.on(CHANNELS.fromMainProcess.onUpdate, onUpdateDataCallback)
 	},
 	onUnsubUpdateData: () => {
 		
 	},
-
-	// onPomodoroUpdate: (callback: (data: PomodoroTimerInfo) => void) => {
-	// 	prevOnPomoUpdateListener = (_event, data) => callback(data)
-	// 	ipcRenderer.on(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, prevOnPomoUpdateListener)
-	// },
-	// onUnsubPomoUpdate: () => {
-	// 	ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onSendPomodoroUpdate, prevOnPomoUpdateListener)
-	// },
-	// onSessionUpdate: (callback: (data: DayWorkDict) => void) => {
-	// 	prevOnSessionUpdateListener = (_event, data) => callback(data)
-	// 	ipcRenderer.on(CHANNELS.fromPomodoroMain.onSendSessionUpdate, prevOnSessionUpdateListener)
-	// },
-	// onUnsubSessionUpdate: () => {
-	// 	ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onSendSessionUpdate, prevOnSessionUpdateListener)
-	// },
 	onClosed: (callback: () => void) => {
 		if (prevOnClosedListener) {
 			ipcRenderer.removeListener(CHANNELS.fromPomodoroMain.onClose, prevOnClosedListener)
@@ -67,8 +54,7 @@ contextBridge.exposeInMainWorld('app', {
 		ipcRenderer.addListener(CHANNELS.fromMainProcess.hydrateUserData, (_, data: UserData) => callback(data))
 	},
 	saveData: (data: Partial<UserData>) => {
-		console.log("??")
-		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onSaveData, data);
+		ipcRenderer.send(CHANNELS.fromMainRenderer.onSaveData, data);
 	}
 });
 
@@ -79,4 +65,10 @@ contextBridge.exposeInMainWorld('ollama', {
 contextBridge.exposeInMainWorld('states', {
 	onOllamaStateChanged: (callback: (isOllamaActive: boolean) => void) => ipcRenderer.addListener(CHANNELS.fromMainProcess.ollamaStateChanged, (_, change) => callback(change)),
 	onExtensionStateChanged: (callback: (isExtensionConnected: boolean) => void) => ipcRenderer.addListener(CHANNELS.fromMainProcess.onExtensionStateChanged, (_, change) => callback(change))
+})
+
+contextBridge.exposeInMainWorld('windowControl', {
+	minimize: () => ipcRenderer.send(CHANNELS.fromMainRenderer.minimizeMain),
+	maximize: () => ipcRenderer.send(CHANNELS.fromMainRenderer.maximizeMain),
+	close: () => ipcRenderer.send(CHANNELS.fromMainRenderer.closeMain)
 })

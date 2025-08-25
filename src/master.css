@@ -15,8 +15,8 @@
   --background-alt-color: rgb(214 218 222);
   
   --subtask-progress-green: rgb(143, 199, 131);
-  --timer-progress-done: rgb(247, 127, 127);
-  --timer-progress-left: rgb(232, 232, 232);
+  --timer-progress-done: var(--warn);
+  --timer-progress-left: var(--background-alt-color);
 
   --text-color: rgb(0, 0, 0);
   --text-color-light: rgb(40, 40, 40);
@@ -27,6 +27,10 @@
   --cell-2: #5d998d;
   --cell-3: #34767d;
   --cell-4: #0e334a;
+
+  /* size constants */
+  --window-control-size: 18px;
+  --small-padding: 5px;
 }
 
 .dark {
@@ -37,10 +41,11 @@
   --select-background: #23272f;
   --unselect: #383838;
   --select-accent: #60aaff;
-  --warn: #ff6b6b;
-  --subtask-progress-green: #6fcf97;
-  --timer-progress-done: #ff6b6b;
-  --timer-progress-left: #444;
+  --warn: #ba3748;
+  --subtask-progress-green: #0e4b28;
+
+  --timer-progress-done: var(--warn);
+  --timer-progress-left: var(--background-alt-color);
 
   --text-color: rgb(255, 255, 255);
   --text-color-light: rgb(160, 160, 160);
@@ -170,4 +175,31 @@ button:disabled:hover {
 /* On hover */
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-color);
+}
+
+/* For top bar areas that allow you to drag to move window */
+.window-dragger {
+  -webkit-app-region: drag;
+}
+
+/* For minimize, maximize, or close buttons of windows */
+.window-control {
+  -webkit-app-region: no-drag;
+  background-color: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  color: var(--text-color);
+}
+.window-control-icon {
+  size: var(--window-control-size);
+}
+
+.window-control:hover {
+  background-color: var(--select-background);
+}
+
+.window-control:active {
+  background-color: var(--select-accent);
 }

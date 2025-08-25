@@ -10,6 +10,7 @@ import '../main/states/userDataStates'
 import { createContext } from "react";
 import Sidebar from "./main/Sidebar";
 import SettingsModal from "./main/settings/Settings";
+import { Copy, Minus, X } from "lucide-react";
 
 enum USER_ACTIONS {
 	EDITING_POMODORO = "editing_pomodoro",
@@ -18,7 +19,7 @@ enum USER_ACTIONS {
 
 export interface AppContext {
 	saveData: (data: Partial<UserData>) => void,
-	currentUserActions: USER_ACTIONS[]
+	currentUserActions: USER_ACTIONS[] // TODO
 }
 
 export enum Menu {
@@ -56,25 +57,40 @@ export default function App() {
 		});
 	}, []);
 
-	useEffect( () => {
+	useEffect(() => {
 		document.body.classList.toggle("dark", darkMode);
 	}, [darkMode])
 
 	return <AppContext.Provider value={{ saveData, currentUserActions: [] }}> 
-		<div className="app" >
+		<div className="app">
 			{/* Sidebar */}
 			<Sidebar menuAt={menuAt} setMenuAt={(newMenu) => setMenuAt(newMenu) } />
 	
 			{/* Main container */} 
 			<div className="main-container">
 				{/* Top Overlayed Bar */}
-				<div className="top-bar"> </div>
+				<div className="top-bar">
+					<div className=" window-dragger" style={{flex: 1}} > </div>
+					<div style={{height: '28px'}} >
+						<button onClick={() => window.windowControl.minimize()} className="window-control">
+							<Minus size={18}/>
+						</button>
+						<button onClick={() => window.windowControl.maximize()} className="window-control">
+							<Copy style={{transform: 'scaleX(-1)'}} size={18}/>
+						</button>
+						<button onClick={() => window.windowControl.close()} className="window-control">
+							<X size={18}/>
+						</button>
+					</div>
+				</div>
 				
-				<div className="main-content" style={{maxWidth: "38rem"}}>
-					{ menuAt == Menu.HOME_PAGE && <HomeMenu /> }
-					{ menuAt == Menu.STATS && <StatsMenu /> }
-					{ menuAt == Menu.COMPLETED && <CompletedTasksMenu /> }
-					{ menuAt == Menu.QUICK_POMO && <QuickPomoMenu /> }
+				<div className="main-content-scrollable-area">
+					<div className="main-content" style={{maxWidth: "38rem"}}>
+						{ menuAt == Menu.HOME_PAGE && <HomeMenu /> }
+						{ menuAt == Menu.STATS && <StatsMenu /> }
+						{ menuAt == Menu.COMPLETED && <CompletedTasksMenu /> }
+						{ menuAt == Menu.QUICK_POMO && <QuickPomoMenu /> }
+					</div>
 				</div>
 			</div>
 		</div> 

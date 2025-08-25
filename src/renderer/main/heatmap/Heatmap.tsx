@@ -7,7 +7,7 @@ import { DayWork, DayWorkDict } from '/src/types/Pomodoro';
  
 export function Heatmap({history} : {history: DayWorkDict}){
 	const currentYear = new Date().getFullYear();
-	const minYear = currentYear - 2006;
+	const minYear = 2022;
 
 	const [startDate, setStartDate] = useState<Date>(() => new Date(currentYear, 0, 1) );
 	
@@ -45,27 +45,26 @@ export function Heatmap({history} : {history: DayWorkDict}){
 	return <div
 			style={{
 				width: "100%",
-				maxWidth: "900px",
 				overflowX: "auto",
 				margin: "0 auto",
 			}}
 		>
-		<div style={{ minWidth: '38rem' }}>
+		<div style={{  }}>
 			<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
 				<button
 					onClick={goToPreviousYear}
 					disabled={yearShown <= minYear}
 				>
-					← Previous Year
+					←
 				</button>
 				
-				<h2>{yearShown}</h2>
+				<h2 style={{margin: 0}} >{yearShown}</h2>
 				
 				<button
 					onClick={goToNextYear}
 					disabled={yearShown >= currentYear}
 				>
-					Next Year →
+					→
 				</button>
 			</div>
 

@@ -1,12 +1,15 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { PomodoroTimerInfo } from '../../../types/Pomodoro';
 import { CHANNELS, PomodoroRendererExports } from '/src/types/IPC';
+import { UserData } from '/src/types/UserData';
 
 declare global {
 	interface Window {
 		pomodoro: PomodoroRendererExports
 	}
 }
+
+var onUpdateDataCallback: (event: Electron.IpcRendererEvent, ...args: any[]) => void;
 
 // Exposes functions that the *renderers* can call.
 contextBridge.exposeInMainWorld('pomodoro', {
@@ -24,5 +27,10 @@ contextBridge.exposeInMainWorld('pomodoro', {
 	},
 	changeSize : (x: number, y: number) => {
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.changeWindowSize, x, y)
-	}
+	},
+	onUpdateData: (callback: (data: UserData) => void) => {
+		console.log('On update data');
+		onUpdateDataCallback = (_event, data) => callback(data)
+		ipcRenderer.on(CHANNELS.fromMainProcess.onUpdate, onUpdateDataCallback)
+	},
 });

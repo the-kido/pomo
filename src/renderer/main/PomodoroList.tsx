@@ -63,7 +63,7 @@ export default function PomodoroList() {
     const windowHeight = useWindowSizeStore(state => state.height);
 
     const launchPomo = (idx: number) => {
-      window.pomodoro.createWindow(pomoList[idx], {width: windowWidth, height: windowHeight})
+      window.pomodoro.launchPomodoroWindow(pomoList[idx], {width: windowWidth, height: windowHeight})
       setLaunchedPomo(idx);
     }
 
