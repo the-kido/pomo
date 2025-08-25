@@ -1,7 +1,7 @@
 import './popup.css'
 
 import { createPortal } from "react-dom";
-import { CSSProperties, ReactNode } from "react";
+import { ReactNode } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 
 interface OpenPopup {
@@ -26,7 +26,7 @@ export const useCheckInPopupStore = create<OpenPopup>(set => ({
 }));
 
 
-function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore:  UseBoundStore<StoreApi<OpenPopup>>}) {
+function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore: UseBoundStore<StoreApi<OpenPopup>>}) {
   const portalRoot = document.getElementById('portal-root');
 
   const open = usePopupStore(state => state.open);
@@ -34,12 +34,11 @@ function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore
 
   return open && <>
     <div className={`popup-overlay ${open ? 'popup-overlay-open' : 'popup-overlay-close'}`} />
+    
     {createPortal(
-      <> 
-        <div className="popup" style={{ top: 100, left: 100 }}>
-          {children}
-        </div>
-      </>,
+      <div className="popup">
+        {children}
+      </div>,
       portalRoot
     )}
   </>

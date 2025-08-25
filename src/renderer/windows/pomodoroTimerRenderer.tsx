@@ -135,7 +135,9 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 
   const subtaskProgressBarColor = `linear-gradient(-90deg,rgba(255, 255, 255, 0) ${(1 - progress) * 100}%,var(--subtask-progress-green) ${(1 - progress) * 100}%)`
 
-  return <div ref={pomoWindow} className="pomo">
+  return <>
+  <div id='portal-root'></div>
+  <div ref={pomoWindow} className="pomo">
     <Header onClose={onPomodoroClose} isShrunk={isShrunk} toggleSize={onToggleSize} />
     <div className="main-info">
       {/* This is the first "square" w/ the main info */}
@@ -175,6 +177,7 @@ function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
       </> }
     </>}
   </div>
+  </>
 }
 
 function App() {

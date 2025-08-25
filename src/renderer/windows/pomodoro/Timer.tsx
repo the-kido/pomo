@@ -123,14 +123,14 @@ export default function Timer({workTime, breakTime, pomosFinished, onPomoFinishe
   }, []);
 
   const decreaseTimer = (currentState: TimerStates, switchTo: TimerStates) => {
-    if (isPaused(currentState)) return
+    if (isPaused(currentState)) return;
 
-    const finalTimeMS = currentState == TimerStates.BreakTimer ? getFinalBreakTime() : getFinalWorkTime()
+    const finalTimeMS = currentState == TimerStates.BreakTimer ? getFinalBreakTime() : getFinalWorkTime();
     if (finalTimeMS <= 0) {
       setAndInitState(switchTo);
-      setPercentLeft(0)          
+      setPercentLeft(0);          
       setTimeText('0:00');
-      return
+      return;
     }
 
     const mins = Math.floor(Math.ceil(finalTimeMS / 1000) / 60)
@@ -152,18 +152,22 @@ export default function Timer({workTime, breakTime, pomosFinished, onPomoFinishe
   const isSwitchButtonEnabled = () => currentState == TimerStates.WorkFinished || currentState == TimerStates.BreakFinished || currentState == TimerStates.BreakTimer;
 
   const progressBarColor = `linear-gradient(-90deg, var(--timer-progress-left) ${percentLeft * 100}%,var(--timer-progress-done) ${percentLeft * 100}%)`
+  
   return <>
     {/* Pop-up related stuff */}
     <Popup usePopupStore={usePausePopupStore}>
-      <div style={{ textAlign: 'center', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        <h2 style={{ width: '100%' }}> You've paused the timer for</h2>
+      <div className="pause-popup">
+        <h2> Timer paused for</h2>
         <h3> {timePausedText}</h3>
         <textarea id="hint text" placeholder="Optional: why did you pause?" cols={20} rows={5} style={{ resize: 'none' }}></textarea>
       </div>
     </Popup>
     <Popup usePopupStore={useCheckInPopupStore}>
-      <textarea id="hint text" placeholder="How did that session go?" cols={20} rows={5} style={{ resize: 'none' }}></textarea>
-      <button onClick={hideCheckIn}>Dismiss</button>
+      <div className="break-popup">
+        <h3>You're on break!</h3>
+        <textarea id="hint text" placeholder="How did that session go?" cols={20} rows={5} style={{ resize: 'none' }}></textarea>
+        <button onClick={hideCheckIn}>Dismiss</button>
+      </div>
     </Popup>
     {/* The actual content of the timer */}
     <div className="progress-bar" style={{ background: progressBarColor, flex: 1, display: 'flex', justifyContent: 'center' }}>
@@ -177,7 +181,7 @@ export default function Timer({workTime, breakTime, pomosFinished, onPomoFinishe
         >
           {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
         </button>
-        <button disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch"} </button>
+        <button className="test" disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch"} </button>
       </div>
     </div>
   </>

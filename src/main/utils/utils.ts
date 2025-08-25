@@ -6,9 +6,9 @@ export const timeToWords = (minutes: number, seconds: number) => {
     var minutesEnglish = `${minutes % 60} minute${minutes == 1 ? '' : 's'}`;
     var hoursEnglish = `${hours} hour${hours == 1 ? '' : 's'}`;
 
-    if (minutes == 0) return `${seconds} seconds`;
+    if (minutes == 0) return `${secondsEnglish}`;
     else if (hours != 0) return `${hoursEnglish}, ${minutesEnglish}, and ${secondsEnglish}`
-    else return `${minutes} minutes and ${seconds} seconds`
+    else return `${minutesEnglish} and ${secondsEnglish}`
 } 
 
 
