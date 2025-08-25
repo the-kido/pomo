@@ -20,6 +20,13 @@
 
   --text-color: rgb(0, 0, 0);
   --text-color-light: rgb(40, 40, 40);
+
+  /* For Heatmap */
+  --default-cell: var(--background-alt-color);
+  --cell-1: #9fc2ba;
+  --cell-2: #5d998d;
+  --cell-3: #34767d;
+  --cell-4: #0e334a;
 }
 
 .dark {
@@ -37,6 +44,13 @@
 
   --text-color: rgb(255, 255, 255);
   --text-color-light: rgb(160, 160, 160);
+
+  /* For Heatmap */
+  --default-cell: var(--background-alt-color);
+  --cell-1: #014521;
+  --cell-2: #0f700d;
+  --cell-3: #8cba4a;
+  --cell-4: #cfe386;
 }
 
 @font-face {

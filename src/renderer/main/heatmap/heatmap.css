@@ -1,17 +1,21 @@
+.color-empty {
+    fill: var(--default-cell) !important;
+}
+
 .color-github-1 {
-    background-color: #ebedf0;
+    fill: var(--cell-1) !important; 
 }
 
 .color-github-2 {
-    background-color: #c6e48b;
+    fill: var(--cell-2) !important;
 }
 
 .color-github-3 {
-    background-color: #7bc96f;
+    fill: var(--cell-3) !important;
 }
 
 .color-github-4 {
-    background-color: #239a3b;
+    fill: var(--cell-4) !important;
 }
 
 rect {
