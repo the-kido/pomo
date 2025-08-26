@@ -39,17 +39,6 @@ export default function ServiceStatuses()
     const isOllamaActive = useOllamaStateStore(state => state.isOllamaActive);
     const isExtensionConnected = useExtensionStateStore(state => state.isExtensionConnected);
 
-    useEffect(() => {
-        window.states.onOllamaStateChanged((newState: boolean) => {
-            useOllamaStateStore.getState().setOllamaActive(newState);
-            console.log("OLLAMA CHANGED: ", newState )
-        });
-        window.states.onExtensionStateChanged((newState: boolean) => {
-            useExtensionStateStore.getState().setExtensionConnected(newState);
-            console.log("EXTNEISOn CHANGED: ", newState)
-        });
-    }, []);
-
     return <>
         <Status
             label="Ollama"

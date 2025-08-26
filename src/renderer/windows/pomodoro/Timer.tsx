@@ -181,7 +181,7 @@ export default function Timer({workTime, breakTime, pomosFinished, onPomoFinishe
         >
           {currentState == TimerStates.JustOpened ? "Start!" : (isPaused(currentState) ? "Unpause" : "Pause")}
         </button>
-        <button className="test" disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Switch"} </button>
+        <button className="test" disabled={!isSwitchButtonEnabled()} onClick={() => onSwitchPressed()} > {currentState == TimerStates.BreakTimer ? "Skip" : "Break"} </button>
       </div>
     </div>
   </>

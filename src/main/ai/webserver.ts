@@ -99,6 +99,7 @@ mainProcessEvents.on('main-window-created', (window) => {
 const webSocketServer = new WebSocketServer({ port: 8081 });
 
 webSocketServer.on('connection', (webSocket) => {
+    console.log("connected?")
     if (mainWindow == null) return;
 
     useExtensionStateStore.getState().setExtensionConnected(true);

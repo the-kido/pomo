@@ -11,6 +11,7 @@ import { createContext } from "react";
 import Sidebar from "./main/Sidebar";
 import SettingsModal from "./main/settings/Settings";
 import { Copy, Minus, X } from "lucide-react";
+import { useExtensionStateStore, useOllamaStateStore } from "../main/states/appStates";
 
 enum USER_ACTIONS {
 	EDITING_POMODORO = "editing_pomodoro",
@@ -56,6 +57,16 @@ export default function App() {
 			useUserDataStore.getState().loadUserData(data);
 		});
 	}, []);
+
+	useEffect(() => {
+		window.states.onOllamaStateChanged((newState: boolean) => {
+			useOllamaStateStore.getState().setOllamaActive(newState);
+		});
+		window.states.onExtensionStateChanged((newState: boolean) => {
+			useExtensionStateStore.getState().setExtensionConnected(newState);
+		});
+	}, []);
+	
 
 	useEffect(() => {
 		document.body.classList.toggle("dark", darkMode);

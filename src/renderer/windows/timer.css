@@ -128,7 +128,7 @@ h4 {
 /* TODO */
 .test {
   background: rgba(var(--text-color-split), 0.8);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.3);
@@ -143,13 +143,6 @@ h4 {
   font-size: 50px;
   margin: 0px;
   color: var(--text-color);
-  /* background: linear-gradient(45deg, #101010, #535353);
-  
-  background-clip: text;
-  -webkit-background-clip: text;
-  
-  color: transparent;
-  -webkit-text-fill-color: transparent; */
 }
 
 /* For subtask progress bar stuff */
