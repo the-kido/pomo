@@ -113,6 +113,7 @@ h4 {
 
 /* Things to do with the custom title bar */
 .title-bar {
+  z-index: 400;
   position: fixed;
   padding: var(--small-padding);
   height: var(--window-control-size);
@@ -132,6 +133,13 @@ h4 {
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.3);
+
+  width: 32px;
+  height: 32px;
+  padding: 0;              /* don’t let padding mess with size */
+  display: flex;
+  align-items: center;     /* vertical centering */
+  justify-content: center; /* horizontal centering */
 }
 
 .test:disabled {
@@ -143,6 +151,8 @@ h4 {
   font-size: 50px;
   margin: 0px;
   color: var(--text-color);
+  
+  z-index: 100;
 }
 
 /* For subtask progress bar stuff */
@@ -154,6 +164,28 @@ h4 {
   width: 65%;
   margin: 10px;
   block-size: 1.2em;
+}
+
+.progress-bar {
+  flex: 1;
+  background-color: var(--timer-progress-done);
+
+  position: fixed;
+
+  transition: width 0.25s linear, background-color 1s linear;
+}
+
+.break-color {
+  background-color: var(--subtask-progress-green);
+}
+
+.progress-bar-background {
+  width: 100%;
+  background-color: var(--timer-progress-left);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .progress-bar-text {

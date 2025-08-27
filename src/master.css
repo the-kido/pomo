@@ -19,7 +19,7 @@
   --timer-progress-left: var(--background-alt-color);
 
   --text-color: rgb(0, 0, 0);
-  --text-color-split: 0, 0, 0;
+  --text-color-split: 255, 255, 255;
   --text-color-light: rgb(40, 40, 40);
 
   /* For Heatmap */

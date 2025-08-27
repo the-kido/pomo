@@ -5,22 +5,24 @@ import { ReactNode } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 
 interface OpenPopup {
+  topShift: string,
   open: boolean,
-  openPopup: () => void,
-  closePopup: () => void
+  closePopup: () => void,
+  showBackground: boolean
 }
 
-export const usePausePopupStore = create<OpenPopup>(set => ({
-  open: false,
-  openPopup: () => set({ open: true }),
-  closePopup: () => set({ open: false }),
-}));
+// interface SwitchPopup extends OpenPopup {
+//   message: string;
+//   selfLogPrompt: string;
+//   openPopup: (message: string, selfLogPrompt: string) => void;
+// }
 
-export const useCheckInPopupStore = create<OpenPopup>(set => ({
+// TEMP name!
+
+export const usePausePopupStore = create<OpenPopup & {openPopup: () => void}>(set => ({
+  showBackground: true,
+  topShift: '70px',
   open: false,
-  x: 0,
-  y: 0,
-  width: 0,
   openPopup: () => set({ open: true }),
   closePopup: () => set({ open: false }),
 }));
@@ -28,15 +30,17 @@ export const useCheckInPopupStore = create<OpenPopup>(set => ({
 
 function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore: UseBoundStore<StoreApi<OpenPopup>>}) {
   const portalRoot = document.getElementById('portal-root');
+  const topShift = usePopupStore(state => state.topShift);
+  const showBackground = usePopupStore(state => state.showBackground);
 
   const open = usePopupStore(state => state.open);
   if (!portalRoot) return null;
-
+  
   return open && <>
-    <div className={`popup-overlay ${open ? 'popup-overlay-open' : 'popup-overlay-close'}`} />
+    {showBackground && <div className={`popup-overlay ${open ? 'popup-overlay-open' : 'popup-overlay-close'}`} />}
     
     {createPortal(
-      <div className="popup">
+      <div className="popup" style={{ top: topShift }}>
         {children}
       </div>,
       portalRoot

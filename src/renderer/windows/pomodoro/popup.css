@@ -19,13 +19,12 @@
 }
 
 .popup {
-	background-color: var(--background-color);
-  width: calc(100% - var(--menu-padding) * 2);
-  top: 100px;
   position: absolute;
-  border-radius: var(--input-border-radius);
-  margin: var(--menu-padding);
   z-index: 1000;
+	/* background-color: var(--background-color); */
+  /* width: calc(100% - var(--menu-padding) * 2); */
+  /* border-radius: var(--input-border-radius); */
+  /* margin: var(--menu-padding); */
 }
 
 .pause-popup {
@@ -33,6 +32,11 @@
   display: flex;
   align-items: stretch;
   flex-direction: column;
+  margin: var(--menu-padding);
+
+  background-color: var(--background-color);
+  width: calc(100% - var(--menu-padding) * 2);
+  border-radius: var(--input-border-radius);
   margin: var(--menu-padding);
 }
 
