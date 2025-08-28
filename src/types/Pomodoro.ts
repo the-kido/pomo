@@ -9,7 +9,9 @@ export const PomoActivityTypeDisplay: Record<PomoActivityType, string> = {
 };
 
 export const NONE: string = "None"
-export const PLEASE_SELECT: string = "Please Select"
+export const SELECT_GOAL: string = "Select a Goal"
+export const SELECT_TYPE: string = "Select a Type"
+export const SELECT_REWARD: string = "Select a Reward"
 
 export interface PomodoroTimerInfo {
     // Listed in order of what is inputted by the pomodoro creator

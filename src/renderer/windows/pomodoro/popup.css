@@ -21,30 +21,14 @@
 .popup {
   position: absolute;
   z-index: 1000;
-	/* background-color: var(--background-color); */
-  /* width: calc(100% - var(--menu-padding) * 2); */
-  /* border-radius: var(--input-border-radius); */
-  /* margin: var(--menu-padding); */
-}
-
-.pause-popup {
-  text-align: center;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  margin: var(--menu-padding);
-
-  background-color: var(--background-color);
+	background-color: var(--background-color);
   width: calc(100% - var(--menu-padding) * 2);
   border-radius: var(--input-border-radius);
   margin: var(--menu-padding);
-}
-
-.break-popup {
-  gap: 10px;
+  padding: var(--medium-padding) 0px;
+  
   text-align: center;
   display: flex;
   align-items: stretch;
   flex-direction: column;
-  margin: var(--menu-padding);
 }

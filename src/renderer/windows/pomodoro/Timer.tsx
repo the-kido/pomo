@@ -24,8 +24,6 @@ export const useSwitchStore = create<ShowSwitchPrompt>(set => ({
   setOnSwitchMenu: (cb: () => void) => set({ onSwitchMenu: cb }),
 }));
 
-
-
 interface TimerState {
   tick: () => void,
   onSwitchPressed: () => void,
@@ -175,7 +173,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished } : { workTi
   }
   
   const onPausePressed = () => states[currentState].onPausedPressed()
-  const onSwitchPressed = () => {states[currentState].onSwitchPressed(); console.log('proper switching yeah')}
+  const onSwitchPressed = () => states[currentState].onSwitchPressed()
 
   const setOnSwitchMenu = useSwitchStore(state => state.setOnSwitchMenu);
   useEffect( () => {
@@ -191,18 +189,37 @@ export default function Timer({ workTime, breakTime, onPomoFinished } : { workTi
   const isPaused = (currentState: TimerStates) => currentState == TimerStates.WorkPaused || currentState == TimerStates.JustOpened;
   const isPauseButtonEnabled = () => currentState == TimerStates.WorkPaused || currentState == TimerStates.WorkTimer || currentState == TimerStates.JustOpened;
 
-  // const progressBarColor = `linear-gradient(-90deg, var(--timer-progress-left) ${percentLeft * 100}%,var(--timer-progress-done) ${percentLeft * 100}%)`
-  const newWidth = `${percentLeft * 100}%`;
-  
-  const reg = useRef<HTMLDivElement>(null);
 
+  // Track height to update the progress bar with
+  const newWidth = `${percentLeft * 100}%`;
+  const [barHeight, setBarHeight] = useState<number>(0);
+ 
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current) {
+      setBarHeight(ref.current.clientHeight);
+    }
+
+    const resizeObserver = new ResizeObserver(entries => {
+      if (entries[0]) {
+        setBarHeight(entries[0].target.clientHeight);
+      }
+    });
+
+    if (ref.current) {
+      resizeObserver.observe(ref.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, []);
+ 
   return <div className={"timer"}>
 
     {/* Pop-up related stuff */}
     <RenderPopups timePausedText={timePausedText}/>
     {/* The actual content of the timer */}
-    <div className={`progress-bar ${(currentState == TimerStates.BreakTimer || currentState == TimerStates.BreakFinished) && 'break-color'}`} style={{ width: newWidth, height: reg.current?.clientHeight }}> </div>
-    <div ref={reg} className="progress-bar-background" >
+    <div className={`progress-bar ${(currentState == TimerStates.BreakTimer || currentState == TimerStates.BreakFinished) && 'break-color'}`} style={{ width: newWidth, height: barHeight }}> </div>
+    <div ref={ref} className="progress-bar-background" >
       <MemoizedTimerContent 
         currentState={currentState}
         isPaused={isPaused(currentState)}
@@ -257,10 +274,8 @@ function RenderPopups({ timePausedText } : { timePausedText: string }) {
 
   return <>
     <Popup usePopupStore={usePausePopupStore}>
-      <div className="pause-popup">
-        <h2> Timer paused for</h2>
-        <h3> {timePausedText}</h3>
-      </div>
+      <h2> Timer paused for</h2>
+      <h3> {timePausedText}</h3>
     </Popup>
   </>
 }

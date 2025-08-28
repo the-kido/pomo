@@ -133,7 +133,7 @@ h4 {
 /* TODO */
 .test {
   background: rgba(var(--text-color-split), 0.8);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.3);

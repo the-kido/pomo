@@ -11,14 +11,6 @@ interface OpenPopup {
   showBackground: boolean
 }
 
-// interface SwitchPopup extends OpenPopup {
-//   message: string;
-//   selfLogPrompt: string;
-//   openPopup: (message: string, selfLogPrompt: string) => void;
-// }
-
-// TEMP name!
-
 export const usePausePopupStore = create<OpenPopup & {openPopup: () => void}>(set => ({
   showBackground: true,
   topShift: '70px',
@@ -26,7 +18,6 @@ export const usePausePopupStore = create<OpenPopup & {openPopup: () => void}>(se
   openPopup: () => set({ open: true }),
   closePopup: () => set({ open: false }),
 }));
-
 
 function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore: UseBoundStore<StoreApi<OpenPopup>>}) {
   const portalRoot = document.getElementById('portal-root');
@@ -36,10 +27,10 @@ function Popup({ children, usePopupStore}: {  children: ReactNode, usePopupStore
   const open = usePopupStore(state => state.open);
   if (!portalRoot) return null;
   
-  return open && <>
-    {showBackground && <div className={`popup-overlay ${open ? 'popup-overlay-open' : 'popup-overlay-close'}`} />}
+  return <>
+    <div className={`popup-overlay ${open ? 'popup-overlay-open' : 'popup-overlay-close'}`} />
     
-    {createPortal(
+    {open && createPortal(
       <div className="popup" style={{ top: topShift }}>
         {children}
       </div>,

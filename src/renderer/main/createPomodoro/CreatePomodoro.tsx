@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { getDefaultPomoTimer, NONE, PLEASE_SELECT, PomoActivityType, PomodoroTimerInfo } from "/src/types/Pomodoro"
+import { createContext, useEffect, useState } from "react";
+import { getDefaultPomoTimer, NONE, PomoActivityType, PomodoroTimerInfo, SELECT_GOAL } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "../PomodoroList";
-import { AppContext } from "../../App";
 import { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
 import { TestTing } from "/src/main/components/EditableList";
 import { useUserSettingsStore } from "/src/main/states/userDataStates";
@@ -62,7 +61,7 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 
 		if (notRequired.includes(Stages.TYPE))
 		{
-			setNewPomo(old => ({...old, type: PomoActivityType.UNKNOWN, goal: PLEASE_SELECT}))
+			setNewPomo(old => ({...old, type: PomoActivityType.UNKNOWN, goal: SELECT_GOAL}))
 		}
 		
 		if (notRequired.includes(Stages.FIRST_REWARD))

@@ -1,5 +1,5 @@
 import { JSX, useEffect, useRef, useState } from 'react';
-import { PomoActivityTypeDisplay, PomodoroTimerInfo } from '/src/types/Pomodoro';
+import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo, SELECT_GOAL } from '/src/types/Pomodoro';
 import Subtask from './Subtask';
 import Timer, { useSwitchStore } from './Timer';
 import { create } from 'zustand';
@@ -125,13 +125,15 @@ function Switch({ isShrunk } : { isShrunk: boolean }) {
 function TaskInfo({ info, pomosCompleted, isShrunk } : { info: PomodoroTimerInfo, pomosCompleted: number, isShrunk: boolean } ) {
   const setDescription = useUpdatingState(state => state.setDescription);
 
+  var activityTypeText = PomoActivityTypeDisplay[info.type];
+  var goalText = info.goal;
+
 	return <>
 		<h2 className={`description ${(!isShrunk) && "text-editable"}`} onClick={isShrunk ? undefined : setDescription} > {info.task} </h2>
-		{ !isShrunk && 
-		<div className='misc-info'>
+		{ !isShrunk && <div className='misc-info'>
 			<div style={{ display: 'flex' }}>
-				<h4 className='chip'>{PomoActivityTypeDisplay[info.type]}</h4>
-				<h4 className='chip'>{info.goal}</h4>
+				{ info.type != PomoActivityType.UNKNOWN && <h4 className='chip'>{activityTypeText}</h4> }
+				{ goalText != SELECT_GOAL && <h4 className='chip'>{goalText}</h4>}
 			</div>
 			<h4>🍅 x{pomosCompleted}</h4>
 		</div> }
