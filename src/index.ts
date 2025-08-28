@@ -143,7 +143,7 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
 ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number) => {
   // TODO: make magic numbers go bye bye and make it scale with UI scale value when I implement that for the timer
   const newX = Math.max(x, 275);
-  const newY = Math.max(y, 200);
+  const newY = Math.max(y, 175);
   pomodoro.setMinimumSize(newX, newY);
   pomodoro.setSize(newX, newY);
 });

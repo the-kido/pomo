@@ -33,7 +33,7 @@ body {
 }
 
 .timer {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
@@ -90,7 +90,11 @@ h3 {
 
 .description {
   text-align: center;
-  cursor: text; 
+  cursor: text;
+}
+
+.text-editable {
+  cursor: pointer;
 }
 
 .button {
@@ -148,10 +152,14 @@ h4 {
 }
 
 .timer-text {
+  position: absolute;
+
   font-size: 50px;
   margin: 0px;
   color: var(--text-color);
   
+  transform: translateX(-50%);
+  left: 50%;
   z-index: 100;
 }
 
@@ -183,7 +191,7 @@ h4 {
   width: 100%;
   background-color: var(--timer-progress-left);
 
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: center;
 }
@@ -191,4 +199,36 @@ h4 {
 .progress-bar-text {
   position: absolute; 
   margin: 0px; 
+}
+
+.timer-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.edit-description-area {
+  font-size: large;
+}
+
+@keyframes pulse-warn {
+  0% {
+    background-color: var(--background-color);
+  }
+  50% {
+    background-color: var(--warn);
+  }
+  100% {
+    background-color: var(--background-color);
+  }
+}
+
+.pulse-notify {
+  padding: 5px 10px;
+  font-size: large;
+
+  display: flex;
+  margin: auto;
+
+  animation: pulse-warn 2s infinite;
 }

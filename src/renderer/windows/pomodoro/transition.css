@@ -1,0 +1,29 @@
+.transition-element {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.transition-element.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.transition-element.hidden {
+	position: absolute;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.component-container {
+  position: relative;
+  width: 100%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.component-container .transition-element {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}

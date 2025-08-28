@@ -5,6 +5,7 @@ import Timer, { useSwitchStore } from './Timer';
 import { create } from 'zustand';
 import Header from './Header';
 import { useUserSettingsStore } from '/src/main/states/userDataStates';
+import TransitionWrapper from './TransitionWrapper';
 
 const SUBTASK_ARRAY_WEIGHTS = [1, 0.5, 0.325];
 
@@ -51,6 +52,10 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
 
   useEffect(() => {
+    // Check if we are editing. If so, we close out of it early
+    if (isShrunk) useUpdatingState.getState().finishSettingDescription();
+
+
     // This runs after isShrunk changes and the DOM/layout is updated
     window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight);
   }, [isShrunk]);
@@ -81,9 +86,18 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 					breakTime={info.breakTimeSeconds}
 					onPomoFinished={updatePomodorosCompleted}
 				/>
-				<div style={{height: '90px'}}>
-				{ updating ? <EditTaskInfo info={info} /> : 
-				showing ? <Switch  /> : <TaskInfo info={info} pomosCompleted={pomosCompleted} /> }
+				<div className='component-container' style={{minHeight: isShrunk ? '50px' : '85px'}}>
+				  <TransitionWrapper show={!isShrunk && updating}>
+            <EditTaskInfo info={info} />
+          </TransitionWrapper>
+          
+          <TransitionWrapper show={showing && !updating}>
+            <Switch isShrunk={isShrunk}/>
+          </TransitionWrapper>
+          
+          <TransitionWrapper show={!showing && !updating}>
+            <TaskInfo info={info} pomosCompleted={pomosCompleted} isShrunk={isShrunk}/>
+          </TransitionWrapper>
 				</div>
 			</div>
 			<SubtasksInfo 
@@ -94,37 +108,38 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   </>
 }
 
-function Switch( ) {
-	const message = useSwitchStore(state => state.message);
+function Switch({ isShrunk } : { isShrunk: boolean }) {
+	const messages = useSwitchStore(state => state.messages);
 	const hide = useSwitchStore(state => state.hide);
 	const onSwitch = useSwitchStore(state => state.onSwitchMenu);
 
-
 	return <>
-		<button onClick={() => {
+    {!isShrunk && <h2>{messages.titleText}</h2>}
+		<button className='pulse-notify' onClick={() => {
 			onSwitch();
 			hide();
-		}}>{message}</button>
+		}}>{messages.buttonText}</button>
 	</>
 }
 
-function TaskInfo({ info, pomosCompleted } : { info: PomodoroTimerInfo, pomosCompleted: number } ) {
+function TaskInfo({ info, pomosCompleted, isShrunk } : { info: PomodoroTimerInfo, pomosCompleted: number, isShrunk: boolean } ) {
   const setDescription = useUpdatingState(state => state.setDescription);
 
 	return <>
-		<h2 className='description' onClick={setDescription} > {info.task} </h2>
+		<h2 className={`description ${(!isShrunk) && "text-editable"}`} onClick={isShrunk ? undefined : setDescription} > {info.task} </h2>
+		{ !isShrunk && 
 		<div className='misc-info'>
 			<div style={{ display: 'flex' }}>
 				<h4 className='chip'>{PomoActivityTypeDisplay[info.type]}</h4>
 				<h4 className='chip'>{info.goal}</h4>
 			</div>
 			<h4>🍅 x{pomosCompleted}</h4>
-		</div>
+		</div> }
 	</>
 }
 
 function EditTaskInfo({ info } : { info: PomodoroTimerInfo }) {
-  const discTextField = useRef<HTMLTextAreaElement>(null);
+  const discTextField = useRef<HTMLInputElement>(null);
 	
 	const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
 
@@ -140,13 +155,22 @@ function EditTaskInfo({ info } : { info: PomodoroTimerInfo }) {
     window.pomodoro.sendPomodoroUpdate({ ...info, task: newValue });
   }
 	
-	return <>
-		<textarea ref={discTextField} defaultValue={info.task}></textarea>
-		<div style={{ display: 'flex' }}>
-			<input type='button' defaultValue={"Cancel"} onClick={onDescriptionChangeCancel}></input>
-			<input type='button' defaultValue={"Finish"} onClick={() => onDescriptionChangeSaved(discTextField.current.value)}></input>
-		</div>
-	</>
+  return (
+    <div style={{
+      margin: 'var(--medium-padding) var(--menu-padding)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'var(--medium-padding)'
+    }}>
+      <input 
+        type="text" 
+        className="edit-description-area" ref={discTextField} defaultValue={info.task}></input>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <button onClick={onDescriptionChangeCancel}>Cancel</button>
+        <button onClick={() => onDescriptionChangeSaved(discTextField.current.value)}>Finish</button>
+      </div>
+    </div>
+  )
 }
 
 function SubtasksInfo({ info, isShrunk } : { info : PomodoroTimerInfo, isShrunk: boolean }) {

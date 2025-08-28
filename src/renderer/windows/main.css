@@ -116,27 +116,8 @@ select {
   line-height: 1.2;
 }
 
-input[type="text"] {
-  border-bottom: 1px solid var(--border-color);
-  width: 9rem;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-}
-
-input[type="text"]:focus {
-  outline: none;
-  border-bottom: 1px solid var(--select-accent);
-  background-color: var(--select-background);
-}
-
 ul {
   margin: 0px;
-}
-
-.inline-input {
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
 }
 
 h3 {

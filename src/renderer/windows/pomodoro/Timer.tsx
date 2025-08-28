@@ -4,20 +4,21 @@ import { timeToWords } from "/src/main/utils/utils";
 import { FastForward, Pause, Play, RotateCcw } from "lucide-react";
 import { create } from "zustand";
 
+interface MessageType {titleText: string, buttonText: string}
 
 interface ShowSwitchPrompt {
   showing: boolean,
-  message: string,
+  messages: MessageType,
   hide: () => void,
-  show: (message: string) => void,
+  show: (messages: MessageType) => void,
   onSwitchMenu?: () => void, // <-- Add this
   setOnSwitchMenu: (cb: () => void) => void, // <-- Add setter
 }
 
 export const useSwitchStore = create<ShowSwitchPrompt>(set => ({
   showing: false,
-  message: "Switch to break",
-  show: (message: string) => set({ showing: true, message }),
+  messages: { titleText: "Unset", buttonText: "Unset"},
+  show: (messages: MessageType) => set({ showing: true, messages }),
   hide: () => set({ showing: false }),
   onSwitchMenu: undefined,
   setOnSwitchMenu: (cb: () => void) => set({ onSwitchMenu: cb }),
@@ -110,7 +111,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished } : { workTi
       init: () => {
         timeStartedMS.current = Date.now() - breakTime * 1000;
 
-        showSwitchPrompt("You can switch to break");
+        showSwitchPrompt({ titleText: "Work session over!", buttonText: "Switch to break"});
       },
     },
     [TimerStates.BreakTimer]: {
@@ -136,7 +137,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished } : { workTi
       },
       onPausedPressed: () => null,
       init: () => {
-        showSwitchPrompt("Break is over!");
+        showSwitchPrompt({ titleText: "Break over!", buttonText: "Switch to work"});
       },
     },
   }
@@ -233,8 +234,7 @@ const MemoizedTimerContent = memo(function TimerContent({
   timeText: string;
 }) {
   return (
-    <div style={{ display: 'flex' }}>
-      <h1 className="timer-text">{timeText}</h1>
+    <div className="timer-content" style={{ display: 'flex' }}>
       <div style={{ display: 'flex', flexDirection: 'column', margin: '10px', gap: '10px' }}>
        <button
           disabled={!isPauseButtonEnabled}
@@ -248,6 +248,7 @@ const MemoizedTimerContent = memo(function TimerContent({
           {currentState == TimerStates.BreakTimer ? <FastForward /> : <RotateCcw />}
         </button>
       </div>
+      <h1 className="timer-text">{timeText}</h1>
     </div>
   );
 });

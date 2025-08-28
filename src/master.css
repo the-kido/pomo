@@ -32,6 +32,7 @@
   /* size constants */
   --window-control-size: 18px;
   --small-padding: 5px;
+  --medium-padding: 10px;
   --menu-padding: 20px;
 }
 
@@ -214,4 +215,25 @@ button:disabled:hover {
 
 .window-control:active {
   background-color: var(--select-accent);
+}
+
+/* For 1-line text inputs */
+
+input[type="text"] {
+  border-bottom: 1px solid var(--border-color);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-bottom: 1px solid var(--select-accent);
+  background-color: var(--select-background);
+}
+
+.inline-input {
+  width: 9rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
