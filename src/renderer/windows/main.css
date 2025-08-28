@@ -192,6 +192,6 @@ html, body, #root, .app-container {
 }
 .main-content {
   margin: auto;
-  max-width: 38rem;
+  max-width: var(--content-width);
 }
 

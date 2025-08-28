@@ -34,6 +34,8 @@
   --small-padding: 5px;
   --medium-padding: 10px;
   --menu-padding: 20px;
+
+  --content-width: 38rem;
 }
 
 .dark {

@@ -29,8 +29,8 @@ var onUpdateDataCallback: (event: Electron.IpcRendererEvent, ...args: any[]) => 
 var prevOnClosedListener: (event: Electron.IpcRendererEvent) => void;
 
 contextBridge.exposeInMainWorld('pomodoro', {
-	launchPomodoroWindow: (idx: number, fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
-		ipcRenderer.send(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, idx, fileToLoad, options)
+	launchPomodoroWindow: (fileToLoad: string, options: Electron.BrowserWindowConstructorOptions) : void => {
+		ipcRenderer.send(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, fileToLoad, options)
 	},
 	onUpdateData: (callback: (data: UserData) => void) => {
 		console.log('onUpdateData');

@@ -168,7 +168,10 @@ export default function Timer({ workTime, breakTime, onPomoFinished } : { workTi
     setTimeText(stringify(secs, mins));
   }
 
+  const hideSwitchMenu = useSwitchStore(state => state.hide);
   const restart = () => {
+    hideSwitchMenu();
+
     setAndInitState(TimerStates.WorkTimer);
   }
   

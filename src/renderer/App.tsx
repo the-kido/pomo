@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import CreatePomodoro from "./main/createPomodoro/CreatePomodoro";
 import PomodoroList from "./main/PomodoroList";
-import { useUserDataStore, useUserSettingsStore, useWorkSessionHistoryStore } from "../main/states/userDataStates";
+import { useUserDataStore, useUserSettingsStore, useWindowSizeStore, useWorkSessionHistoryStore } from "../main/states/userDataStates";
 import { UserData } from "../types/UserData";
 
 import { Heatmap } from "./main/heatmap/Heatmap";
@@ -12,6 +12,7 @@ import Sidebar from "./main/Sidebar";
 import SettingsModal from "./main/settings/Settings";
 import { Copy, Minus, X } from "lucide-react";
 import { useExtensionStateStore, useOllamaStateStore } from "../main/states/appStates";
+import { getDefaultPomoTimer, PomoActivityType, PomodoroTimerInfo } from "../types/Pomodoro";
 
 enum USER_ACTIONS {
 	EDITING_POMODORO = "editing_pomodoro",
@@ -96,11 +97,11 @@ export default function App() {
 				</div>
 				
 				<div className="main-content-scrollable-area">
-					<div className="main-content" style={{maxWidth: "38rem"}}>
+					<div className="main-content" style={{maxWidth: "var(--content-width)"}}>
 						{ menuAt == Menu.HOME_PAGE && <HomeMenu /> }
 						{ menuAt == Menu.STATS && <StatsMenu /> }
 						{ menuAt == Menu.COMPLETED && <CompletedTasksMenu /> }
-						{ menuAt == Menu.QUICK_POMO && <QuickPomoMenu /> }
+						{/* { menuAt == Menu.QUICK_POMO && <QuickPomoMenu /> } */}
 					</div>
 				</div>
 			</div>
@@ -121,12 +122,6 @@ function HomeMenu() {
 	</>
 }
 
-function QuickPomoMenu() {
-	return <>
-
-	</>
-}
-
 function StatsMenu() {
 	const history = useWorkSessionHistoryStore(store => store.history);
 
@@ -140,4 +135,44 @@ function CompletedTasksMenu() {
 	return <>
 		<h1> Your Completed Pomos </h1>
 	</>
+}
+
+
+function QuickPomoMenu() {
+	const [task, setTask] = useState<string>("");
+	const [pomo, setPomo] = useState<PomodoroTimerInfo>(getDefaultPomoTimer());
+
+	useEffect( () => {
+		setPomo(old => ({ ...old, task }));
+	}, [task])
+
+	const windowWidth = useWindowSizeStore(state => state.width);
+	const windowHeight = useWindowSizeStore(state => state.height);
+
+	const onOpen = () => {
+		window.pomodoro.launchPomodoroWindow(pomo, {width: windowWidth, height: windowHeight});
+	}
+
+	return ( 
+		<>
+			<div>
+				<h1>Quick Pomodoro</h1>
+			</div>
+			<div className="section">
+				<div>
+					<label>
+						Task:
+						<input
+							type="text"
+							value={task}
+							onChange={e => setTask(e.target.value)}
+							placeholder="Enter your task"
+							/>
+					</label>
+				</div>
+				<button onClick={onOpen} ></button>
+
+			</div>
+		</>
+	);
 }

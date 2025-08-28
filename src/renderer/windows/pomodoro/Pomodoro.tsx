@@ -144,7 +144,6 @@ function EditTaskInfo({ info } : { info: PomodoroTimerInfo }) {
   const discTextField = useRef<HTMLInputElement>(null);
 	
 	const finishSettingDescription = useUpdatingState(state => state.finishSettingDescription);
-
 	
 	function onDescriptionChangeCancel() {
     finishSettingDescription();
@@ -203,7 +202,6 @@ function SubtasksInfo({ info, isShrunk } : { info : PomodoroTimerInfo, isShrunk:
 	</> )
 }
 
-
 function SubtaskList({info, subtasksCompletedIndicies, setSubtasksCompletedIndicies} : { info: PomodoroTimerInfo, subtasksCompletedIndicies: number[], setSubtasksCompletedIndicies: React.Dispatch<React.SetStateAction<number[]>> }) {
 	
   const setupSubtasks = (): { array: JSX.Element[], leftover: number } => {
@@ -240,7 +238,6 @@ function SubtaskList({info, subtasksCompletedIndicies, setSubtasksCompletedIndic
     return { array: out, leftover: info.subtasks.length - out.length };
   }
 
-	
 	var tasks = setupSubtasks();
 
 	return <>

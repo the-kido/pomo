@@ -33,6 +33,7 @@ export interface PomodoroTimerInfo {
 export function getDefaultPomoTimer(): PomodoroTimerInfo {
   return {
     type: PomoActivityType.UNKNOWN,
+    goal: SELECT_GOAL,
     task: '',
     motivation: '',
     nextReward: '',
