@@ -2,7 +2,7 @@ import './settings.css'; // Import the styles
 import './slider.css'; // Import the styles
 import { useContext, useEffect, useState } from 'react';
 import { useUiStore } from '../Sidebar';
-import { Settings } from 'lucide-react';
+import { MoveLeftIcon, Settings } from 'lucide-react';
 import { SortableSubtask, SubtaskList } from '/src/main/components/EditableList';
 import { SubtaskItem } from '../createPomodoro/Stages';
 import { AppContext } from '../../App';
@@ -138,6 +138,7 @@ function BuildingPomoPage() {
 
   const [enabledTaskType, setShowTaskType] = useState(useUserSettingsStore.getState().enabledTaskType);
   const [enableTaskRewards, setShowTaskRewards] = useState(useUserSettingsStore.getState().enabledTaskRewards);
+  const [enableSpecifyMotive, setEnableSpecifyMotive] = useState(useUserSettingsStore.getState().enabledSpecifyMotive);
 
   const goals = useGoalStore.getState().goals;
 
@@ -162,15 +163,17 @@ function BuildingPomoPage() {
 
     store.setEnabledTaskType(enabledTaskType) 
     store.setEnabledTaskRewards(enableTaskRewards)
+    store.setEnabledSpecifyMotive(enableSpecifyMotive)
 
     appContext.saveData({
       user: {
         ...useUserDataStore.getState().getUserData().user, // Preserve all existing settings
         enabledTaskRewards: enableTaskRewards,
-        enabledTaskType: enabledTaskType
+        enabledTaskType: enabledTaskType,
+        enabledSpecifyMotive: enableSpecifyMotive,
       }
     });
-  }, [enabledTaskType, enableTaskRewards])
+  }, [enabledTaskType, enableTaskRewards, enableSpecifyMotive])
 
   return <>
     <Divider text='Toggle Creation Features'>
@@ -184,13 +187,23 @@ function BuildingPomoPage() {
           handleToggle={() => setShowTaskType(old => !old)} 
           />
       </SettingItem>
-      <SettingItem
+      {/* <SettingItem
         label="Task Rewards"
         description="Lets you choose what you get once a timer switches to break"
         > 
-      <ToggleSwitch 
+        <ToggleSwitch 
           isOn={enableTaskRewards}
           handleToggle={() => setShowTaskRewards(old => !old)} 
+          />
+      </SettingItem> */}
+      
+      <SettingItem
+        label="Motivation"
+        description="When describing your task, specify *why* you're doing it"
+        > 
+        <ToggleSwitch 
+          isOn={enableSpecifyMotive}
+          handleToggle={() => setEnableSpecifyMotive(old => !old)} 
           />
       </SettingItem>
     

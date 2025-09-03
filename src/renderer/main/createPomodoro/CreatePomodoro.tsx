@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { getDefaultPomoTimer, NONE, PomoActivityType, PomodoroTimerInfo, SELECT_GOAL } from "/src/types/Pomodoro"
 import { usePomodorosStore } from "../PomodoroList";
-import { SelectFirstRewardStage, TaskStage, TypeStage } from "./Stages";
+import { SelectFirstRewardStage, SetTimeStage, TaskStage, TypeStage } from "./Stages";
 import { TestTing } from "/src/main/components/EditableList";
 import { useUserSettingsStore } from "/src/main/states/userDataStates";
 
@@ -14,7 +14,8 @@ export const StagesCleared = createContext<StagesCompletedType | undefined>(unde
 export enum Stages {
 	TYPE, 
 	TASK, 
-	FIRST_REWARD, 
+	TIME, 
+	FIRST_REWARD,
 	SUBTASKS
 }
 
@@ -31,6 +32,7 @@ function getStagesRequired() {
 	if (state.enabledTaskRewards) stagesRequired.push(Stages.FIRST_REWARD)
 	else stagesNotRequired.push(Stages.FIRST_REWARD)
 
+	stagesRequired.push(Stages.TIME)
 	stagesRequired.push(Stages.SUBTASKS)
 
 	return {stagesRequired: stagesRequired, stagesNotRequired: stagesNotRequired}
@@ -119,9 +121,11 @@ function CreatePomodoro({ info, onSaved, resetFields } : { info? : PomodoroTimer
 						onTaskChanged={ newTask => setNewPomo({ ...newPomo, task: newTask }) } 
 						onMotivationChanged={ newMotive => setNewPomo({ ...newPomo, motivation: newMotive }) }
 					/>}
-					{canEnterStage(Stages.FIRST_REWARD) && <SelectFirstRewardStage 
+					{canEnterStage(Stages.TIME) && <SetTimeStage 
 						info={info} 
-						onRewardChanged={newReward => setNewPomo({ ...newPomo, nextReward: newReward })}
+						// onRewardChanged={newReward => setNewPomo({ ...newPomo, nextReward: newReward })}
+						onBreakTimeChanged={ newBreakTime => setNewPomo({...newPomo, breakTimeSeconds: newBreakTime }) }
+						onWorkTimeChanged={ newWorkTime => setNewPomo({...newPomo, startTimeSeconds: newWorkTime }) }
 					/>}
 				</div>
 				{/* Right */}

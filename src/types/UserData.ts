@@ -24,5 +24,6 @@ export interface UserPreferences {
   workTime: number,
   enabledTaskType: boolean,
   enabledTaskRewards: boolean,
+  enabledSpecifyMotive: boolean,
   darkMode: boolean,
 }

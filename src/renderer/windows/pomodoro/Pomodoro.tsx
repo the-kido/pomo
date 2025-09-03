@@ -82,7 +82,7 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 			<div className="main-info">
 				{/* This is the first "square" w/ the main info */}
 				<Timer
-					workTime={/*info.startTimeSeconds*/ 5}
+					workTime={info.startTimeSeconds}
 					breakTime={info.breakTimeSeconds}
 					onPomoFinished={updatePomodorosCompleted}
 				/>

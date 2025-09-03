@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { Stages, StagesCleared } from "./CreatePomodoro";
-import { useGoalStore, useRewardsStore } from "../../../main/states/userDataStates"
+import { useGoalStore, useRewardsStore, useUserSettingsStore } from "../../../main/states/userDataStates"
 import { PomoActivityType, PomodoroTimerInfo, PomoActivityTypeDisplay, SELECT_GOAL, SELECT_TYPE, NONE, SELECT_REWARD } from "/src/types/Pomodoro";
+import { ChevronDown } from "lucide-react";
 
 
 export interface SubtaskItem {
@@ -17,7 +18,7 @@ export function TypeStage({ info, onSetType, onSetGoal } : { info? : PomodoroTim
   const stagesClearedContext = useContext(StagesCleared);
   
   useEffect(() => {
-    const isCompleted = type == PomoActivityType.CHILL || type == PomoActivityType.ACTIVE && goal != SELECT_GOAL;
+    const isCompleted = type == PomoActivityType.CHILL || type == PomoActivityType.ACTIVE;
     stagesClearedContext.updateStageCleared(isCompleted, Stages.TYPE);
   }, [type, goal])
 
@@ -29,7 +30,7 @@ export function TypeStage({ info, onSetType, onSetGoal } : { info? : PomodoroTim
       <option value={PomoActivityType.ACTIVE}>{PomoActivityTypeDisplay[PomoActivityType.ACTIVE]}</option>
       <option value={PomoActivityType.CHILL}>{PomoActivityTypeDisplay[PomoActivityType.CHILL]}</option>
     </select>
-    { type == PomoActivityType.ACTIVE && <select value={goal} onChange={e => { setGoal(e.target.value); onSetGoal(e.target.value) }}>
+    { <select value={goal} onChange={e => { setGoal(e.target.value); onSetGoal(e.target.value) }}>
       <option value={SELECT_GOAL}>{SELECT_GOAL}</option>
       <option className="divider-option" disabled>──────────</option>
       <option value={NONE} key={-1}>{NONE}</option>
@@ -41,15 +42,17 @@ export function TypeStage({ info, onSetType, onSetGoal } : { info? : PomodoroTim
 export function TaskStage({ info, onTaskChanged, onMotivationChanged} : { info? : PomodoroTimerInfo, onTaskChanged: (str: string) => void, onMotivationChanged: (str: string) => void }) {
   const [task, setTask] = useState<string>(info ? info.task : '');
   const [motivation, setMotivation] = useState<string>(info ? info.motivation : '');
+  const enabledSpecifyMotive = useUserSettingsStore(state => state.enabledSpecifyMotive);
 
   const stagesCompletedContext = useContext(StagesCleared)
 
   useEffect(() => {
-    const isCompleted = task != '' && motivation != '';
+    const isCompleted = task != '' && (!enabledSpecifyMotive || motivation != '');
     stagesCompletedContext.updateStageCleared(isCompleted, Stages.TASK);
   }, [task, motivation])
 
   return <div className="section">
+    <h3>Task</h3>
     <p style={{margin: '0px'}}>
       I will: <input 
         type="text" 
@@ -60,7 +63,8 @@ export function TaskStage({ info, onTaskChanged, onMotivationChanged} : { info? 
           onTaskChanged(e.target.value) 
         }}> 
       </input>
-      <br></br>
+    </p>  
+    {enabledSpecifyMotive && <p style={{margin: '0px'}}>
       in order to <input 
         type="text" 
         className="inline-input" 
@@ -70,8 +74,66 @@ export function TaskStage({ info, onTaskChanged, onMotivationChanged} : { info? 
           onMotivationChanged(e.target.value) 
         }}>
       </input>
-    </p>
+    </p>}
   </div>
+}
+
+export function SetTimeStage(props: {info? : PomodoroTimerInfo, onWorkTimeChanged: (str: number) => void, onBreakTimeChanged: (str: number) => void }) {
+  const [workTime, setWorkTime] = useState<number>(props.info?.startTimeSeconds ?? 25 * 60);
+  const [breakTime, setBreakTime] = useState<number>(props.info?.breakTimeSeconds ?? 5 * 60);
+
+  const stagesCompletedContext = useContext(StagesCleared);
+
+  useEffect(() => {
+    const isCompleted = workTime > 0 && breakTime > 0;
+    stagesCompletedContext.updateStageCleared(isCompleted, Stages.TIME);
+  }, [workTime, breakTime]);
+
+  return (
+    <div className="section">
+      <h3>Set Times</h3>
+      <label>
+        Work Time (minutes):{" "}
+        <input
+          type="number"
+          min={1}
+          value={workTime / 60}
+          onChange={e => {
+            const newValue = Number(e.target.value);
+            setWorkTime(newValue * 60);
+            props.onWorkTimeChanged(newValue * 60);
+          }}
+          className="inline-input"
+        />
+      </label>
+      <br />
+      <label>
+        Break Time (minutes):{" "}
+        <input
+          type="number"
+          min={1}
+          value={breakTime / 60}
+          onChange={e => {
+            const newValue = Number(e.target.value);
+            setBreakTime(newValue * 60)
+            props.onBreakTimeChanged(newValue * 60) 
+          }}
+          className="inline-input"
+        />
+      </label>
+      <br />
+      {/* <label>
+        Long Break Time (minutes):{" "}
+        <input
+          type="number"
+          min={1}
+          value={longBreakTime}
+          onChange={e => setLongBreakTime(Number(e.target.value))}
+          className="inline-input"
+        />
+      </label> */}
+    </div>
+  );
 }
 
 export function SelectFirstRewardStage(props: { info? : PomodoroTimerInfo, onRewardChanged: (str: string) => void }) {
@@ -90,15 +152,22 @@ export function SelectFirstRewardStage(props: { info? : PomodoroTimerInfo, onRew
     stagesCompletedContext.updateStageCleared(isCompleted, Stages.FIRST_REWARD);
   }, [reward])
 
+  const [showing, setShowing] = useState<boolean>( /* false */ true);
+
   return <div className="section">
-    <h3> Initial things: </h3>
-    <p> Reward:  
-    <select className="inline-input" defaultValue={props.info ? reward : SELECT_REWARD} onChange={(e) => { setReward(e.target.value); props.onRewardChanged(e.target.value) }}> 
-      <option value={SELECT_REWARD}>{SELECT_REWARD}</option>
-      <option className="divider-option" disabled>──────────</option>
-      <option value={NONE} key={-1}>{NONE}</option>
-      {rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option> ) }
-    </select>
-    </p>
+    <div style={{display: 'flex', justifyContent: 'space-between'}} >
+      <h3> Misc </h3> {/*<button onClick={() => setShowing(old => !old)} ><ChevronDown/> </button> */}
+    </div>
+
+    {showing && (
+      <p> Reward:
+        <select className="inline-input" defaultValue={props.info ? reward : SELECT_REWARD} onChange={(e) => { setReward(e.target.value); props.onRewardChanged(e.target.value) }}> 
+          <option value={SELECT_REWARD}>{SELECT_REWARD}</option>
+          <option className="divider-option" disabled>──────────</option>
+          <option value={NONE} key={-1}>{NONE}</option>
+          {rewards.map( (reward, i) => <option value={reward} key={i}> {reward} </option> ) }
+        </select>
+      </p>
+    )}
   </div>
 }

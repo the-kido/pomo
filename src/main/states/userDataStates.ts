@@ -11,8 +11,9 @@ export const DEFAULT_USERDATA: UserData = {
 		breakTime: 5 * 60,
 		longBreakTime: 25 * 60,
 		workTime: 25 * 60,
-		enabledTaskType: true,
-		enabledTaskRewards: true,
+		enabledTaskType: false,
+		enabledTaskRewards: false,
+		enabledSpecifyMotive: false,
 		darkMode: false,
 	},
 	window: {
@@ -38,6 +39,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		var workTime = usePomodoroTimerStore.getState().workTime;
 		var enabledTaskType = useUserSettingsStore.getState().enabledTaskType;
 		var enabledTaskRewards = useUserSettingsStore.getState().enabledTaskRewards;
+		var enabledSpecifyMotive = useUserSettingsStore.getState().enabledSpecifyMotive;
 		var darkMode = useUserSettingsStore.getState().darkMode;
 		var length = useWindowSizeStore.getState().height;
 		var width = useWindowSizeStore.getState().width;
@@ -52,6 +54,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				workTime: workTime,
 				enabledTaskType: enabledTaskType,
 				enabledTaskRewards: enabledTaskRewards,
+				enabledSpecifyMotive: enabledSpecifyMotive,
 				darkMode: darkMode,
 			},
 			window: {
@@ -70,6 +73,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		usePomodoroTimerStore.getState().setWorkTime(data.user.workTime);
 		useUserSettingsStore.getState().setEnabledTaskType(data.user.enabledTaskType);
 		useUserSettingsStore.getState().setEnabledTaskRewards(data.user.enabledTaskRewards);
+		useUserSettingsStore.getState().setEnabledSpecifyMotive(data.user.enabledSpecifyMotive);
 		useUserSettingsStore.getState().setUsingDarkMode(data.user.darkMode);
 		useWindowSizeStore.getState().setSize(data.window.width, data.window.height);
 		usePomodorosStore.getState().setPomodoros([...data.storedPomos]);
@@ -243,18 +247,22 @@ export const useWindowSizeStore = create<WindowSize>((set) => ({
 interface UserSettings {
 	enabledTaskType: boolean;
 	enabledTaskRewards: boolean;
+	enabledSpecifyMotive: boolean,
 	darkMode: boolean,
 	setEnabledTaskType: (value: boolean) => void;
 	setEnabledTaskRewards: (value: boolean) => void;
+	setEnabledSpecifyMotive: (value: boolean) => void;
 	setUsingDarkMode: (value: boolean) => void;
 }
 
 export const useUserSettingsStore = create<UserSettings>((set) => ({
 	enabledTaskType: true,
 	enabledTaskRewards: true,
+	enabledSpecifyMotive: true,
 	darkMode: false,
 	setEnabledTaskType: (value) => set({ enabledTaskType: value }),
 	setEnabledTaskRewards: (value) => set({ enabledTaskRewards: value }),
+	setEnabledSpecifyMotive: (value) => set({ enabledSpecifyMotive: value }),
 	setUsingDarkMode: (value) => set({ darkMode: value })
 }));
 
