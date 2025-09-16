@@ -1,7 +1,6 @@
 import RPC from 'discord-rpc';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import { mainProcessEvents } from '../events/events';
-import { useUserDataStore } from '../states/userDataStates';
 
 const clientId = '1405193043988189205';
 

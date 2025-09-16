@@ -16,6 +16,7 @@ import { UserData } from './types/UserData';
 import { mainProcessEvents } from './main/events/events';
 import { CHANNELS } from './types/IPC';
 import { useUserDataStore, useWorkSessionHistoryStore } from './main/states/userDataStates';
+import path from 'path';
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -30,6 +31,7 @@ const createWindow = async (): Promise<void> => {
     },
     autoHideMenuBar: true,
     frame: false,
+    icon: path.join(__dirname, './assets/app.ico')
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -91,7 +93,8 @@ ipcMain.on(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, (_, timerInfo: Pomo
     frame: false,
     // expose window controls in Windows/Linux
     ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}), 
-    alwaysOnTop: true
+    alwaysOnTop: true,
+    icon: path.join(__dirname, './assets/app.ico')
   });
 
   pomodoro.setMinimumSize(275, 200);

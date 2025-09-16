@@ -1,26 +1,14 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { PomoActivityType, PomoActivityTypeDisplay, PomodoroTimerInfo } from "/src/types/Pomodoro";
 import CreatePomodoro from "./createPomodoro/CreatePomodoro";
-import { AppContext } from "../App";
 import { Check } from "lucide-react";
-
-interface ListedPomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void, onMarkAsComplete: () => void }
 
 /*
 Represents an entry of a created pomodoro timer within the
 pomodoro list present on the main screen.
 */
-export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDelete, onMarkAsComplete }: ListedPomodoroProps) {
-	
-	const [editing, setEditing] = useState<boolean>(false);
-	
-	const onSaved = (newPomo: PomodoroTimerInfo) => {
-		onUpdate(newPomo);
-		setEditing(false);
-	}
-	
-	if (editing) return <CreatePomodoro onSaved={onSaved} info={info} />
-	
+export function ListedPomodoro({ info, children }: { info: PomodoroTimerInfo, children: React.ReactNode }) {
+
 	return <div className="listed-pomodoro">
 		<div style={{display: 'flex', justifyContent: 'space-between' }} >
 			<div className="pomo-header" style={{left: '1rem'}}>
@@ -68,7 +56,28 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
 				</div>
 			</div>
 		</div>
+		{ children }
+	</div>
+}
 
+interface ListedHomePomodoroProps { info: PomodoroTimerInfo, onUpdate: (newPomo: PomodoroTimerInfo) => void, status: 'launched' | 'launchable' | 'cant launch', onLaunch: () => void, onDelete: () => void, onMarkAsComplete: () => void }
+
+/*
+Represents the listed pomodoros on the home page.
+Specifically it can be edited, launched, marked as complete, and deleted 
+*/
+export function ListedHomePomodoro({info, onUpdate, status, onLaunch, onDelete, onMarkAsComplete }: ListedHomePomodoroProps) {
+		
+	const [editing, setEditing] = useState<boolean>(false);
+	
+	const onSaved = (newPomo: PomodoroTimerInfo) => {
+		onUpdate(newPomo);
+		setEditing(false);
+	}
+	
+	if (editing) return <CreatePomodoro onSaved={onSaved} info={info} />
+
+	return <ListedPomodoro info={info}>
 		<div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between', width: '100%' }}>
 			<div style={{ display: 'flex', gap: '8px'}}>
 				<button disabled={status == 'launched'} onClick={() => setEditing(true)} > Edit </button>
@@ -79,5 +88,20 @@ export default function ListedPomodoro({info, onUpdate, status, onLaunch, onDele
 				<button onClick={() => onDelete()} > 🗑️ </button>
 			</div>
 		</div>
-	</div>
+	</ListedPomodoro>
+}
+
+interface ListedCompletedPomodoroProps { info: PomodoroTimerInfo, onDelete: () => void, onMarkAsIncomplete: () => void }
+
+/*
+Represents listed pomodoros for the completed pomos page
+Only lets you delete permenantly or unmark as complete to work on again.
+*/
+export function ListedCompletedPomodoro( {info, onDelete, onMarkAsIncomplete} : ListedCompletedPomodoroProps ) {
+	return <ListedPomodoro info={info}>
+		<div style={{ display: 'flex', gap: '8px'}}>
+			<button onClick={() => onDelete()} > Delete </button>
+			<button onClick={() => onMarkAsIncomplete()} > Mark as incomplete </button>
+		</div>
+	</ListedPomodoro>
 }

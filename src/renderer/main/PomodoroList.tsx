@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { PomodoroTimerInfo } from "/src/types/Pomodoro";
-import ListedPomodoro from "./ListedPomodoro";
+import { ListedHomePomodoro } from "./ListedPomodoro";
 import { useContext, useEffect, useState } from "react";
 import Warn from "../misc/Warn";
 import { AppContext } from "../App";
 import { useWindowSizeStore } from "../../main/states/userDataStates";
+import { useCompletedPomodorosStore } from "./CompletedPomodoroList";
 
 interface Pomodoros {
     list: PomodoroTimerInfo[],
@@ -25,28 +26,14 @@ export const usePomodorosStore = create<Pomodoros>(set => ({
     markPomodoroAsComplete: (idxToMark) => {
       console.log(useCompletedPomodorosStore.getState().list)
       set(state => {
+        console.log("trying to add!")
         const completedPomo = state.list[idxToMark];
         if (!completedPomo) return {};
         useCompletedPomodorosStore.getState().addPomodoro(completedPomo);
-        // useCompletedPomodorosStore.getState().addPomodoro(completedPomo);
+        console.log("added !", completedPomo)
         return { list: state.list.filter((_, itemIdx) => itemIdx !== idxToMark) };
       });
     }
-}))
-
-// TEMP: Move the stored pomodoro stuff elsewhere.
-interface CompletedPomodoros {
-  list: PomodoroTimerInfo[],
-  setPomodoros: (list: PomodoroTimerInfo[]) => void,
-  addPomodoro: (toAdd: PomodoroTimerInfo) => void,
-  removePomodoro: (idx: number) => void
-}
-
-export const useCompletedPomodorosStore = create<CompletedPomodoros>(set => ({
-  list: [],
-  setPomodoros: (list: PomodoroTimerInfo[]) => set({list: list}),
-  addPomodoro: (toAdd) => set(state => ({ list: [...state.list, toAdd] })),
-  removePomodoro: (idxToRemove) => set(state => ({ list: state.list.filter((_, itemIdx) => itemIdx !== idxToRemove) }))
 }))
 
 
@@ -94,13 +81,12 @@ export default function PomodoroList() {
     {promptToMarkAsComplete.state && <Warn 
       confirmText="Are you sure you want to mark this task as complete?"
       onYes={() => {
-        console.log("TEAST")
         markPomodoroAsComplete(promptToMarkAsComplete.idx); 
         setPromptToMarkAsComplete({state: false});
       }}
       onNo={() => setPromptToMarkAsComplete({state: false})}
     />}
-    {pomoList.map((pomoInfo, idx) => <ListedPomodoro 
+    {pomoList.map((pomoInfo, idx) => <ListedHomePomodoro 
       info={pomoInfo} 
       key={idx} 
       onUpdate={(newPomo) => updatePomodoro(idx, newPomo)}

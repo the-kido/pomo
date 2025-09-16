@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { UserData, UserDataStore } from '/src/types/UserData';
-import { useCompletedPomodorosStore, usePomodorosStore } from '/src/renderer/main/PomodoroList';
+import { usePomodorosStore } from '/src/renderer/main/PomodoroList';
 import { DayWork, DayWorkDict } from '/src/types/Pomodoro';
 import { getYMD } from '../utils/utils';
+import { useCompletedPomodorosStore } from '/src/renderer/main/CompletedPomodoroList';
 
 export const DEFAULT_USERDATA: UserData = {
 	user: {

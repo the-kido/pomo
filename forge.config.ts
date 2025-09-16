@@ -7,6 +7,7 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import * as path from 'path';
 
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
@@ -14,12 +15,29 @@ import { rendererConfig } from './webpack.renderer.config';
 const ENTRY_POINT_SRC = './src/main/windows';
 const ENTRY_POINT_RENDERER_SRC = './src/renderer/windows';
 
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    icon: path.resolve(__dirname, 'assets/app.ico')
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({
+      setupIcon: './assets/app.ico'
+    }), 
+    new MakerZIP({}, ['darwin']), 
+    new MakerRpm({
+      options: {
+        icon: './assets/app.png'
+      }
+    }), 
+    new MakerDeb({
+      options: {
+        icon: './assets/app.png'
+      }
+    })
+  ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({

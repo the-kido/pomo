@@ -13,6 +13,7 @@ import SettingsModal from "./main/settings/Settings";
 import { Copy, Minus, X } from "lucide-react";
 import { useExtensionStateStore, useOllamaStateStore } from "../main/states/appStates";
 import { getDefaultPomoTimer, PomoActivityType, PomodoroTimerInfo } from "../types/Pomodoro";
+import CompletedPomodoroList from "./main/CompletedPomodoroList";
 
 enum USER_ACTIONS {
 	EDITING_POMODORO = "editing_pomodoro",
@@ -26,7 +27,7 @@ export interface AppContext {
 
 export enum Menu {
 	HOME_PAGE = 'Home Page',
-	QUICK_POMO = 'Quick Pomodoro',
+	// QUICK_POMO = 'Quick Pomodoro',
 	STATS = 'Statistics',
 	COMPLETED = 'Completed Tasks',
 }
@@ -83,7 +84,7 @@ export default function App() {
 				{/* Top Overlayed Bar */}
 				<div className="top-bar">
 					<div className=" window-dragger" style={{flex: 1}} > </div>
-					<div style={{height: '28px'}} >
+					<div style={{height: '30px', display: 'flex', alignItems: 'center'}} >
 						<button onClick={() => window.windowControl.minimize()} className="window-control">
 							<Minus size={18}/>
 						</button>
@@ -100,7 +101,7 @@ export default function App() {
 					<div className="main-content" style={{maxWidth: "var(--content-width)"}}>
 						{ menuAt == Menu.HOME_PAGE && <HomeMenu /> }
 						{ menuAt == Menu.STATS && <StatsMenu /> }
-						{ menuAt == Menu.COMPLETED && <CompletedTasksMenu /> }
+						{ menuAt == Menu.COMPLETED && <CompletedPomodoroList /> }
 						{/* { menuAt == Menu.QUICK_POMO && <QuickPomoMenu /> } */}
 					</div>
 				</div>
@@ -128,12 +129,6 @@ function StatsMenu() {
 	return <>
 		<h1> Your Statistics </h1>
 		<Heatmap history={history}/>
-	</>
-}
-
-function CompletedTasksMenu() {
-	return <>
-		<h1> Your Completed Pomos </h1>
 	</>
 }
 
