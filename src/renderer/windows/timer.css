@@ -31,6 +31,9 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 10px;
+
+  white-space: nowrap; 
+  overflow: hidden;  
 }
 
 .timer {
@@ -90,6 +93,10 @@ h3 {
 }
 
 .description {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
   text-align: center;
   cursor: text;
 }

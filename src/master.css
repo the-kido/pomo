@@ -109,6 +109,10 @@ select, button {
   padding-right: 4px;
   border: 1px solid gray;
   border-radius: var(--input-border-radius);
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 h1, h2, h3, h4, h5, div, input {

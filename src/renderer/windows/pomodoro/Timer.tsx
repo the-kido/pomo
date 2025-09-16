@@ -33,7 +33,7 @@ interface TimerState {
 
 enum TimerStates { JustOpened, WorkTimer, WorkPaused, WorkFinished, BreakTimer, BreakFinished }
 
-export default function Timer({ workTime, breakTime, onPomoFinished } : { workTime: number, breakTime: number, onPomoFinished: () => void }) {
+export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } : { workTime: number, breakTime: number, onPomoFinished: () => void, isShrunk: boolean }) {
 
   const [currentState, setCurrentState] = useState<TimerStates>(TimerStates.JustOpened);
 
@@ -231,6 +231,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished } : { workTi
         onSwitchPressed={onSwitchPressed}
         restart={restart}
         timeText={timeText}
+        isShrunk={isShrunk}
       />
     </div>
   </div>
@@ -244,18 +245,20 @@ const MemoizedTimerContent = memo(function TimerContent({
   onSwitchPressed,
   restart,
   timeText,
+  isShrunk
 }: {
-  currentState: TimerStates;
-  isPaused: boolean;
-  isPauseButtonEnabled: boolean;
-  onPausePressed: () => void;
-  onSwitchPressed: () => void;
-  restart: () => void;
-  timeText: string;
+  currentState: TimerStates,
+  isPaused: boolean,
+  isPauseButtonEnabled: boolean,
+  onPausePressed: () => void,
+  onSwitchPressed: () => void,
+  restart: () => void,
+  timeText: string,
+  isShrunk: boolean
 }) {
   return (
     <div className="timer-content" style={{ display: 'flex' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', margin: '10px', gap: '10px' }}>
+      <div style={{ display: 'flex', flexDirection: isShrunk ? 'row' : 'column', margin: '10px', gap: '10px' }}>
        <button
           disabled={!isPauseButtonEnabled}
           onClick={() => {onPausePressed(); console.log("pause pressed?")}}
@@ -268,7 +271,7 @@ const MemoizedTimerContent = memo(function TimerContent({
           {currentState == TimerStates.BreakTimer ? <FastForward /> : <RotateCcw />}
         </button>
       </div>
-      <h1 className="timer-text">{timeText}</h1>
+      <h1 className="timer-text" style={ isShrunk ? {transform: 'translateX(calc(-100% - 10px))', left: '100%'} : {}} >{timeText}</h1>
     </div>
   );
 });

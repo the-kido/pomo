@@ -97,7 +97,8 @@ ipcMain.on(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, (_, timerInfo: Pomo
     icon: path.join(__dirname, './assets/app.ico')
   });
 
-  pomodoro.setMinimumSize(275, 200);
+  // pomodoro.setMinimumSize(275, 200);
+  pomodoro.setMinimumSize(150, 100);
   pomodoro.loadURL(POMODORO_TIMER_WEBPACK_ENTRY);
 
   // Open the DevTools.
@@ -144,10 +145,11 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onMinimize, () => {
 // Update minimum window size.
 ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number) => {
   // TODO: make magic numbers go bye bye and make it scale with UI scale value when I implement that for the timer
-  const newX = Math.max(x + 1, 275);
-  const newY = Math.max(y + 1, 175);
-  pomodoro.setMinimumSize(newX, newY);
-  pomodoro.setSize(newX, newY);
+  
+  // const newX = Math.max(x + 1);
+  // const newY = Math.max(y + 1 );
+  // pomodoro.setMaximumSize(newX, newY);
+  // pomodoro.setSize(newX, newY);
 });
 
 /**

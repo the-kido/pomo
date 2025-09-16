@@ -89,6 +89,7 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
 					workTime={info.startTimeSeconds}
 					breakTime={info.breakTimeSeconds}
 					onPomoFinished={updatePomodorosCompleted}
+          isShrunk={isShrunk}
 				/>
 				<div className='component-container' style={{minHeight: isShrunk ? '50px' : '85px'}}>
 				  <TransitionWrapper show={!isShrunk && updating}>
