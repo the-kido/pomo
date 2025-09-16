@@ -9,7 +9,8 @@ export type PomodoroRendererExports = {
 
 	onUpdateData: (callback: (data: UserData) => void) => void;
 	onUnsubUpdateData: () => void;
-	attemptClose: (data: PomodoroTimerInfo) => void;
+	attemptClose: () => void;
+	attemptMinimize: () => void;
 	onClosed: (callback: () => void) => void;
 	changeSize: (x: number, y: number) => void;
 };
@@ -21,6 +22,7 @@ export const CHANNELS = {
 	} as const,
 	fromPomodoroRenderer: {
 		onClose: 'closed-pomodoro',
+		onMinimize: 'minimized-pomodoro',
 		changeWindowSize: 'change-window-size',
 		onSendPomodoroUpdate: 'sending-pomo-update',
 		onIncrementPomosDone: 'sending-increment-pomos-done'

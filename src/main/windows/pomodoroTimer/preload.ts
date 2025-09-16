@@ -17,7 +17,10 @@ contextBridge.exposeInMainWorld('pomodoro', {
 		ipcRenderer.on(CHANNELS.fromPomodoroMain.onInit, (_event: any, data: any) => callback(data))
 	},
 	attemptClose: (data: PomodoroTimerInfo) => {
-		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onClose, data)
+		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onClose)
+	},
+	attemptMinimize: (data: PomodoroTimerInfo) => {
+		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onMinimize)
 	},
 	sendPomodoroUpdate: (data: PomodoroTimerInfo) => {
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onSendPomodoroUpdate, data)

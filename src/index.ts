@@ -103,11 +103,6 @@ ipcMain.on(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, (_, timerInfo: Pomo
   // Open the DevTools.
   if (process.env.NODE_ENV === 'development') pomodoro.webContents.openDevTools();
 
-  // Make sure you can't maximize the window
-  pomodoro.on('maximize', () => {
-    pomodoro.unmaximize();
-  });
-
   // When the window loads, initialize its data
   pomodoro.webContents.on('did-finish-load', () => {
     pomodoro.webContents.send(CHANNELS.fromPomodoroMain.onInit, timerInfo);
@@ -141,6 +136,10 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
   pomodoro.close();
   mainProcessEvents.emit('on-close-pomodoro')
 });
+
+ipcMain.on(CHANNELS.fromPomodoroRenderer.onMinimize, () => {
+  pomodoro.minimize();
+})
 
 // Update minimum window size.
 ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number) => {

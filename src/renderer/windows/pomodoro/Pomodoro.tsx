@@ -44,7 +44,11 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   }
 
   function onPomodoroClose() {
-    window.pomodoro.attemptClose(info);
+    window.pomodoro.attemptClose();
+  }
+  
+  function onPomodoroMinimize() {
+    window.pomodoro.attemptMinimize();
   }
 
   function onToggleSize(newSize: boolean) {
@@ -78,7 +82,7 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
   return <>
 		<div id='portal-root'></div>
 		<div ref={pomoWindow} className="pomo">
-			<Header onClose={onPomodoroClose} isShrunk={isShrunk} toggleSize={onToggleSize} />
+			<Header onClose={onPomodoroClose} isShrunk={isShrunk} toggleSize={onToggleSize} minimize={onPomodoroMinimize} />
 			<div className="main-info">
 				{/* This is the first "square" w/ the main info */}
 				<Timer
