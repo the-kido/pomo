@@ -2,7 +2,7 @@ import './settings.css'; // Import the styles
 import './slider.css'; // Import the styles
 import { useContext, useEffect, useState } from 'react';
 import { useUiStore } from '../Sidebar';
-import { MoveLeftIcon, Settings } from 'lucide-react';
+import { MoveLeftIcon, Settings, X } from 'lucide-react';
 import { SortableSubtask, SubtaskList } from '/src/main/components/EditableList';
 import { SubtaskItem } from '../createPomodoro/Stages';
 import { AppContext } from '../../App';
@@ -62,10 +62,10 @@ export default function SettingsModal() {
           <div className="settings-content">
             <div className='sticky-content-header'>
               <h2>{MENU_LABELS[selectedMenu]}</h2>
-              <button onClick={closeSettings} className="close-button">✖</button>
+              <button title='Close' onClick={closeSettings} className="close-button"> <X /> </button>
             </div>
             <div className='settings-main-content-scroll-area'>
-              <div className='settings-main-content' >
+              <div className='settings-main-content'>
                 {selectedMenu === Menus.BUILDING && (
                   <BuildingPomoPage />
                 )}

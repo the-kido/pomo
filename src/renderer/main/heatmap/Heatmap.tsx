@@ -54,7 +54,8 @@ export function Heatmap({history} : {history: DayWorkDict}){
 				<button
 					onClick={goToPreviousYear}
 					disabled={yearShown <= minYear}
-				>
+					title='Go back a year'
+					>
 					←
 				</button>
 				
@@ -63,6 +64,7 @@ export function Heatmap({history} : {history: DayWorkDict}){
 				<button
 					onClick={goToNextYear}
 					disabled={yearShown >= currentYear}
+					title='Go forward a year'
 				>
 					→
 				</button>

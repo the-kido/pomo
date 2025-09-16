@@ -11,10 +11,10 @@ export function ListedPomodoro({ info, children }: { info: PomodoroTimerInfo, ch
 
 	return <div className="listed-pomodoro">
 		<div style={{display: 'flex', justifyContent: 'space-between' }} >
-			<div className="pomo-header" style={{left: '1rem'}}>
+			<div title="Your Pomodoro's task" className="pomo-header" style={{left: '1rem'}}>
 				{info.task}
 			</div>
-			<div className="pomo-header" style={{left: 'calc(100% - 4rem)'}}> {`🍅 x${info.completed}`}</div>
+			<div title='Total number of Pomodoro sessions ("work" intervals) completed' className='pomo-header' style={{left: 'calc(100% - 4rem)'}}> {`🍅 x${info.completed}`}</div>
 		</div>
 
 		<div className="listed-pomodoro-content">
@@ -23,8 +23,8 @@ export function ListedPomodoro({ info, children }: { info: PomodoroTimerInfo, ch
 				{/* Type Stage */}
 				<div style={{display: 'flex'}}> 
 					{/* ⚠️ TEMP */}
-					{info.type != PomoActivityType.UNKNOWN && <h4>{PomoActivityTypeDisplay[info.type]}</h4>}
-					{ info.type == PomoActivityType.ACTIVE && <h4>{info.goal}</h4> }
+					{ info.type != PomoActivityType.UNKNOWN && <h4 title="Type of task">{PomoActivityTypeDisplay[info.type]}</h4>}
+					{ info.type == PomoActivityType.ACTIVE && <h4 title="Task's goal">{info.goal}</h4> }
 				</div>
 				{/* Task Stage*/}
 				{info.motivation && <div>
@@ -81,12 +81,12 @@ export function ListedHomePomodoro({info, onUpdate, status, onLaunch, onDelete, 
 	return <ListedPomodoro info={info}>
 		<div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between', width: '100%' }}>
 			<div style={{ display: 'flex', gap: '8px'}}>
-				<button disabled={status == 'launched'} onClick={() => setEditing(true)} > Edit </button>
-				<button disabled={status != 'launchable'} onClick={() => onLaunch()} > { status != 'launched' ? 'Launch 🚀' : 'Launched' } </button>
+				<button title="Edit task" disabled={status == 'launched'} onClick={() => setEditing(true)} > Edit </button>
+				<button title="Start a Pomodoro timer for this task!" disabled={status != 'launchable'} onClick={() => onLaunch()} > { status != 'launched' ? 'Launch 🚀' : 'Launched' } </button>
 			</div>
 			<div style={{ display: 'flex', gap: '8px'}}>
-				<button onClick={() => onMarkAsComplete()} > <Check /> </button>
-				<button onClick={() => onDelete()} > 🗑️ </button>
+				<button title="Mark as completed" onClick={() => onMarkAsComplete()} > <Check /> </button>
+				<button title="Delete" onClick={() => onDelete()} > 🗑️ </button>
 			</div>
 		</div>
 	</ListedPomodoro>

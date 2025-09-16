@@ -85,13 +85,25 @@ export default function App() {
 				<div className="top-bar">
 					<div className=" window-dragger" style={{flex: 1}} > </div>
 					<div style={{height: '30px', display: 'flex', alignItems: 'center'}} >
-						<button onClick={() => window.windowControl.minimize()} className="window-control">
+						<button 
+							onClick={() => window.windowControl.minimize()} 
+							className="window-control"
+							title="Minimize"
+						>
 							<Minus size={18}/>
 						</button>
-						<button onClick={() => window.windowControl.maximize()} className="window-control">
+						<button 
+							onClick={() => window.windowControl.maximize()} 
+							className="window-control"
+							title="Maximize"
+						>
 							<Copy style={{transform: 'scaleX(-1)'}} size={18}/>
 						</button>
-						<button onClick={() => window.windowControl.close()} className="window-control">
+						<button 
+							onClick={() => window.windowControl.close()} 
+							className="window-control"
+							title="Close window"
+						>
 							<X size={18}/>
 						</button>
 					</div>
