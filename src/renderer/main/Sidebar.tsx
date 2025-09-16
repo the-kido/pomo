@@ -21,7 +21,7 @@ export default function Sidebar({menuAt, setMenuAt} : {menuAt: Menu, setMenuAt: 
 
 	return <div className="side-bar">
 		{/* Top */}
-		<div>
+		<div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', paddingBottom: 'var(--medium-padding)', marginBottom: 'var(--medium-padding)' }} >
 			<button 
 				style={{background: 'none', border: 'none' }} 
 				title="Settings"
@@ -31,11 +31,11 @@ export default function Sidebar({menuAt, setMenuAt} : {menuAt: Menu, setMenuAt: 
 			</button>
 		</div>
 		{/* Middle */}
-		<div style={{flex: 1}}>
+		<div className="settings-buttons" style={{flex: 1}}>
 			{Object.entries(Menu).map(([menuKey, label]) => (
 				<button
 					key={menuKey}
-					style={{ display: 'block', width: '100%', margin: '8px 0' }}
+					// style={{ display: 'block', width: '100%', margin: '8px 0' }}
 					className={`menu-button${menuAt === label ? '-active' : ''}`}
 					onClick={() => setMenuAt(label)}
 				>

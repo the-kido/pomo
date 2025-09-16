@@ -23,17 +23,18 @@ export function ListedPomodoro({ info, children }: { info: PomodoroTimerInfo, ch
 				{/* Type Stage */}
 				<div style={{display: 'flex'}}> 
 					{/* ⚠️ TEMP */}
-					<h4>{PomoActivityTypeDisplay[info.type]}</h4>
+					{info.type != PomoActivityType.UNKNOWN && <h4>{PomoActivityTypeDisplay[info.type]}</h4>}
 					{ info.type == PomoActivityType.ACTIVE && <h4>{info.goal}</h4> }
 				</div>
 				{/* Task Stage*/}
-				<div>
+				{info.motivation && <div>
 					Created in order to <span>{info.motivation}</span>
-				</div>
+				</div>}
 				{/* Select First Reward Stage*/}
-				<div> 
+				{/* ⚠️ TODO */}
+				{/* <div> 
 					Next Reward: <span>{info.nextReward}</span>
-				</div>
+				</div> */}
 			</div>
 			
 			{/* Right */}

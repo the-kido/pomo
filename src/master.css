@@ -151,6 +151,7 @@ button:disabled:hover {
 
 /* For selection menus */
 .menu-button {
+  text-align: left;
 	background: none;
 	border: none;
 }
@@ -159,7 +160,8 @@ button:disabled:hover {
 }
 
 .menu-button-active {
-	border: none;
+	text-align: left;
+  border: none;
 	filter: none;
 	background: var(--select-background);
 }

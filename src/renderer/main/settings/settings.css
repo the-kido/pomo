@@ -45,7 +45,7 @@
 	cursor: pointer;
 }
 
-.settings-menu {
+/* .settings-menu {
 	border-top-left-radius: var(--input-border-radius);
 	border-bottom-left-radius: var(--input-border-radius);
 	width: 10em;
@@ -53,7 +53,7 @@
 	gap: 0.5em;
 	display: flex;
 	flex-direction: column;
-}
+} */
 
 .settings-content {
 	display: flex;
@@ -80,17 +80,11 @@
 }
 
 .settings-buttons {
-	padding: 0px var(--menu-padding);
     margin-top: 0px;
     display: flex;
     flex-direction: column;
 	gap: 0.3em;
 }
-
-/* 
-
-
-*/
 
 .setting-item {
   display: flex;

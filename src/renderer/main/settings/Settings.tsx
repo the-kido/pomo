@@ -36,23 +36,26 @@ export default function SettingsModal() {
       
       <div className="modal-content">
           {/* Left menu bar */}
-          <div className="settings-menu" style={{display: 'flex', flexDirection: 'column' }}>
+          <div className="side-bar" style={{paddingTop: '0px', display: 'flex', flexDirection: 'column' }}>
+            <div>
+
             <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Settings className='icon' style={{paddingRight: '4px'}} />Settings
             </h2>
-            <div className='settings-buttons'>
-              
-              {Object.values(Menus)
-                .filter((v) => typeof v === "number")
-                .map((menu) => (
+              <div className='settings-buttons'>
+                
+                {Object.values(Menus)
+                  .filter((v) => typeof v === "number")
+                  .map((menu) => (
                     <SettingsMenuButton
                     key={menu}
                     selected={selectedMenu === menu}
                     label={MENU_LABELS[menu as Menus]}
                     onClick={() => setSelectedMenu(menu as Menus)}
-                  />
-                )
-              )}
+                    />
+                  )
+                )}
+              </div>
             </div>
           </div>
           {/* Right content bar */}

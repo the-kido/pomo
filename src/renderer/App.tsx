@@ -12,7 +12,7 @@ import Sidebar from "./main/Sidebar";
 import SettingsModal from "./main/settings/Settings";
 import { Copy, Minus, X } from "lucide-react";
 import { useExtensionStateStore, useOllamaStateStore } from "../main/states/appStates";
-import { getDefaultPomoTimer, PomoActivityType, PomodoroTimerInfo } from "../types/Pomodoro";
+import { getDefaultPomoTimer, PomodoroTimerInfo } from "../types/Pomodoro";
 import CompletedPomodoroList from "./main/CompletedPomodoroList";
 
 enum USER_ACTIONS {
