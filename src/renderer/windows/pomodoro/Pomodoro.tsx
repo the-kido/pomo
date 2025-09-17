@@ -59,9 +59,8 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     // Check if we are editing. If so, we close out of it early
     if (isShrunk) useUpdatingState.getState().finishSettingDescription();
 
-
     // This runs after isShrunk changes and the DOM/layout is updated
-    window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight);
+    window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight, isShrunk);
   }, [isShrunk]);
 
   // Required to set pomodoro window to correct size on first load
@@ -69,7 +68,7 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
     // Wait for the DOM to settle
     const timer = setTimeout(() => {
       if (pomoWindow.current) {
-        window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight);
+        window.pomodoro.changeSize(pomoWindow.current.scrollWidth, pomoWindow.current.scrollHeight, isShrunk);
       }
     }, 100); // Wait for some arbitrary time so all is set in stone
 
@@ -104,11 +103,14 @@ export default function Pomodoro({ info }: { info?: PomodoroTimerInfo }) {
             <TaskInfo info={info} pomosCompleted={pomosCompleted} isShrunk={isShrunk}/>
           </TransitionWrapper>
 				</div>
+        
+	  		<div className='subtask-list'>
+         <SubtasksInfo 
+            info={info}
+            isShrunk={isShrunk}
+          />
+        </div>
 			</div>
-			<SubtasksInfo 
-				info={info}
-				isShrunk={isShrunk}
-			/>
 		</div>
   </>
 }
@@ -134,7 +136,12 @@ function TaskInfo({ info, pomosCompleted, isShrunk } : { info: PomodoroTimerInfo
   var goalText = info.goal;
 
 	return <>
-		<h2 className={`description ${(!isShrunk) && "text-editable"}`} onClick={isShrunk ? undefined : setDescription} > {info.task} </h2>
+		<h2 
+      className={`description ${(!isShrunk) && "text-editable"}`} 
+      onClick={isShrunk ? undefined : setDescription}
+      style={{padding: '0px var(--medium-padding)', fontSize: isShrunk ? 'large' : 'x-large' }}
+    > 
+      {info.task} </h2>
 		{ !isShrunk && <div className='misc-info'>
 			<div style={{ display: 'flex' }}>
 				{ info.type != PomoActivityType.UNKNOWN && <h4 className='chip'>{activityTypeText}</h4> }

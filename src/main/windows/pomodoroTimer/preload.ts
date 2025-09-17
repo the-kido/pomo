@@ -28,8 +28,8 @@ contextBridge.exposeInMainWorld('pomodoro', {
 	incrementPomosDone: () => {
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.onIncrementPomosDone)
 	},
-	changeSize : (x: number, y: number) => {
-		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.changeWindowSize, x, y)
+	changeSize : (x: number, y: number, isShrunk: boolean) => {
+		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.changeWindowSize, x, y, isShrunk)
 	},
 	onUpdateData: (callback: (data: UserData) => void) => {
 		console.log('On update data');

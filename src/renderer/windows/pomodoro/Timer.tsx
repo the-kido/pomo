@@ -189,9 +189,8 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
   const getFinalWorkTime = () => workTime * 1000 - (Date.now() - timeStartedMS.current) + timePaused.current;
   const getFinalBreakTime = () => breakTime * 1000 - (Date.now() - timeStartedMS.current)
   
-  const isPaused = (currentState: TimerStates) => currentState == TimerStates.WorkPaused || currentState == TimerStates.JustOpened;
+  const isPaused = (currentState: TimerStates) => currentState == TimerStates.WorkPaused;
   const isPauseButtonEnabled = () => currentState == TimerStates.WorkPaused || currentState == TimerStates.WorkTimer || currentState == TimerStates.JustOpened;
-
 
   // Track height to update the progress bar with
   const newWidth = `${percentLeft * 100}%`;
@@ -256,22 +255,25 @@ const MemoizedTimerContent = memo(function TimerContent({
   timeText: string,
   isShrunk: boolean
 }) {
+  const iconSize = isShrunk ? 14 : 18;
+  const buttonClassName = `timer-button ${isShrunk && 'timer-button-small'}`
+
   return (
     <div className="timer-content" style={{ display: 'flex' }}>
       <div style={{ display: 'flex', flexDirection: isShrunk ? 'row' : 'column', margin: '10px', gap: '10px' }}>
        <button
           disabled={!isPauseButtonEnabled}
           onClick={() => {onPausePressed(); console.log("pause pressed?")}}
-          className="test"
-          style={{ zIndex: isPaused  ? 1000 : 'auto'}} 
+          className={buttonClassName}
+          style={{ zIndex: isPaused ? 1000 : 'auto'}} 
         >
-          {currentState == TimerStates.JustOpened ? <Play size={18} /> : (isPaused ? <Play size={18} /> : <Pause size={18}/>)}
+          {currentState == TimerStates.JustOpened ? <Play size={iconSize} /> : (isPaused ? <Play size={iconSize} /> : <Pause size={iconSize}/>)}
         </button>
-        <button className="test" onClick={() => {(currentState == TimerStates.BreakTimer ? onSwitchPressed : restart)(); console.log("switch pressed?")} } >
-          {currentState == TimerStates.BreakTimer ? <FastForward /> : <RotateCcw />}
+        <button className={buttonClassName} onClick={() => {(currentState == TimerStates.BreakTimer ? onSwitchPressed : restart)(); console.log("switch pressed?")} } >
+          {currentState == TimerStates.BreakTimer ? <FastForward size={iconSize} /> : <RotateCcw size={iconSize}/>}
         </button>
       </div>
-      <h1 className="timer-text" style={ isShrunk ? {transform: 'translateX(calc(-100% - 10px))', left: '100%'} : {}} >{timeText}</h1>
+      <h1 className="timer-text" style={ isShrunk ? {transform: 'translateX(calc(-100% - 10px)) translateY(5%)', left: '100%', fontSize: '30px'} : {fontSize: '50px'}} >{timeText}</h1>
     </div>
   );
 });

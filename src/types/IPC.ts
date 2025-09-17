@@ -12,7 +12,7 @@ export type PomodoroRendererExports = {
 	attemptClose: () => void;
 	attemptMinimize: () => void;
 	onClosed: (callback: () => void) => void;
-	changeSize: (x: number, y: number) => void;
+	changeSize: (x: number, y: number, isShrunk: boolean) => void;
 };
 
 export const CHANNELS = {

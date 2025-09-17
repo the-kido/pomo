@@ -1,7 +1,7 @@
 import { Expand, Grip, Minus, PanelBottomClose, Shrink } from 'lucide-react'
 
 export default function Header({ onClose, isShrunk, toggleSize, minimize }: { onClose: () => void, isShrunk: boolean, toggleSize: (toggle: boolean) => void, minimize: () => void }) {
-	return <div className='title-bar'>
+	return <div className='title-bar' style={{borderBottom: '1px solid var(--border-color)'}} >
 		<div style={{flex: 1}} className='window-dragger'>
 			{/* <Grip size={18}/> */}
 		</div>
