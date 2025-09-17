@@ -21,7 +21,7 @@ export default function Sidebar({menuAt, setMenuAt} : {menuAt: Menu, setMenuAt: 
 
 	return <div className="side-bar">
 		{/* Top */}
-		<div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', paddingBottom: 'var(--medium-padding)', marginBottom: 'var(--medium-padding)' }} >
+		<div style={{ display: 'flex', paddingBottom: 'var(--medium-padding)', marginBottom: 'var(--medium-padding)' }} >
 			<button 
 				style={{background: 'none', border: 'none' }} 
 				title="Settings"

@@ -20,7 +20,7 @@ export default function Header({ onClose, isShrunk, toggleSize, minimize }: { on
 			<div style={{margin: '2px'}}> </div>
 			
 			<button  style={{padding: 0}} className='window-control' onClick={onClose}>
-				<PanelBottomClose  size={18}/>
+				<PanelBottomClose size={18}/>
 			</button>
 		</div>
 	</div>
