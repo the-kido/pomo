@@ -3,6 +3,7 @@ import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import '/src/main/data/load'
 import '/src/main/ai/ai'
 import '/src/main/rpc/discord'
+import '/src/main/data/update-checker'
 import { useAppStateStore } from '/src/main/states/appStates'
 
 //#region Main Window
