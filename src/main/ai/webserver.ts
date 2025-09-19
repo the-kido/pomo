@@ -1,12 +1,12 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { generate } from './ollama';
 import { addUnblockedSite, IsURLUnblocked } from './blocked-sites'
-import { Website, MessageType, InboundMessage, EntertainmentPayload } from 'prod-app-shared';
 import { useAppStateStore, useExtensionStateStore } from '/src/main/states/appStates';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import { PRODUCTIVE, UNPRODUCTIVE } from '/src/types/AI';
 import { mainProcessEvents } from '../events/events';
 import { CHANNELS } from '/src/types/IPC';
+import { EntertainmentPayload, InboundMessage, MessageType, Website } from '/src/types/extension';
 
 const UNBLOCKED_SITE_DELAY_IN_SECONDS = 60 * 15; 
 

@@ -63,7 +63,6 @@
     "electron-updater": "^6.6.2",
     "lucide-react": "^0.525.0",
     "ollama": "^0.5.17",
-    "prod-app-shared": "file:../shared-package",
     "react": "^19.1.0",
     "react-calendar-heatmap": "^1.10.0",
     "react-dom": "^19.1.0",
