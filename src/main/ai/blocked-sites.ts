@@ -1,4 +1,4 @@
-import { Website } from "prod-app-shared/dist";
+import { Website } from "/src/types/extension";
 
 class UnblockedSite {
     website: Website;
