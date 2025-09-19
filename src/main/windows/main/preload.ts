@@ -9,6 +9,7 @@ declare global {
 		app: { 
 			onDidFinishLoad: (callback: (data: UserData) => void) => void,
 			saveData: (data: Partial<UserData>) => void,
+			getAppVersion: () => string,
 		},
 		ollama: {
 			generateText: (prompt: string) => Promise<LLMResult>
@@ -33,7 +34,6 @@ contextBridge.exposeInMainWorld('pomodoro', {
 		ipcRenderer.send(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, fileToLoad, options)
 	},
 	onUpdateData: (callback: (data: UserData) => void) => {
-		console.log('onUpdateData');
 		onUpdateDataCallback = (_event, data) => callback(data)
 		ipcRenderer.on(CHANNELS.fromMainProcess.onUpdate, onUpdateDataCallback)
 	},
@@ -55,6 +55,9 @@ contextBridge.exposeInMainWorld('app', {
 	},
 	saveData: (data: Partial<UserData>) => {
 		ipcRenderer.send(CHANNELS.fromMainRenderer.onSaveData, data);
+	},
+	getAppVersion: () => {
+		return ipcRenderer.invoke(CHANNELS.fromMainRenderer.getAppVersion)
 	}
 });
 

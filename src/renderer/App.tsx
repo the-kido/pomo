@@ -31,6 +31,7 @@ export enum Menu {
 	STATS = 'Statistics',
 	COMPLETED = 'Completed Tasks',
 }
+
 export const AppContext = createContext<AppContext>(undefined)
 
 export default function App() {
@@ -39,9 +40,7 @@ export default function App() {
 	const [ menuAt, setMenuAt ] = useState<Menu>(Menu.HOME_PAGE) 
 
 	useEffect(() => {
-		console.log("SUBBING TO ONUPDATEDATA")
 		window.pomodoro.onUpdateData((data: UserData) => {
-			console.log("LOADING")
 			useUserDataStore.getState().loadUserData(data);
 		});
 		return () => {
@@ -69,7 +68,6 @@ export default function App() {
 		});
 	}, []);
 	
-
 	useEffect(() => {
 		document.body.classList.toggle("dark", darkMode);
 	}, [darkMode])

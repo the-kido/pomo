@@ -139,8 +139,8 @@ ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
   mainProcessEvents.emit('on-close-pomodoro')
 });
 
-ipcMain.on(CHANNELS.fromPomodoroRenderer.onMinimize, () => {
-  pomodoro.minimize();
+ipcMain.handle(CHANNELS.fromMainRenderer.getAppVersion, () => {
+  return app.getVersion();
 })
 
 // Update minimum window size.

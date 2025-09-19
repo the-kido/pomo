@@ -9,6 +9,8 @@
 }
 
 .modal-content {
+	overflow: hidden;
+	
 	display: flex;
 	flex-direction: row;
 

@@ -3,7 +3,7 @@ name: Build & Release
 on:
   push:
     tags:
-      - 'v*'   # runs when you push a tag like v1.2.3
+      - 'v*'
 
 jobs:
   release:
@@ -20,9 +20,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+  
+      - name: Disable interactive prompts
+        run: |
+          npm config set yes true
+          npm config set audit false
+          npm config set fund false
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build & Publish
         run: npx electron-builder --publish always

@@ -24,11 +24,18 @@ export default function SettingsModal() {
   const { isSettingsOpen, closeSettings } = useUiStore();
   const [selectedMenu, setSelectedMenu] = useState<Menus>(Menus.BUILDING);
 
+  const [test, setTest] = useState<string>("Unknown")
+
+  
+  useEffect(() => {
+    setTest(window.app.getAppVersion())
+  }, [])
+  
   // If the modal is not open, render nothing.
   if (!isSettingsOpen) {
     return null;
   }
-
+  
   return (
     <>
       {/* backdrop */}
@@ -78,7 +85,8 @@ export default function SettingsModal() {
                       <ServiceStatuses/>
                     </Divider> 
                     <Divider text={"Credits"}>
-                      Made by kido!
+                      Made by kido! <br />
+                      Version: {test}
                     </Divider>
                   </>
                 )}
