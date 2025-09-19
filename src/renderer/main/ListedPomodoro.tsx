@@ -30,6 +30,12 @@ export function ListedPomodoro({ info, children }: { info: PomodoroTimerInfo, ch
 				{info.motivation && <div>
 					Created in order to <span>{info.motivation}</span>
 				</div>}
+				<div>
+					Break time: {info.breakTimeSeconds / 60} mins
+				</div>
+				<div>
+					Work time: {info.startTimeSeconds / 60} mins
+				</div>
 				{/* Select First Reward Stage*/}
 				{/* ⚠️ TODO */}
 				{/* <div> 

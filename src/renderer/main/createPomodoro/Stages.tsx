@@ -52,11 +52,12 @@ export function TaskStage({ info, onTaskChanged, onMotivationChanged} : { info? 
   }, [task, motivation])
 
   return <div className="section">
-    <h3>Task</h3>
+    <h3>Set your Task</h3>
     <p style={{margin: '0px'}}>
-      I will: <input 
+      {enabledSpecifyMotive ? 'I will' : ''} <input 
         type="text" 
-        className="inline-input" 
+        className={enabledSpecifyMotive ? `inline-input text-field-input` : 'text-field-input'}
+        placeholder="Task"
         defaultValue={task} 
         onChange={(e) => { 
           setTask(e.target.value); 
@@ -68,6 +69,7 @@ export function TaskStage({ info, onTaskChanged, onMotivationChanged} : { info? 
       in order to <input 
         type="text" 
         className="inline-input" 
+        placeholder="Motivation"
         defaultValue={motivation} 
         onChange={(e) => { 
           setMotivation(e.target.value); 
@@ -93,34 +95,54 @@ export function SetTimeStage(props: {info? : PomodoroTimerInfo, onWorkTimeChange
     <div className="section">
       <h3>Set Times</h3>
       <label>
-        Work Time (minutes):{" "}
+        Work Time  :{" "}
+      </label>
+      <div className="input-wrapper">
         <input
           type="number"
           min={1}
-          value={workTime / 60}
+          value={workTime == -1 ? '' : workTime / 60}
           onChange={e => {
-            const newValue = Number(e.target.value);
+            if (e.target.value == '') return setWorkTime(-1);
+            const newValue = Math.min(Number(e.target.value), 999);
             setWorkTime(newValue * 60);
             props.onWorkTimeChanged(newValue * 60);
           }}
-          className="inline-input"
+          onBlur={e => {
+            if (workTime <= -1) {
+              setWorkTime(0);
+              props.onWorkTimeChanged(0);
+            }
+          }}
+          className="number-input inline-input"
         />
-      </label>
+        <span className="suffix">mins</span>
+      </div>
       <br />
       <label>
-        Break Time (minutes):{" "}
+        Break Time:{" "}
+      </label>
+      <div className="input-wrapper">
         <input
           type="number"
           min={1}
-          value={breakTime / 60}
+          value={breakTime == -1 ? '': breakTime / 60}
           onChange={e => {
+            if (e.target.value == '') return setWorkTime(-1);
             const newValue = Number(e.target.value);
             setBreakTime(newValue * 60)
             props.onBreakTimeChanged(newValue * 60) 
           }}
-          className="inline-input"
+          onBlur={e => {
+            if (workTime <= -1) {
+              setWorkTime(0);
+              props.onWorkTimeChanged(0);
+            }
+          }}
+          className="number-input inline-input"
         />
-      </label>
+        <span className='suffix'>mins</span>
+      </div>
       <br />
       {/* <label>
         Long Break Time (minutes):{" "}

@@ -199,14 +199,14 @@ function AddSubtask({ onAddSubtask, nextIndex }: { onAddSubtask: (text: string) 
     input.current.value = '';
   }
   
-  return <p className="subtask">
+  return <p className='subtask'>
     { `${nextIndex}.` } 
     <input
       ref={input}
-      type="text" 
-      className="inline-input" 
+      type='text'
+      className='inline-input' 
       onChange={(e) => setNewTask(e.target.value)}
-      placeholder="Add a subtask"
+      placeholder='Add a subtask'
     />
     <button disabled={newTask === ''} onClick={onAddSubtaskPressed}>
       Add

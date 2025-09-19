@@ -240,10 +240,42 @@ input[type="text"]:focus, input[type="number"]:focus {
   background-color: var(--select-background);
 }
 
-.inline-input {
+.text-field-input {
   width: 9rem;
+}
+
+.number-input {
+  width: 1em;
+}
+
+.inline-input {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+}
+
+
+/* For suffix (specifically for # of minutes) */
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-wrapper input {
+  padding-right: 2.5em; /* larger value lets larger input */
+}
+
+.input-wrapper .suffix {
+  position: absolute;
+  right: 0.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none; /* so clicks still go to input */
+  transition: opacity 0.2s;
+}
+
+.input-wrapper input:focus + .suffix {
+  opacity: 0; /* hide suffix while typing */
 }
 
 
