@@ -6,11 +6,11 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [windows-latest]
 
     steps:
       - name: Checkout code
@@ -20,17 +20,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-  
-      - name: Disable interactive prompts
-        run: |
-          npm config set yes true
-          npm config set audit false
-          npm config set fund false
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build & Publish
-        run: npx electron-builder --publish always
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build with Electron Forge
+        run: npm run make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-artifacts
+          path: out/make/**
