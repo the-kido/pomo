@@ -33,3 +33,8 @@ jobs:
         with:
           name: ${{ runner.os }}-artifacts
           path: out/make/**
+
+      - name: Publish to GitHub
+        run: npx electron-builder --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
