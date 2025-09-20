@@ -22,6 +22,19 @@ const config: ForgeConfig = {
     icon: path.resolve(__dirname, 'assets/app.ico')
   },
   rebuildConfig: {},
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'the-kido',
+          name: 'pomo'
+        },
+        prerelease: false,
+        draft: false
+      }
+    }
+  ],
   makers: [
     new MakerSquirrel({
       setupIcon: './assets/app.ico'

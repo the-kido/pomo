@@ -25,12 +25,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and Publish with Electron Forge
+      - name: Build with Electron Forge
+        run: npm run make
+
+      - name: Publish to GitHub Releases
         run: npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifacts
+      - name: Upload artifacts (fallback)
         uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-artifacts

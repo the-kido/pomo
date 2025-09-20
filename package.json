@@ -1,7 +1,7 @@
 {
   "name": "pomo-timer",
   "productName": "PomoTimer",
-  "version": "1.0.3-beta",
+  "version": "1.1.0-beta",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
@@ -15,6 +15,10 @@
   "author": {
     "name": "Krish Patel",
     "email": "63456333+the-kido@users.noreply.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/the-kido/pomo.git"
   },
   "build": {
     "appId": "com.kido.PomoTimer",
@@ -35,6 +39,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron-forge/plugin-webpack": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.9.0",
     "@electron/fuses": "^1.8.0",
     "@types/react": "^19.1.6",
     "@types/react-calendar-heatmap": "^1.9.0",
@@ -45,6 +50,7 @@
     "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^6.11.0",
     "electron": "36.4.0",
+    "electron-builder": "^26.0.12",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
