@@ -1,7 +1,7 @@
 {
   "name": "pomo-timer",
   "productName": "PomoTimer",
-  "version": "1.1.0-beta",
+  "version": "1.1.1-beta",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
