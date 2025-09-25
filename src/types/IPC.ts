@@ -40,5 +40,6 @@ export const CHANNELS = {
 		maximizeMain: 'maximize-main-window',
 		closeMain: 'close-main-window',
 		getAppVersion: 'get-app-version',
+		checkForUpdates: 'check-for-updates',
 	} as const
 } as const;

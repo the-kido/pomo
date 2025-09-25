@@ -31,7 +31,8 @@ const config: ForgeConfig = {
           name: 'pomo'
         },
         prerelease: false,
-        draft: false
+        draft: false,
+        generateReleaseNotes: true
       }
     }
   ],
