@@ -1,0 +1,34 @@
+.divider-option {
+  padding: 2px 8px;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+/* For the multi-segment button in the task select section */
+.segmented-button {
+    display: inline-flex;
+    border-radius: var(--input-border-radius);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.segment {
+    border-radius: 0px;
+    background: var(--background-color);
+    border: none;
+    transition: background 0.1s;
+}
+
+.segment.selected {
+    background: var(--select-background);
+    color: var(--text-color);
+    filter: none;
+}
+
+.segment:hover {
+    scale: 1;
+}
+
+.segment:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}

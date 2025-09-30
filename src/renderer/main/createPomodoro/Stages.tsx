@@ -2,12 +2,26 @@ import { useContext, useEffect, useState } from "react";
 import { Stages, StagesCleared } from "./CreatePomodoro";
 import { useGoalStore, useRewardsStore, useUserSettingsStore } from "../../../main/states/userDataStates"
 import { PomoActivityType, PomodoroTimerInfo, PomoActivityTypeDisplay, SELECT_GOAL, SELECT_TYPE, NONE, SELECT_REWARD } from "/src/types/Pomodoro";
-import { ChevronDown } from "lucide-react";
-
+import './stages.css'
 
 export interface SubtaskItem {
   id: string;
   text: string;
+}
+
+export function SegmentedButton({value: value, options, onChange} : { value: PomoActivityType, options: { label: string; key: PomoActivityType }[], onChange: (value: PomoActivityType) => void }) {
+  return <div style={{marginBottom: '5px'}} className={'segmented-button'}>
+    {options.map((option, idx) => (
+      <button
+        key={option.key}
+        type="button"
+        className={`segment${value === option.key ? ' selected' : ''}`}
+        onClick={() => onChange(option.key)}
+      >
+        {option.label}
+      </button>
+    ))}
+  </div>
 }
 
 export function TypeStage({ info, onSetType, onSetGoal } : { info? : PomodoroTimerInfo, onSetType: (type: PomoActivityType) => void, onSetGoal: (goal: string) => void }) {
@@ -23,13 +37,11 @@ export function TypeStage({ info, onSetType, onSetGoal } : { info? : PomodoroTim
   }, [type, goal])
 
   return <>
-    {/* Temporary; use "slider" selection instead */}
-    <select value={type} onChange={e => { setType(e.target.value as unknown as PomoActivityType); onSetType(e.target.value as unknown as PomoActivityType) }}>
-      <option value={PomoActivityType.UNKNOWN}>{SELECT_TYPE}</option>
-      <option className="divider-option" disabled>──────────</option>
-      <option value={PomoActivityType.ACTIVE}>{PomoActivityTypeDisplay[PomoActivityType.ACTIVE]}</option>
-      <option value={PomoActivityType.CHILL}>{PomoActivityTypeDisplay[PomoActivityType.CHILL]}</option>
-    </select>
+    <SegmentedButton 
+      value={type}
+      options={[{label: PomoActivityTypeDisplay[PomoActivityType.CHILL], key: PomoActivityType.CHILL}, {label: PomoActivityTypeDisplay[PomoActivityType.ACTIVE], key: PomoActivityType.ACTIVE}]}
+      onChange={ (selectedType) => { setType(selectedType); onSetType(selectedType) }}
+    />
     { <select value={goal} onChange={e => { setGoal(e.target.value); onSetGoal(e.target.value) }}>
       <option value={SELECT_GOAL}>{SELECT_GOAL}</option>
       <option className="divider-option" disabled>──────────</option>
