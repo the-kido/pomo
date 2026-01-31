@@ -13,6 +13,7 @@ export type PomodoroRendererExports = {
 	attemptMinimize: () => void;
 	onClosed: (callback: () => void) => void;
 	changeSize: (x: number, y: number, isShrunk: boolean) => void;
+	showNotification: (title: string, options?: Electron.NotificationConstructorOptions) => void;
 };
 
 export const CHANNELS = {
@@ -25,7 +26,8 @@ export const CHANNELS = {
 		onMinimize: 'minimized-pomodoro',
 		changeWindowSize: 'change-window-size',
 		onSendPomodoroUpdate: 'sending-pomo-update',
-		onIncrementPomosDone: 'sending-increment-pomos-done'
+		onIncrementPomosDone: 'sending-increment-pomos-done',
+		showNotification: 'show-notification'
 	} as const,
 	fromMainProcess: {
 		hydrateUserData: 'hydrate-user-data',
