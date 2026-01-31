@@ -31,6 +31,9 @@ contextBridge.exposeInMainWorld('pomodoro', {
 	changeSize : (x: number, y: number, isShrunk: boolean) => {
 		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.changeWindowSize, x, y, isShrunk)
 	},
+	showNotification: (title: string, options?: Electron.NotificationConstructorOptions) => {
+		ipcRenderer.send(CHANNELS.fromPomodoroRenderer.showNotification, title, options)
+	},
 	onUpdateData: (callback: (data: UserData) => void) => {
 		console.log('On update data');
 		onUpdateDataCallback = (_event, data) => callback(data)

@@ -110,6 +110,10 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
         timeStartedMS.current = Date.now() - breakTime * 1000;
 
         showSwitchPrompt({ titleText: "Work session over!", buttonText: "Switch to break"});
+        window.pomodoro.showNotification("Work session over!", {
+          body: "Time for a break!",
+          silent: false,
+        });
       },
     },
     [TimerStates.BreakTimer]: {
@@ -136,6 +140,10 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
       onPausedPressed: () => null,
       init: () => {
         showSwitchPrompt({ titleText: "Break over!", buttonText: "Switch to work"});
+        window.pomodoro.showNotification("Break over!", {
+          body: "Time to get back to work!",
+          silent: false,
+        });
       },
     },
   }

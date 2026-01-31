@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification } from 'electron';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import '/src/main/data/load'
 import '/src/main/ai/ai'
@@ -20,6 +20,9 @@ import { useUserDataStore, useWorkSessionHistoryStore } from './main/states/user
 import path from 'path';
 
 if (require('electron-squirrel-startup')) app.quit();
+
+// App name required for notifs
+app.name = 'PomoTimer';
 
 var mainWindow: BrowserWindow;
 
@@ -54,6 +57,11 @@ const createWindow = async (): Promise<void> => {
   });
 
   mainProcessEvents.emit('main-window-created', mainWindow)
+
+  app.setName("testing?")
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('BAZINGA');
+  }
 };
 
 app.on('ready', createWindow);
@@ -137,6 +145,16 @@ ipcMain.on(CHANNELS.fromMainRenderer.closeMain, () => {
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
   pomodoro.close();
   mainProcessEvents.emit('on-close-pomodoro')
+});
+
+// Show notification from pomodoro timer
+ipcMain.on(CHANNELS.fromPomodoroRenderer.showNotification, (_, title: string, options?: Electron.NotificationConstructorOptions) => {
+  const notification = new Notification({
+    title,
+    icon: path.join(__dirname, './assets/app.ico'),
+    ...options
+  });
+  notification.show();
 });
 
 ipcMain.handle(CHANNELS.fromMainRenderer.getAppVersion, () => {
