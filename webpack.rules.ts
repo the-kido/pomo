@@ -28,4 +28,11 @@ export const rules: Required<ModuleOptions>['rules'] = [
       },
     },
   },
+  {
+    test: /\.(mp3|wav|ogg)$/,
+    type: 'asset/resource',
+    generator: {
+      filename: 'assets/[name][ext]',
+    },
+  },
 ];

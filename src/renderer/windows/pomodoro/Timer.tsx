@@ -3,6 +3,7 @@ import Popup, { usePausePopupStore } from "./Popup";
 import { timeToWords } from "/src/main/utils/utils";
 import { FastForward, Pause, Play, RotateCcw } from "lucide-react";
 import { create } from "zustand";
+import { soundEffects } from "/src/renderer/utils/soundEffects";
 
 interface MessageType {titleText: string, buttonText: string}
 
@@ -78,6 +79,8 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
         if (comingFrom != TimerStates.WorkPaused) {
           timeStartedMS.current = Date.now();
           timePaused.current = 0;
+          const remainingTime = getFinalWorkTime() / 1000;
+          soundEffects.startTickingSound(remainingTime);
         }
       },
     },
@@ -95,6 +98,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
         setTimePausedText("0 seconds");
       },
       init: () => {
+        soundEffects.resetTickingInterval();
         openPausePopup();
         currentTimeAtPause.current = Date.now();
       },
@@ -102,6 +106,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
     [TimerStates.WorkFinished]: {
       tick: () => null,
       onSwitchPressed: () => {
+        soundEffects.stopAlarm();
         onPomoFinished();
         setAndInitState(TimerStates.BreakTimer)
       },
@@ -109,6 +114,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
       init: () => {
         timeStartedMS.current = Date.now() - breakTime * 1000;
 
+        soundEffects.playAlarm();
         showSwitchPrompt({ titleText: "Work session over!", buttonText: "Switch to break"});
         window.pomodoro.showNotification("Work session over!", {
           body: "Time for a break!",
@@ -128,6 +134,7 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
       },
       onPausedPressed: () => null,
       init: () => {
+        soundEffects.stopTickingSound();
         timeStartedMS.current = Date.now();
         timePaused.current = 0;
       },
@@ -135,10 +142,12 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
     [TimerStates.BreakFinished]: {
       tick: () => null,
       onSwitchPressed: () => {
+        soundEffects.stopAlarm();
         setAndInitState(TimerStates.WorkTimer)
       },
       onPausedPressed: () => null,
       init: () => {
+        soundEffects.playAlarm();
         showSwitchPrompt({ titleText: "Break over!", buttonText: "Switch to work"});
         window.pomodoro.showNotification("Break over!", {
           body: "Time to get back to work!",
@@ -149,12 +158,19 @@ export default function Timer({ workTime, breakTime, onPomoFinished, isShrunk } 
   }
 
   useEffect(() => {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       setCurrentState( currentState => {
         states[currentState].tick();
         return currentState;
       })
     }, 250);
+
+    // Cleanup on component unmount
+    return () => {
+      clearInterval(intervalId);
+      soundEffects.stopAlarm();
+      soundEffects.stopTickingSound();
+    };
   }, []);
 
 
