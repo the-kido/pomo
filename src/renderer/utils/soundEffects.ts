@@ -22,7 +22,7 @@ class SoundEffectsManager {
     // Initialize alarm audio
     this.alarmAudio = new Audio();
     this.alarmAudio.src = alarmSrc;
-    this.alarmAudio.loop = true;
+    this.alarmAudio.loop = false;
 
     // Initialize ticking audio
     this.tickingAudio = new Audio();
