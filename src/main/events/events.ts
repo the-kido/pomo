@@ -1,11 +1,13 @@
 import { EventEmitter } from 'events';
 import { PomodoroTimerInfo } from '/src/types/Pomodoro';
 import { BrowserWindow } from 'electron';
+import { UserData } from '/src/types/UserData';
 
 // Define all possible events and their argument types
 export type MainProcessEventMap = {
   'main-window-created': [window: BrowserWindow]; 
   'pomodoro-updated': [pomoInfo: PomodoroTimerInfo];
+  'user-data-updated': [data: UserData];
   
   // For tracking pomodoro state.  
   'on-close-pomodoro': []; 

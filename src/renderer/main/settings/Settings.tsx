@@ -267,7 +267,7 @@ function BuildingPomoPage() {
             if (itemToRemove == null) return
             useRewardsStore.getState().removeReward(itemToRemove.text)
           }}
-          onSubtasksChanged={(subtasks: string[], added: string): void => {
+          onSubtasksChanged={(subtasks: string[]): void => {
             useRewardsStore.getState().setRewards(subtasks)
           }} 
           >
@@ -281,6 +281,8 @@ function AppearancePage() {
 
   const isDarkMode = useUserSettingsStore.getState().darkMode;
   const setUsingDarkMode = useUserSettingsStore.getState().setUsingDarkMode;
+  const discordRpcEnabled = useUserSettingsStore(store => store.discordRpcEnabled);
+  const setDiscordRpcEnabled = useUserSettingsStore.getState().setDiscordRpcEnabled;
   
   const appContext = useContext(AppContext)
 
@@ -292,18 +294,38 @@ function AppearancePage() {
   }, [isDarkMode])
 
   return ( 
-    <Divider text='Theme'>
-      <SettingItem 
-        label={'Dark Mode'} 
-        description={'Need I say more?'}
+    <>
+      <Divider text='Theme'>
+        <SettingItem
+          label={'Dark Mode'}
+          description={'Need I say more?'}
+          >
+          <ToggleSwitch
+            isOn={isDarkMode}
+            handleToggle={() => {
+              setUsingDarkMode(!isDarkMode)
+            }}
+            />
+        </SettingItem>
+      </Divider>
+      <Divider text='Integrations'>
+        <SettingItem
+          label='Discord Rich Presence'
+          description='Show your Pomodoro activity on Discord'
         >
-        <ToggleSwitch 
-          isOn={isDarkMode} 
-          handleToggle={() => {
-            setUsingDarkMode(!isDarkMode)
-          }}
+          <ToggleSwitch
+            isOn={discordRpcEnabled}
+            handleToggle={() => {
+              const nextValue = !discordRpcEnabled;
+              setDiscordRpcEnabled(nextValue);
+              appContext.saveData({user: {
+                ...useUserDataStore.getState().getUserData().user,
+                discordRpcEnabled: nextValue
+              }});
+            }}
           />
-      </SettingItem>
-    </Divider>
+        </SettingItem>
+      </Divider>
+    </>
   )
 }

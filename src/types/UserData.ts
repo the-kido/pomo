@@ -26,4 +26,5 @@ export interface UserPreferences {
   enabledTaskRewards: boolean,
   enabledSpecifyMotive: boolean,
   darkMode: boolean,
+  discordRpcEnabled: boolean,
 }

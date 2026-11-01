@@ -16,6 +16,7 @@ export const DEFAULT_USERDATA: UserData = {
 		enabledTaskRewards: false,
 		enabledSpecifyMotive: false,
 		darkMode: false,
+		discordRpcEnabled: false,
 	},
 	window: {
 		width: 0,
@@ -42,6 +43,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		var enabledTaskRewards = useUserSettingsStore.getState().enabledTaskRewards;
 		var enabledSpecifyMotive = useUserSettingsStore.getState().enabledSpecifyMotive;
 		var darkMode = useUserSettingsStore.getState().darkMode;
+		var discordRpcEnabled = useUserSettingsStore.getState().discordRpcEnabled;
 		var length = useWindowSizeStore.getState().height;
 		var width = useWindowSizeStore.getState().width;
 		var workSessionHistory = useWorkSessionHistoryStore.getState().history
@@ -57,6 +59,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 				enabledTaskRewards: enabledTaskRewards,
 				enabledSpecifyMotive: enabledSpecifyMotive,
 				darkMode: darkMode,
+				discordRpcEnabled: discordRpcEnabled,
 			},
 			window: {
 				width: width,
@@ -76,6 +79,7 @@ export const useUserDataStore = create<UserDataStore>((_, __) => ({
 		useUserSettingsStore.getState().setEnabledTaskRewards(data.user.enabledTaskRewards);
 		useUserSettingsStore.getState().setEnabledSpecifyMotive(data.user.enabledSpecifyMotive);
 		useUserSettingsStore.getState().setUsingDarkMode(data.user.darkMode);
+		useUserSettingsStore.getState().setDiscordRpcEnabled(data.user.discordRpcEnabled);
 		useWindowSizeStore.getState().setSize(data.window.width, data.window.height);
 		usePomodorosStore.getState().setPomodoros([...data.storedPomos]);
 		useCompletedPomodorosStore.getState().setPomodoros([...data.storedCompletedPomos])
@@ -178,7 +182,7 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 	longBreakTime: 25 * 60,
 	workTime: 25 * 60,
 	setBreakTime: (to: number) => {
-		var result: SetBreakTimeResults;
+		var result: SetBreakTimeResults = 'Success';
 		set((state) => {
 			if (to <= 0) {
 				result = 'Too Short';
@@ -199,7 +203,7 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 		return result;
 	},
 	setLongBreakTime(to: number) {
-		var result: SetLongBreakTimeResults;
+		var result: SetLongBreakTimeResults = 'Success';
 		set((state) => {
 			if (to <= state.breakTime ) {
 				result = 'Shorter Than Break';
@@ -216,7 +220,7 @@ export const usePomodoroTimerStore = create<PomodoroTimerTimes>((set, _) => ({
 		return result;
 	},
 	setWorkTime(to: number) {
-		var result: SetWorkTimeResults;
+		var result: SetWorkTimeResults = 'Success';
 		set((state) => {
 			if (to <= 3) {
 				result = 'Too Short';
@@ -250,10 +254,12 @@ interface UserSettings {
 	enabledTaskRewards: boolean;
 	enabledSpecifyMotive: boolean,
 	darkMode: boolean,
+	discordRpcEnabled: boolean,
 	setEnabledTaskType: (value: boolean) => void;
 	setEnabledTaskRewards: (value: boolean) => void;
 	setEnabledSpecifyMotive: (value: boolean) => void;
 	setUsingDarkMode: (value: boolean) => void;
+	setDiscordRpcEnabled: (value: boolean) => void;
 }
 
 export const useUserSettingsStore = create<UserSettings>((set) => ({
@@ -261,10 +267,12 @@ export const useUserSettingsStore = create<UserSettings>((set) => ({
 	enabledTaskRewards: true,
 	enabledSpecifyMotive: true,
 	darkMode: false,
+	discordRpcEnabled: true,
 	setEnabledTaskType: (value) => set({ enabledTaskType: value }),
 	setEnabledTaskRewards: (value) => set({ enabledTaskRewards: value }),
 	setEnabledSpecifyMotive: (value) => set({ enabledSpecifyMotive: value }),
-	setUsingDarkMode: (value) => set({ darkMode: value })
+	setUsingDarkMode: (value) => set({ darkMode: value }),
+	setDiscordRpcEnabled: (value) => set({ discordRpcEnabled: value })
 }));
 
 interface WorkSessionHistory {

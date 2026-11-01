@@ -45,6 +45,7 @@ const createWindow = async (): Promise<void> => {
   // "hydrating" user data
   const data = await readData();
   useUserDataStore.getState().loadUserData(data);
+  mainProcessEvents.emit('user-data-updated', useUserDataStore.getState().getUserData());
   console.log("Hydrating complete")
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -115,7 +116,7 @@ ipcMain.on(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, (_, timerInfo: Pomo
 
   // When the window loads, initialize its data
   pomodoro.webContents.on('did-finish-load', () => {
-    pomodoro.webContents.send(CHANNELS.fromPomodoroMain.onInit, timerInfo);
+    pomodoro?.webContents.send(CHANNELS.fromPomodoroMain.onInit, timerInfo);
   });
 
   // On close, update state, don't *actually* close it but hide it, and notify main that timer closed
@@ -123,7 +124,7 @@ ipcMain.on(CHANNELS.fromMainRenderer.onLaunchPomodoroWindow, (_, timerInfo: Pomo
     useAppStateStore.getState().stopPomodoro()
 
     event.preventDefault();
-    pomodoro.hide();
+    pomodoro?.hide();
     mainWindow.webContents.send(CHANNELS.fromPomodoroMain.onClose);
   });
 })
@@ -143,7 +144,7 @@ ipcMain.on(CHANNELS.fromMainRenderer.closeMain, () => {
 
 // Close the pomodoro and notify 
 ipcMain.on(CHANNELS.fromPomodoroRenderer.onClose, () => {
-  pomodoro.close();
+  pomodoro?.close();
   mainProcessEvents.emit('on-close-pomodoro')
 });
 
@@ -168,8 +169,8 @@ ipcMain.handle(CHANNELS.fromMainRenderer.checkForUpdates, async () => {
 // Update minimum window size.
 ipcMain.on(CHANNELS.fromPomodoroRenderer.changeWindowSize, (_, x: number, y: number, isShrunk: boolean) => {
   // TODO: make magic numbers go bye bye and make it scale with UI scale value when I implement that for the timer
-  if (isShrunk) pomodoro.setMinimumSize(175, 125)
-  else pomodoro.setMinimumSize(200, 200)
+  if (isShrunk) pomodoro?.setMinimumSize(175, 125)
+  else pomodoro?.setMinimumSize(200, 200)
 });
 
 /**
@@ -191,6 +192,7 @@ function updateUserData(partialUpdate: Partial<UserData>, send: boolean = true, 
   // Update canonical state
   useUserDataStore.getState().loadUserData(newData);
   writeData(newData);
+  mainProcessEvents.emit('user-data-updated', newData);
   
   // Notify main window
   console.log("SENDING!")
